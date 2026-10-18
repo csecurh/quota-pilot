@@ -37,7 +37,7 @@ test('OpenAI onboarding is ChatGPT-only and cannot bootstrap the Codex CLI foote
   const manifest=JSON.parse(await read('plugin.json'));
   assert.equal(manifest.extensions['com.openai'].onboardingSkill,'./skills/chatgpt-hud/SKILL.md');
   const chat=await read('skills/chatgpt-hud/SKILL.md');
-  assert.match(chat,/NEVER execute an installer/);
+  assert.match(chat,/Do not run an installation script/);
   assert.match(chat,/get_overview/);
   assert.match(chat,/open_hud/);
   assert.match(chat,/if tools are not available/i);
