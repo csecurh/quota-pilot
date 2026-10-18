@@ -50,7 +50,7 @@ jobs:
             sizeBytes = $bytes
             license = 'runtime/NODE-LICENSE'
           } | ConvertTo-Json -Depth 3
-          [IO.File]::WriteAllText((Join-Path (Get-Location) 'runtime/NODE-PROVENANCE.json'), $provenance+"\n", (New-Object System.Text.UTF8Encoding($false)))
+          [IO.File]::WriteAllText((Join-Path (Get-Location) 'runtime/NODE-PROVENANCE.json'), $provenance+[char]10, (New-Object System.Text.UTF8Encoding($false)))
           Write-Output "Verified portable Windows runtime $version, size $bytes"
       - name: Publish bundled Windows runtime directly to Git main
         shell: pwsh
@@ -59,6 +59,8 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -- runtime/node.exe runtime/NODE-LICENSE runtime/NODE-PROVENANCE.json
+          git diff --cached --quiet
+          if ($LASTEXITCODE -eq 0) { Write-Output 'Already bundled the same verified Windows runtime'; exit 0 }
           git commit -m 'build: include verified Windows runtime for source marketplace'
           if ($LASTEXITCODE -ne 0) { throw 'Git commit failed' }
           git push origin HEAD:main
