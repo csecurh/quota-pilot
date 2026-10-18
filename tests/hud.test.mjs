@@ -59,7 +59,7 @@ test('Codex HUD installer preserves existing status line entries', async () => {
   try {
     const dir = join(home, '.codex');
     await mkdir(dir, { recursive: true });
-    await writeFile(join(dir, 'config.toml'), '[tui]\nstatus_line = ["git-branch"]\n');
+    await writeFile(join(dir, 'config.toml'), '[tui]\nstatus_line = ["git-branch"]\n\n[features]\nweb_search = true\n');
     await run('scripts/install-codex-hud.mjs', { home });
     const config = await readFile(join(dir, 'config.toml'), 'utf8');
     assert.match(config, /git-branch/);
