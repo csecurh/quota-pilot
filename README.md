@@ -1,5 +1,7 @@
 # QuotaPilot
 
+**Language / Idioma: English · [Español](README.es.md)**
+
 **Know your AI limits before they interrupt your work.**
 
 **License: [MIT](LICENSE)** · Copyright © 2026 Cibersecurity-H
@@ -42,6 +44,10 @@ npm run doctor
 Run **only the script for your host**. Restart the corresponding host afterward; a custom Claude status line will not be overwritten. The Codex footer relies on native tokens and cannot show arbitrary exact-reset custom fields.
 
 See [installation, troubleshooting, update and removal](docs/INSTALL.md) and the [real-host test guide](docs/HOST-TEST-PLAN.md).
+
+## Language / Idioma
+
+The ChatGPT widget automatically chooses **English or Spanish** from the system language, with an **EN / ES** toggle in the HUD. Claude Code's status line and the local doctor follow the OS language; set `QUOTAPILOT_LANG=en` or `QUOTAPILOT_LANG=es` on the local process to override. Data keys and snapshot schemas remain language-neutral. [Documentación en español](README.es.md).
 
 ## What you get
 

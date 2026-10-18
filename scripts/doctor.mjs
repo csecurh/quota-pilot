@@ -4,6 +4,13 @@ import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { readSafeText } from './secure-fs.mjs';
 
+const requestedLanguage = process.env.QUOTAPILOT_LANG;
+const language = requestedLanguage === 'es' || requestedLanguage === 'en'
+  ? requestedLanguage : (Intl.DateTimeFormat().resolvedOptions().locale.toLowerCase().startsWith('es') ? 'es' : 'en');
+const text = language === 'es'
+  ? { header: 'AI Usage — diagnóstico local', node: 'Node compatible', claude: 'Claude Code', codex: 'Codex', chatgpt: 'ChatGPT', snapshot: 'Snapshot de Claude', yes: 'sí', no: 'no', private: 'No se muestran credenciales, rutas ni datos del proveedor.' }
+  : { header: 'AI Usage — local diagnostics', node: 'Node supported', claude: 'Claude Code', codex: 'Codex', chatgpt: 'ChatGPT', snapshot: 'Claude snapshot', yes: 'yes', no: 'no', private: 'No credentials, file paths or provider data displayed.' };
+
 if (process.argv.slice(2).some((arg) => arg !== '--json')) {
   process.stderr.write('Usage: node scripts/doctor.mjs [--json]\n');
   process.exitCode = 2;
@@ -55,13 +62,13 @@ if (process.argv.slice(2).some((arg) => arg !== '--json')) {
 
   if (process.argv.includes('--json')) process.stdout.write(JSON.stringify(report, null, 2) + '\n');
   else {
-    process.stdout.write('AI Usage — local diagnostics\n');
-    process.stdout.write('Node supported: ' + (report.node.supported ? 'yes' : 'no') + '\n');
-    process.stdout.write('Claude Code: ' + report.surfaces.claude_code + '\n');
-    process.stdout.write('Codex: ' + report.surfaces.codex + '\n');
-    process.stdout.write('ChatGPT: ' + report.surfaces.chatgpt + '\n');
-    process.stdout.write('Claude snapshot: ' + report.localSnapshot + '\n');
-    process.stdout.write('No credentials, file paths or provider data displayed.\n');
+    process.stdout.write(text.header + '\n');
+    process.stdout.write(text.node + ': ' + (report.node.supported ? text.yes : text.no) + '\n');
+    process.stdout.write(text.claude + ': ' + report.surfaces.claude_code + '\n');
+    process.stdout.write(text.codex + ': ' + report.surfaces.codex + '\n');
+    process.stdout.write(text.chatgpt + ': ' + report.surfaces.chatgpt + '\n');
+    process.stdout.write(text.snapshot + ': ' + report.localSnapshot + '\n');
+    process.stdout.write(text.private + '\n');
   }
   if (!report.node.supported) process.exitCode = 1;
 }

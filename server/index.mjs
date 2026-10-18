@@ -100,8 +100,8 @@ async function getOverview() {
 const hudMeta = {
   ui: { resourceUri: HUD_URI },
   'openai/outputTemplate': HUD_URI,
-  'openai/toolInvocation/invoking': 'Opening usage HUD',
-  'openai/toolInvocation/invoked': 'Usage HUD active',
+  'openai/toolInvocation/invoking': 'Opening usage HUD / Abriendo HUD de consumo',
+  'openai/toolInvocation/invoked': 'Usage HUD active / HUD de consumo activo',
 };
 
 const readOnlyAnnotations = {
@@ -114,16 +114,16 @@ const readOnlyAnnotations = {
 const tools = [
   {
     name: 'open_hud',
-    title: 'Open usage HUD',
-    description: 'Use when the user wants a persistent local quota HUD. Never requests credentials and never sends usage to the public internet.',
+    title: 'Open usage HUD / Abrir HUD',
+    description: 'Use when the user wants a persistent local quota HUD. Never requests credentials and never sends usage to the public internet. / No solicita claves ni envía datos de uso a Internet.',
     inputSchema: { type: 'object', properties: {}, additionalProperties: false },
     annotations: readOnlyAnnotations,
     _meta: hudMeta,
   },
   {
     name: 'get_usage',
-    title: 'Get AI usage',
-    description: 'Use when the user asks for local Codex or Claude Code quota/reset data. Read-only and local-only.',
+    title: 'Get AI usage / Consultar consumo',
+    description: 'Use when the user asks for local Codex or Claude Code quota/reset data. Read-only and local-only. / Solo lectura y datos locales.',
     inputSchema: {
       type: 'object',
       properties: { provider: { type: 'string', enum: ['codex', 'claude_code'] } },
@@ -134,8 +134,8 @@ const tools = [
   },
   {
     name: 'get_overview',
-    title: 'Get quota overview',
-    description: 'Use when the user asks for an overview of local usage. Returns only minimized quota telemetry and derived estimates.',
+    title: 'Get quota overview / Resumen de cuota',
+    description: 'Use when the user asks for an overview of local usage. Returns only minimized quota telemetry and derived estimates. / Solo devuelve métricas mínimas y estimaciones.',
     inputSchema: { type: 'object', properties: {}, additionalProperties: false },
     annotations: readOnlyAnnotations,
     _meta: { ...hudMeta, 'openai/widgetAccessible': true },

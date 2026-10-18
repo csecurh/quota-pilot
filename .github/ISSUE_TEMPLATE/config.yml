@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Security vulnerability (private disclosure)
+  - name: Security vulnerability / Vulnerabilidad (reporte privado)
     url: https://github.com/csecurh/quota-pilot/security
-    about: Do not report vulnerabilities or secrets in a public issue. See SECURITY.md; enable private reporting in repository Security settings.
-  - name: Installation and troubleshooting
+    about: Report privately only / Reporta vulnerabilidades y secretos solo en privado (SECURITY.md / SECURITY.es.md).
+  - name: Installation and troubleshooting / Instalación y ayuda
     url: https://github.com/csecurh/quota-pilot/blob/main/docs/INSTALL.md
-    about: Review the supported hosts and diagnostics before opening an issue.
+    about: Review compatible hosts first / Consulta la instalación y el diagnóstico antes de abrir un issue.

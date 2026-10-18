@@ -1,5 +1,7 @@
 # Public-source release candidate — verification evidence
 
+**Language / Idioma: English · [Español](es/RELEASE-VALIDATION.md)**
+
 Project: quota-pilot, MIT, **GitHub Public**, `0.5.0-rc.1`. This file distinguishes automated results from actual installations.
 
 ## Automated verification

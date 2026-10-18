@@ -23,3 +23,9 @@ When QuotaPilot is installed:
 7. Never request or copy provider passwords, session tokens, prompts, responses, transcripts, working-directory paths, or source code.
 
 After setup, prefer keeping the HUD visible instead of requiring the user to ask for usage repeatedly.
+
+## Language / Idioma
+
+Match the user's language (English or Spanish) when describing setup and quota estimates. The HUD offers an EN/ES selector and starts from the host/system language. For Claude Code status-line text or CLI diagnostics, a process-local `QUOTAPILOT_LANG=en` or `QUOTAPILOT_LANG=es` override is available. The underlying quota JSON keys and filesystem snapshots are never translated.
+
+Responde en español cuando el usuario escriba en español. Conserva nombres técnicos y comandos sin traducir. No inventes cuotas ni datos de reinicio cuando falten. El widget permite elegir EN/ES y la barra de Claude Code puede usar `QUOTAPILOT_LANG`.

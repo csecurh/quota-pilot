@@ -1,5 +1,7 @@
 # Threat model — quota-pilot
 
+**Language / Idioma: English · [Español](es/THREAT-MODEL.md)**
+
 ## Scope and trust boundaries
 
 The product operates via a local MCP stdio server, Codex app-server subprocess, Claude Code status-line collector, and a ChatGPT host-bridge widget. Its principal security goals are confidentiality of host credentials/workspace, integrity of existing configuration and bounded local resource use.

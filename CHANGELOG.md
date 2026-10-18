@@ -1,5 +1,7 @@
 # Changelog
 
+**Language / Idioma: English · [Español](CHANGELOG.es.md)**
+
 This project uses SemVer for plugin/runtime metadata. Release candidates are not public releases and may change before general availability.
 
 ## 0.5.0-rc.1 — Public source, host-validation release candidate
@@ -13,6 +15,7 @@ This project uses SemVer for plugin/runtime metadata. Release candidates are not
 - Normalize missing Claude percentages correctly and limit status-line input accumulation before appending data.
 - Add MIT licensing metadata, CODEOWNERS policy, GitHub Actions Dependabot monitoring and a step-by-step administrative security checklist. Public GitHub source now supports admin-side protection; connected tooling cannot change branch settings.
 - Public marketplace naming (`ai-usage`), HTTPS installation documentation, sanitized GitHub issue templates and a host acceptance guide.
+- Add English/Spanish documentation, bidirectional language links, EN/ES widget toggle and localized Claude status line/doctor, without changing machine-readable data.
 - Retain all existing 0.4.x filesystem/protocol hardening and read-only/no-network invariants.
 
 ## 0.4.0 — Security hardening

@@ -1,6 +1,12 @@
 # Real-host smoke testing — no account data required
 
+**Language / Idioma: English · [Español](es/HOST-TEST-PLAN.md)**
+
 The GitHub repo is public, but installation and runtime behavior must be verified on **actual supported clients**. Use a synthetic sandbox or a test profile where possible. Do not upload tokens, prompts, source code, transcripts, private paths, sensitive logs or identifiers.
+
+## Language / Idioma
+
+Verify the widget's EN/ES toggle and the `QUOTAPILOT_LANG=en` / `QUOTAPILOT_LANG=es` overrides for local Claude/doctor output; machine-readable data remains unchanged.
 
 ## Baseline
 

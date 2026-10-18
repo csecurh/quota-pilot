@@ -8,11 +8,11 @@ import { fileURLToPath } from 'node:url';
 
 const repo = resolve(fileURLToPath(new URL('..', import.meta.url)));
 
-function run(script, { input = '', home } = {}) {
+function run(script, { input = '', home, lang = 'es' } = {}) {
   return new Promise((resolvePromise, reject) => {
     const child = spawn(process.execPath, [resolve(repo, script)], {
       stdio: ['pipe', 'pipe', 'pipe'],
-      env: { ...process.env, HOME: home, USERPROFILE: home },
+      env: { ...process.env, HOME: home, USERPROFILE: home, QUOTAPILOT_LANG: lang },
     });
     let stdout = '';
     let stderr = '';
@@ -127,4 +127,19 @@ test('Claude installer makes no runtime changes when a custom status line exists
     assert.deepEqual(JSON.parse(await readFile(path, 'utf8')), config);
     await assert.rejects(() => readFile(join(home, '.quotapilot', 'claude-statusline.mjs'), 'utf8'), { code: 'ENOENT' });
   } finally { await rm(home, { recursive: true, force: true }); }
+});
+
+test('Claude status line supports English and Spanish without changing minimal snapshots', async () => {
+  const home = await mkdtemp(join(tmpdir(), 'quotapilot-i18n-'));
+  try {
+    const input = JSON.stringify({rate_limits:{five_hour:{used_percentage:45}}});
+    const english = await run('scripts/claude-statusline.mjs', {home,input,lang:'en'});
+    assert.match(english.stdout,/Claude Code · 5h used:45% left:55% reset:/);
+    const spanish = await run('scripts/claude-statusline.mjs', {home,input,lang:'es'});
+    assert.match(spanish.stdout,/Claude Code · 5h usado:45% rest:55% reset:/);
+    const snapshot = JSON.parse(await readFile(join(home,'.quotapilot','claude-latest.json'),'utf8'));
+    assert.equal(snapshot.payload.primary.remainingPercent,55);
+    assert.equal(JSON.stringify(snapshot).includes('usado'),false);
+    assert.equal(JSON.stringify(snapshot).includes('used:'),false);
+  } finally { await rm(home,{recursive:true,force:true}); }
 });

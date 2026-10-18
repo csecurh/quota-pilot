@@ -6,7 +6,7 @@
           {
             "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/ensure-surfaces.mjs\"",
-            "statusMessage": "Activando Claude Code HUD"
+            "statusMessage": "Starting Claude Code HUD / Activando HUD de Claude Code"
           }
         ]
       }

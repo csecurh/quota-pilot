@@ -1,5 +1,7 @@
 # Contributing to QuotaPilot
 
+**Language / Idioma: English · [Español](CONTRIBUTING.es.md)**
+
 QuotaPilot is [MIT licensed](LICENSE) and its GitHub source is **public**. Contributions, bug reports and documentation fixes are welcome. Runtime compatibility is still being tested for `0.5.0-rc.1`.
 
 ## Development

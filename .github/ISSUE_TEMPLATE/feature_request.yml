@@ -1,27 +1,27 @@
-name: Feature request
-description: Suggest an improvement to the local HUD
+name: Feature request / Proponer función
+description: Suggest a HUD improvement / Propón una mejora para el HUD
 title: "[Feature]: "
 labels: [enhancement]
 body:
   - type: markdown
     attributes:
-      value: Do not include provider credentials, user sessions, local paths or private account information.
+      value: Do not include credentials, sessions or private paths. / No incluyas credenciales, sesiones ni rutas privadas.
   - type: textarea
     id: problem
     attributes:
-      label: What problem are you solving?
+      label: What problem are you solving? / ¿Qué problema resuelves?
     validations:
       required: true
   - type: textarea
     id: suggestion
     attributes:
-      label: Suggested solution
+      label: Suggested solution / Solución propuesta
     validations:
       required: true
   - type: dropdown
     id: host
     attributes:
-      label: Relevant host
+      label: Relevant host / Aplicación
       options:
         - All
         - Codex CLI

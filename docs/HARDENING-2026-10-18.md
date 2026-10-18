@@ -1,5 +1,7 @@
 # Security hardening follow-up — 2026-10-18
 
+**Language / Idioma: English · [Español](es/HARDENING-2026-10-18.md)**
+
 This report supplements the 2026-10-17 security audit. It is an internal code/configuration review and adversarial regression suite, not a third-party penetration-test certification.
 
 ## Changes implemented

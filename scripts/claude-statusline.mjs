@@ -4,6 +4,13 @@ import { join } from 'node:path';
 import { atomicWritePrivate } from './secure-fs.mjs';
 
 const MAX_INPUT_BYTES = 256 * 1024;
+// Local display preference only. Provider data and saved snapshot remain language-neutral.
+const requestedLang = process.env.QUOTAPILOT_LANG;
+const osLang = Intl.DateTimeFormat().resolvedOptions().locale;
+const lang = requestedLang === 'es' || requestedLang === 'en' ? requestedLang : (osLang.toLowerCase().startsWith('es') ? 'es' : 'en');
+const copy = lang === 'es'
+  ? { used: 'usado', left: 'rest', reset: 'reset', missing: 'métricas no disponibles', waiting: 'esperando métricas' }
+  : { used: 'used', left: 'left', reset: 'reset', missing: 'metrics unavailable', waiting: 'waiting for metrics' };
 let raw = '';
 let oversized = false;
 
@@ -55,7 +62,7 @@ function countdown(window) {
 
 process.stdin.on('end', async () => {
   if (oversized) {
-    process.stdout.write('Claude Code · métricas no disponibles');
+    process.stdout.write('Claude Code · ' + copy.missing);
     return;
   }
 
@@ -85,14 +92,14 @@ process.stdin.on('end', async () => {
     await atomicWritePrivate(join(homedir(), '.quotapilot', 'claude-latest.json'), JSON.stringify(snapshot));
 
     const fmt = (label, window) => !window ? null
-      : label + ' usado:' + (window.usedPercent == null ? '—' : Math.round(window.usedPercent) + '%')
-      + ' rest:' + (window.remainingPercent == null ? '—' : Math.round(window.remainingPercent) + '%')
-      + ' reset:' + countdown(window);
+      : label + ' ' + copy.used + ':' + (window.usedPercent == null ? '—' : Math.round(window.usedPercent) + '%')
+      + ' ' + copy.left + ':' + (window.remainingPercent == null ? '—' : Math.round(window.remainingPercent) + '%')
+      + ' ' + copy.reset + ':' + countdown(window);
 
     const parts = ['Claude Code', fmt('5h', primary), fmt('7d', secondary)].filter(Boolean);
     if (contextRemaining != null) parts.push('ctx:' + Math.round(contextRemaining) + '%');
     process.stdout.write(parts.join(' · '));
   } catch {
-    process.stdout.write('Claude Code · esperando métricas');
+    process.stdout.write('Claude Code · ' + copy.waiting);
   }
 });

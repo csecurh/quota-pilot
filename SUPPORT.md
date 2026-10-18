@@ -1,5 +1,7 @@
 # Support
 
+**Language / Idioma: English · [Español](SUPPORT.es.md)**
+
 This project is public and MIT licensed. **0.5.0-rc.1 is a release candidate**; host integration remains under field test.
 
 - Installation, upgrades, removals and limitations: [INSTALL.md](docs/INSTALL.md).

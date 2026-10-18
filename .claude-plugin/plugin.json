@@ -1,5 +1,5 @@
 {
   "name": "quota-pilot",
   "version": "0.5.0-rc.1",
-  "description": "Security-hardened local usage HUD for Claude Code."
+  "description": "Local Claude Code quota HUD / HUD local de cuota para Claude Code."
 }

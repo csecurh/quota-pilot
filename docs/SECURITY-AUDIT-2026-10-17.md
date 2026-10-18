@@ -1,5 +1,7 @@
 # QuotaPilot Security Audit — 2026-10-17
 
+**Language / Idioma: English · [Español](es/SECURITY-AUDIT-2026-10-17.md)**
+
 ## Scope
 
 Audited the private repository runtime, MCP stdio server, Codex provider adapter, Claude Code status-line collector, host installers, ChatGPT/MCP App widget, plugin manifests, marketplace configuration, tests, and GitHub Actions workflow.

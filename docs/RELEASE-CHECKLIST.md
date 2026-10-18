@@ -1,5 +1,7 @@
 # Public source release checklist — QuotaPilot 0.5.0-rc.1
 
+**Language / Idioma: English · [Español](es/RELEASE-CHECKLIST.md)**
+
 **GitHub source is PUBLIC and MIT licensed.** A public repository is not the same as a plugin accepted into the universal ChatGPT/Codex directory. This is a candidate for community installation and testing, not a claim of verified support for every host.
 
 ## Complete in the repository

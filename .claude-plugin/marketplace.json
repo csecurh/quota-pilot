@@ -1,6 +1,6 @@
 {
   "name": "ai-usage",
-  "description": "Local-first quota HUD for Claude Code",
+  "description": "Local quota HUD / HUD local de cuota y consumo",
   "owner": {
     "name": "Cibersecurity-H"
   },
@@ -11,7 +11,7 @@
         "source": "github",
         "repo": "csecurh/quota-pilot"
       },
-      "description": "Private-by-design local usage, reset countdowns and pacing estimates for Claude Code."
+      "description": "Local usage, remaining, reset and estimates / Uso local, restante, reinicio y estimaciones."
     }
   ]
 }

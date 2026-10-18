@@ -42,3 +42,18 @@ test('offline doctor does not invent provider availability for empty home', asyn
     assert.match(result.stdout, /ChatGPT: host-dependent/);
   } finally { await rm(home, { recursive: true, force: true }); }
 });
+
+test('doctor supports Spanish while preserving redacted status outputs', async () => {
+  const home=await mkdtemp(join(tmpdir(),'quotapilot-doctor-es-'));
+  try {
+    const result=spawnSync(process.execPath,[script],{
+      encoding:'utf8',timeout:8000,
+      env:{...process.env,HOME:home,USERPROFILE:home,QUOTAPILOT_LANG:'es'},
+    });
+    assert.equal(result.status,0,result.stderr);
+    assert.match(result.stdout,/AI Usage — diagnóstico local/);
+    assert.match(result.stdout,/Node compatible:/);
+    assert.match(result.stdout,/Snapshot de Claude:/);
+    assert.match(result.stdout,/No se muestran credenciales/);
+  } finally { await rm(home,{recursive:true,force:true}); }
+});

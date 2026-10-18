@@ -1,5 +1,7 @@
 # Install QuotaPilot (public source, release candidate)
 
+**Language / Idioma: English · [Español](es/INSTALL.md)**
+
 QuotaPilot is published as source under [MIT](../LICENSE). **The GitHub repository is public; the plugin has not been admitted to the universal ChatGPT/Codex directory.** Automated CI does not replace real host tests.
 
 ## Prerequisites
@@ -67,6 +69,10 @@ Update a cloned checkout with `git pull --ff-only`, run `npm run check` and reru
 - **Claude:** uninstall/disable in the plugin manager. For a *direct install*, remove `settings.statusLine` only when its command points to `~/.quotapilot/claude-statusline.mjs`; remove `~/.quotapilot/` only after inspecting its contents.
 - **Codex:** uninstall/disable in `/plugins`. For a *direct install*, remove the added `five-hour-limit` and `weekly-limit` entries from `~/.codex/config.toml`, retaining all other footer items.
 - **ChatGPT:** remove the local marketplace plugin entry or uninstall in Plugins. This plugin stores no provider credentials.
+
+## Language preference
+
+The HUD chooses English or Spanish using the host language; use **EN / ES** to change it during the conversation. The Claude Code status line and `npm run doctor` follow your operating-system locale. For explicit control, set `QUOTAPILOT_LANG=en` or `QUOTAPILOT_LANG=es` **in the process environment**. This preference does not enter snapshots or affect provider authorization.
 
 ## Diagnostics
 

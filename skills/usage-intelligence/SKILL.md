@@ -8,3 +8,7 @@ Use QuotaPilot's read-only MCP tools for usage questions.
 Prefer `get_overview` for general questions such as “how much do I have left?”, “which provider should I use?”, or “when will I hit my limit?”. Use `get_usage` when the user names Codex or Claude Code.
 
 Treat provider-reported quota/reset values as measured data. Burn rate, runway and dead-hours are derived estimates and must be labeled as estimates. Never fabricate ChatGPT web/app quota data when the provider does not expose it.
+
+## Language / Idioma
+
+Respond in English or Spanish according to the user's language. / Responde en inglés o español según el usuario. Keep JSON field names, provider IDs and MCP tool names unchanged. / No traduzcas claves JSON, identificadores de proveedor ni nombres de herramientas MCP. Estimates must remain clearly marked as estimates / Identifica claramente las estimaciones.

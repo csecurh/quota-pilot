@@ -1,16 +1,16 @@
-name: Bug report
-description: Report an installation or behavior issue without personal data
+name: Bug report / Reportar error
+description: Report a bug without personal data / Reporta errores sin datos personales
 title: "[Bug]: "
 labels: [bug]
 body:
   - type: markdown
     attributes:
       value: |
-        Please DO NOT submit credentials, OAuth tokens, logs with paths, transcripts, source code, session IDs, or vulnerabilities here. Security issues: see SECURITY.md.
+        Please DO NOT submit credentials, OAuth tokens, logs with paths, transcripts, source code, session IDs, or vulnerabilities here. Security issues: see SECURITY.md. / Seguridad: consulta SECURITY.es.md.
   - type: dropdown
     id: host
     attributes:
-      label: Host
+      label: Host / Aplicación
       options:
         - Claude Code
         - Codex CLI
@@ -22,27 +22,27 @@ body:
   - type: input
     id: versions
     attributes:
-      label: Version information
+      label: Version information / Información de versión
       placeholder: "QuotaPilot 0.5.0-rc.1, Node 22, host version (no identifiers)"
     validations:
       required: true
   - type: textarea
     id: expected
     attributes:
-      label: Expected behavior
+      label: Expected behavior / Comportamiento esperado
     validations:
       required: true
   - type: textarea
     id: actual
     attributes:
-      label: Actual behavior and steps to reproduce
-      description: Use synthetic data; sanitize any logs.
+      label: Actual behavior / Comportamiento real y pasos
+      description: Use synthetic data / Usa datos ficticios; anonimiza los registros.
     validations:
       required: true
   - type: checkboxes
     id: safety
     attributes:
-      label: Privacy check
+      label: Privacy check / Privacidad
       options:
-        - label: I removed personal data, filesystem paths, credentials, prompts, responses and transcripts.
+        - label: I removed private data, tokens, paths, prompts and transcripts / Quité datos privados, tokens, rutas, prompts y transcripciones.
           required: true

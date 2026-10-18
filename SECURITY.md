@@ -1,5 +1,7 @@
 # Security Policy
 
+**Language / Idioma: English · [Español](SECURITY.es.md)**
+
 QuotaPilot is a **local-first, read-only** usage HUD. This public MIT-licensed project is unaffiliated with OpenAI or Anthropic. It has no runtime npm dependencies, no QuotaPilot-owned telemetry service and no direct HTTP client in the widget.
 
 ## Supported versions

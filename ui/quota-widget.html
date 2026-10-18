@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -9,7 +9,7 @@
 :root{color-scheme:dark}*{box-sizing:border-box}
 body{margin:0;background:transparent;color:#f6f8fa;font:12px ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 .card{min-width:292px;max-width:360px;padding:14px;border:1px solid rgba(255,255,255,.11);border-radius:18px;background:rgba(14,17,21,.96);box-shadow:0 16px 48px rgba(0,0,0,.28)}
-.top,.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.brand{font-size:13px;font-weight:900;letter-spacing:.2px}.live{font-size:9px;font-weight:900;letter-spacing:1px;color:#7ce38b}
+.locale{display:flex;gap:4px;align-items:center}.locale button{font:inherit;background:transparent;color:#b2bdca;border:1px solid #56616d;border-radius:6px;padding:3px 5px;cursor:pointer}.locale button[aria-pressed="true"]{border-color:#7ce38b;color:#7ce38b}.top,.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.brand{font-size:13px;font-weight:900;letter-spacing:.2px}.live{font-size:9px;font-weight:900;letter-spacing:1px;color:#7ce38b}
 .provider{margin-top:13px}.name{font-size:10px;color:#b2bdca;text-transform:uppercase;font-weight:800;letter-spacing:.8px}
 .main{display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:8px;margin-top:8px}.metric{background:#0a0d10;border-radius:11px;padding:9px}.label{font-size:8px;color:#adbac6;font-weight:900;letter-spacing:.8px}
 .value{display:block;margin-top:3px;font-size:17px;font-weight:900;white-space:nowrap}.reset{font-size:14px}.bar{height:6px;border-radius:99px;background:#252b32;overflow:hidden;margin-top:9px}
@@ -20,12 +20,31 @@ body{margin:0;background:transparent;color:#f6f8fa;font:12px ui-sans-serif,syste
 </head>
 <body>
 <div class="card">
-  <div class="top"><span id="brand" class="brand">AI Usage</span><span id="state" class="live">LOCAL</span></div>
-  <div id="content"><div class="empty">Leyendo cuota local…</div></div>
-  <div class="footer"><span id="updated">—</span><span>auto · 30s</span></div>
+  <div class="top"><span id="brand" class="brand">AI Usage</span><span class="locale" role="group" aria-label="Language / Idioma"><button id="lang-en" type="button" lang="en" aria-pressed="true">EN</button><button id="lang-es" type="button" lang="es" aria-pressed="false">ES</button><span id="state" class="live">LOCAL</span></span></div>
+  <div id="content"><div class="empty">Reading local usage…</div></div>
+  <div class="footer"><span id="updated">—</span><span id="refresh-label">auto · 30s</span></div>
 </div>
 <script>
 const $=id=>document.getElementById(id);
+const translations={
+ en:{loading:'Reading local usage…',empty:'No quota data available yet.',remaining:'remaining',used:'USED',left:'REMAINING',reset:'RESET',burn:'BURN RATE',runway:'RUNWAY',gap:'QUOTA GAP',estimate:'Local estimates · require at least two samples',critical:'Quota nearly exhausted · 10% or less remains',low:'Low quota · 20% or less remains',pace:'At this pace, the quota could run out before reset',updated:'updated',bar:'Quota remaining'},
+ es:{loading:'Leyendo cuota local…',empty:'Sin cuota disponible todavía.',remaining:'restante',used:'USADO',left:'RESTANTE',reset:'RESET',burn:'CONSUMO/H',runway:'AUTONOMÍA',gap:'TIEMPO SIN CUOTA',estimate:'Estimaciones locales · requieren al menos dos muestras',critical:'Cuota casi agotada · queda 10% o menos',low:'Cuota baja · queda 20% o menos',pace:'Al ritmo observado, la cuota podría agotarse antes del reset',updated:'actualizado',bar:'Cuota restante'}
+};
+const preferredLocale=()=>String(navigator.language||'en').toLowerCase().startsWith('es')?'es':'en';
+let locale=preferredLocale();
+let latestData=null;
+const tr=key=>translations[locale][key];
+function chooseLocale(next){
+  if(next!=='es'&&next!=='en')return;
+  locale=next;
+  document.documentElement.lang=locale;
+  $('lang-en').setAttribute('aria-pressed',String(locale==='en'));
+  $('lang-es').setAttribute('aria-pressed',String(locale==='es'));
+  if(latestData)render(latestData);
+  else $('content').replaceChildren(el('div','empty',tr('loading')));
+}
+$('lang-en').addEventListener('click',()=>chooseLocale('en'));
+$('lang-es').addEventListener('click',()=>chooseLocale('es'));
 const clamp=n=>Math.max(0,Math.min(100,Number(n)||0));
 const pct=n=>n==null?'—':Math.round(Number(n))+'%';
 const used=p=>p?.usedPercent!=null?Number(p.usedPercent):(p?.remainingPercent!=null?100-Number(p.remainingPercent):null);
@@ -63,19 +82,19 @@ function rate(ratePerHour){
 }
 function advisory(intelligence){
   const code=intelligence?.alert?.code;
-  if(code==='quota_critical')return ['critical','Cuota casi agotada · queda 10% o menos'];
-  if(code==='quota_low')return ['warn','Cuota baja · queda 20% o menos'];
-  if(code==='pace_risk')return ['warn','Al ritmo observado, la cuota podría agotarse antes del reset'];
+  if(code==='quota_critical')return ['critical',tr('critical')];
+  if(code==='quota_low')return ['warn',tr('low')];
+  if(code==='pace_risk')return ['warn',tr('pace')];
   return null;
 }
 function providerCard(p){
   const r=remain(p?.primary),u=used(p?.primary),reset=countdown(p?.primary?.resetsAt);
   const section=el('section','provider');
   const row=el('div','row');
-  row.append(el('span','name',providerLabel(p)),el('span',severity(r),pct(r)+' restante'));
+  row.append(el('span','name',providerLabel(p)),el('span',severity(r),pct(r)+' '+tr('remaining')));
   const bar=el('div','bar');
   bar.setAttribute('role','progressbar');
-  bar.setAttribute('aria-label','Cuota restante');
+  bar.setAttribute('aria-label',tr('bar'));
   bar.setAttribute('aria-valuemin','0');
   bar.setAttribute('aria-valuemax','100');
   if(r!=null)bar.setAttribute('aria-valuenow',String(Math.round(clamp(r))));
@@ -83,12 +102,12 @@ function providerCard(p){
   fill.style.width=clamp(r)+'%';
   bar.append(fill);
   const main=el('div','main');
-  main.append(metric('USADO',pct(u)),metric('RESTANTE',pct(r),severity(r)),metric('RESET',reset,'reset'));
+  main.append(metric(tr('used'),pct(u)),metric(tr('left'),pct(r),severity(r)),metric(tr('reset'),reset,'reset'));
   section.append(row,bar,main);
   const intel=p?.intelligence;
   const insights=el('div','insight');
-  insights.append(metric('CONSUMO/H',rate(intel?.burnRatePercentPerHour)),metric('AUTONOMÍA',duration(intel?.runwayHours)),metric('TIEMPO SIN CUOTA',duration(intel?.deadHours)));
-  section.append(insights,el('div','note','Estimaciones locales · requieren al menos dos muestras'));
+  insights.append(metric(tr('burn'),rate(intel?.burnRatePercentPerHour)),metric(tr('runway'),duration(intel?.runwayHours)),metric(tr('gap'),duration(intel?.deadHours)));
+  section.append(insights,el('div','note',tr('estimate')));
   const alert=advisory(intel);
   if(alert){
     const warning=el('div','alert '+(alert[0]==='critical'?'critical':''),alert[1]);
@@ -98,16 +117,17 @@ function providerCard(p){
   return section;
 }
 function render(data){
+  latestData=data;
   const overview=data?.overview||data||{};
   const displayName=typeof overview?.host?.displayName==='string'&&overview.host.displayName.length<=32?overview.host.displayName:null;
   if(displayName){$('brand').textContent=displayName;document.title=displayName;}
   const providers=Array.isArray(overview?.providers)?overview.providers.slice(0,2):[];
   const content=$('content');
   content.replaceChildren();
-  if(!providers.length)content.append(el('div','empty','Sin cuota disponible todavía.'));
+  if(!providers.length)content.append(el('div','empty',tr('empty')));
   else for(const provider of providers)content.append(providerCard(provider));
   const generated=Date.parse(overview?.generatedAt);
-  $('updated').textContent='actualizado '+new Date(Number.isFinite(generated)?generated:Date.now()).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  $('updated').textContent=tr('updated')+' '+new Date(Number.isFinite(generated)?generated:Date.now()).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
 }
 let updating=false;
 async function refresh(){
@@ -124,6 +144,7 @@ async function refresh(){
   finally{updating=false;}
 }
 function initial(){
+  chooseLocale(locale);
   if(window.openai){$('brand').textContent='ChatGPT';document.title='ChatGPT';}
   const first=window.openai?.toolOutput;
   if(first)render(first);

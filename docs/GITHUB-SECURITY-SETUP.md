@@ -1,5 +1,7 @@
 # GitHub administration — public repo safety
 
+**Language / Idioma: English · [Español](es/GITHUB-SECURITY-SETUP.md)**
+
 Repository: [csecurh/quota-pilot](https://github.com/csecurh/quota-pilot) (**Public**, MIT). This is a checklist for repository administrators, not a claim that toggles were remotely applied.
 
 ## Last verified (2026-10-18, before public onboarding commit)
