@@ -40,7 +40,7 @@ test('Claude HUD shows used, remaining and reset and writes minimal snapshot', a
       cost: { total_cost_usd: 1.23 },
     };
     const result = await run('scripts/claude-statusline.mjs', { input: JSON.stringify(input), home });
-    assert.match(result.stdout, /5h usado:40% rest:60% reset:/);
+    assert.match(result.stdout, /^Claude Code · 5h usado:40% rest:60% reset:/);
     assert.match(result.stdout, /7d usado:25% rest:75% reset:/);
     const snapshot = JSON.parse(await readFile(join(home, '.quotapilot', 'claude-latest.json'), 'utf8'));
     assert.equal(snapshot.payload.primary.remainingPercent, 60);
@@ -66,6 +66,9 @@ test('Codex HUD installer preserves existing status line entries', async () => {
     assert.match(config, /five-hour-limit/);
     assert.match(config, /weekly-limit/);
     assert.match(config, /status_line_use_colors = true/);
+    assert.match(config, /\[features\]/);
+    assert.match(config, /web_search = true/);
+    assert.equal((config.match(/\[tui\]/g) ?? []).length, 1);
   } finally {
     await rm(home, { recursive: true, force: true });
   }
