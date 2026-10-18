@@ -141,6 +141,11 @@ const tools = [
 ];
 
 function send(message) {
+  if (process.stdout.writableLength > 1024 * 1024) {
+    process.stdin.destroy();
+    process.exitCode = 1;
+    return;
+  }
   process.stdout.write(JSON.stringify(message) + '\n');
 }
 
@@ -211,7 +216,11 @@ async function toolResult(name, args) {
 }
 
 async function handle(message) {
-  if (!isPlainObject(message) || message.jsonrpc !== '2.0') return;
+  if (!isPlainObject(message) || message.jsonrpc !== '2.0') return fail(null, -32600, 'Invalid request');
+  if (message.id != null && !(typeof message.id === 'string' && message.id.length <= 128)
+    && !(typeof message.id === 'number' && Number.isSafeInteger(message.id))) {
+    return fail(null, -32600, 'Invalid request');
+  }
   if (!allowRequest()) {
     if (message.id != null) fail(message.id, -32000, 'Local request rate limit exceeded');
     return;
@@ -251,11 +260,14 @@ async function handle(message) {
   }
 
   if (method === 'resources/read') {
-    if (message.params?.uri !== HUD_URI) return fail(message.id, -32002, 'Resource not found');
+    if (!isPlainObject(message.params) || Object.keys(message.params).length !== 1 || message.params?.uri !== HUD_URI) return fail(message.id, -32002, 'Resource not found');
     return ok(message.id, { contents: [await hudResource()] });
   }
 
   if (method === 'tools/call') {
+    if (!isPlainObject(message.params) || Object.keys(message.params).some((key) => key !== 'name' && key !== 'arguments')) {
+      return fail(message.id, -32602, 'Invalid params');
+    }
     const name = boundedText(message.params?.name, 64);
     if (!tools.some((tool) => tool.name === name)) return fail(message.id, -32601, 'Unknown tool');
     const args = Object.hasOwn(message.params, 'arguments') ? message.params.arguments : {};
@@ -265,41 +277,56 @@ async function handle(message) {
   if (message.id != null) fail(message.id, -32601, 'Method not found');
 }
 
-let buffer = '';
+let frame = '';
+let dropping = false;
 let oversizedFrames = 0;
-process.stdin.setEncoding('utf8');
-process.stdin.on('data', (chunk) => {
-  buffer += chunk;
+let activeRequests = 0;
+const MAX_ACTIVE_REQUESTS = 8;
 
-  if (Buffer.byteLength(buffer, 'utf8') > MAX_MCP_LINE_BYTES && !buffer.includes('\n')) {
-    buffer = '';
-    oversizedFrames += 1;
-    fail(null, -32000, 'Request too large');
-    if (oversizedFrames >= 3) process.exitCode = 1;
+function processFrame(line) {
+  if (!line.trim()) return;
+  let message;
+  try { message = JSON.parse(line); }
+  catch { return fail(null, -32700, 'Parse error'); }
+  if (activeRequests >= MAX_ACTIVE_REQUESTS) {
+    const id = isPlainObject(message) ? message.id : null;
+    if (typeof id === 'string' || typeof id === 'number') fail(null, -32000, 'Server busy');
     return;
   }
+  activeRequests += 1;
+  Promise.resolve().then(() => handle(message)).catch(() => {
+    fail(null, -32603, 'Internal error');
+  }).finally(() => { activeRequests -= 1; });
+}
 
-  while (true) {
-    const newline = buffer.indexOf('\n');
-    if (newline < 0) break;
-    const line = buffer.slice(0, newline).trim();
-    buffer = buffer.slice(newline + 1);
-    if (!line) continue;
+process.stdin.setEncoding('utf8');
+process.stdin.on('data', (chunk) => {
+  let rest = chunk;
+  while (rest.length) {
+    const index = rest.indexOf('\n');
+    const part = index < 0 ? rest : rest.slice(0, index);
+    rest = index < 0 ? '' : rest.slice(index + 1);
 
-    if (Buffer.byteLength(line, 'utf8') > MAX_MCP_LINE_BYTES) {
-      fail(null, -32000, 'Request too large');
-      continue;
+    if (!dropping) {
+      if (Buffer.byteLength(frame, 'utf8') + Buffer.byteLength(part, 'utf8') > MAX_MCP_LINE_BYTES) {
+        frame = '';
+        dropping = true;
+        oversizedFrames += 1;
+        fail(null, -32000, 'Request too large');
+      } else {
+        frame += part;
+      }
     }
 
-    let message;
-    try { message = JSON.parse(line); }
-    catch {
-      fail(null, -32700, 'Parse error');
-      continue;
+    if (index >= 0) {
+      if (!dropping) processFrame(frame);
+      frame = '';
+      dropping = false;
     }
+  }
 
-    handle(message).catch(() => {
-      if (message?.id != null) fail(message.id, -32603, 'Internal error');
-    });
+  if (oversizedFrames >= 3) {
+    process.stdin.destroy();
+    process.exitCode = 1;
   }
 });
