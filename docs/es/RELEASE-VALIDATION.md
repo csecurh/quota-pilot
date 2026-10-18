@@ -2,7 +2,7 @@
 
 **Idioma: [Español](RELEASE-VALIDATION.md) · [English](../RELEASE-VALIDATION.md)**
 
-Proyecto: quota-pilot, MIT, GitHub **público**, versión `0.6.0-rc.3`. Este documento separa pruebas automáticas de pruebas reales en hosts.
+Proyecto: quota-pilot, MIT, GitHub **público**, versión `0.6.0-rc.4`. Este documento separa pruebas automáticas de pruebas reales en hosts.
 
 ## Verificación automatizada
 

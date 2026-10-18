@@ -43,7 +43,7 @@ Verify the widget's EN/ES toggle and the `QUOTAPILOT_LANG=en` / `QUOTAPILOT_LANG
 
 | OS | Host + version | Plugin commit/version | Installed? | Correct native surface? | Metrics? | Upgrade/uninstall? | Result |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Example only | Claude Code (version redacted) | 0.6.0-rc.3 | Yes | Yes | Synthetic | Yes | PASS |
+| Example only | Claude Code (version redacted) | 0.6.0-rc.4 | Yes | Yes | Synthetic | Yes | PASS |
 
 Only sanitized status labels and redacted screenshots should appear in any public issue.
 

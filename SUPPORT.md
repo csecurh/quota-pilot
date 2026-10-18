@@ -2,7 +2,7 @@
 
 **Language / Idioma: English · [Español](SUPPORT.es.md)**
 
-This project is public and MIT licensed. **0.6.0-rc.3 is a release candidate**; host integration remains under field test.
+This project is public and MIT licensed. **0.6.0-rc.4 is a release candidate**; host integration remains under field test.
 
 - Installation, upgrades, removals and limitations: [INSTALL.md](docs/INSTALL.md).
 - Troubleshooting without revealing local paths or settings: run `npm run doctor`.

@@ -8,7 +8,7 @@ The **portable release archive includes the Node.js runtime** and all QuotaPilot
 
 ## Download and select the correct package
 
-From [GitHub Releases](https://github.com/csecurh/quota-pilot/releases/tag/v0.6.0-rc.3) download ONE archive:
+From [GitHub Releases](https://github.com/csecurh/quota-pilot/releases/tag/v0.6.0-rc.4) download ONE archive:
 
 | Your computer | Release asset |
 | --- | --- |

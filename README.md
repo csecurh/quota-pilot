@@ -11,7 +11,7 @@
 
 QuotaPilot is an **open-source, local-first AI usage HUD** for Codex, Claude Code and compatible ChatGPT Desktop plugin hosts. Its visible name matches your host (**Codex**, **Claude Code**, **ChatGPT**; fallback **AI Usage**). The technical package ID remains `quota-pilot`.
 
-> **Public source · 0.6.0-rc.3 release candidate.** Automated checks are green; **real-host installation and PiP compatibility are awaiting user testing**. This repo is not yet listed in the universal ChatGPT/Codex Plugins Directory.
+> **Public source · 0.6.0-rc.4 release candidate.** Automated checks are green; **real-host installation and PiP compatibility are awaiting user testing**. This repo is not yet listed in the universal ChatGPT/Codex Plugins Directory.
 
 ![Illustration of the local usage HUD, with synthetic metrics](docs/assets/hud-preview.svg)
 
@@ -20,6 +20,10 @@ The HUD provides provider-reported **used**, **remaining** and **reset time**, p
 **ChatGPT Desktop permissions:** decline broad requests to install the Codex footer or write into `.quotapilot` from a ChatGPT Work session. The official ChatGPT plugin manager may itself save enable/disable preferences in `~/.codex/config.toml`; that is separate from a script editing the native Codex footer. [Host-specific guidance](docs/AGENT-INSTALL.md).
 
 ## Windows Git marketplace: bundled runtime, no Node installation
+
+**Upgrading from 0.6.0-rc.3:** refresh the **AI Usage** marketplace/install through ChatGPT Desktop Plugins management and restart the application completely. The previous version can remain in the plugin cache without the native executable. Then open a **new local Desktop conversation**, select AI Usage via @ or the composer Plugins selector, and verify that `get_overview` / `open_hud` are actually exposed as MCP tools. Seeing skills alone does not confirm a working MCP connection. Do not request additional filesystem permissions or configure the Codex footer to work around a missing local executor.
+
+
 
 The **Windows x64 GitHub marketplace now carries its own Node.js runtime** at `runtime/node.exe` (directly checked into the repository, under official Node licensing). The root `mcp.json` starts `./runtime/node.exe` rather than a system `node` command. **No ZIP download, PowerShell command or Node/npm install is required of the user** when a compatible **local** host installs the complete repository. The plugin server never downloads its runtime on startup. Confirm `runtime/NODE-PROVENANCE.json` before installing. This increases repository size.
 
@@ -33,7 +37,7 @@ The **Windows x64 GitHub marketplace now carries its own Node.js runtime** at `r
 
 ## Alternative: manual portable release
 
-**Recommended:** download the right archive from [QuotaPilot 0.6.0 portable releases](https://github.com/csecurh/quota-pilot/releases/tag/v0.6.0-rc.3). Windows x64, Linux x64 and both macOS architectures include their own Node.js runtime and license notices. Extract the archive, then add its folder as a **local marketplace/plugin** in a compatible host. **No separate Node/npm installation.** [Full guide](docs/PORTABLE.md) · [Guía en español](docs/es/PORTABLE.md).
+**Recommended:** download the right archive from [QuotaPilot 0.6.0 portable releases](https://github.com/csecurh/quota-pilot/releases/tag/v0.6.0-rc.4). Windows x64, Linux x64 and both macOS architectures include their own Node.js runtime and license notices. Extract the archive, then add its folder as a **local marketplace/plugin** in a compatible host. **No separate Node/npm installation.** [Full guide](docs/PORTABLE.md) · [Guía en español](docs/es/PORTABLE.md).
 
 The bundled runtime **does not** provide a Codex account or authenticated Codex executable: Codex quota data still requires the original Codex application. ChatGPT Desktop requires local MCP Apps support. Installing this ZIP does not put the plugin in the universal directory or guarantee global PiP.
 

@@ -8,7 +8,7 @@
 
 ## Descarga el paquete adecuado
 
-Abre [GitHub Releases](https://github.com/csecurh/quota-pilot/releases/tag/v0.6.0-rc.3) y descarga **solo uno**:
+Abre [GitHub Releases](https://github.com/csecurh/quota-pilot/releases/tag/v0.6.0-rc.4) y descarga **solo uno**:
 
 | Equipo | Archivo |
 | --- | --- |

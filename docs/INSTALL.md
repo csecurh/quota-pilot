@@ -16,7 +16,7 @@ A compatible local ChatGPT Desktop / Codex client can now install **csecurh/quot
 
 ## Alternative: portable package
 
-Download the self-contained package from [GitHub Releases](https://github.com/csecurh/quota-pilot/releases/tag/v0.6.0-rc.3) and register the extracted folder with your compatible plugin host. The archive contains its own runtime. See [PORTABLE.md](PORTABLE.md) for platform selection, integrity checks and host limitations.
+Download the self-contained package from [GitHub Releases](https://github.com/csecurh/quota-pilot/releases/tag/v0.6.0-rc.4) and register the extracted folder with your compatible plugin host. The archive contains its own runtime. See [PORTABLE.md](PORTABLE.md) for platform selection, integrity checks and host limitations.
 
 ## Prerequisites (source installation only)
 

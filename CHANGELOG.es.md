@@ -7,9 +7,15 @@ QuotaPilot utiliza versionado semántico. Las versiones candidatas pueden cambia
 ## Runtime Windows integrado en Git (18 de octubre de 2026)
 
 - El marketplace de GitHub para Windows x64 inicia `./runtime/node.exe` incluido en el repositorio, sin Node/npm externos ni descargas al abrir MCP.
-- La procedencia se fija al SHA-256 de la versión 0.6.0-rc.3, CI comprueba la licencia y hash exacto y el escáner histórico admite únicamente este binario grande verificado.
+- La procedencia se fija al SHA-256 de la versión 0.6.0-rc.4, CI comprueba la licencia y hash exacto y el escáner histórico admite únicamente este binario grande verificado.
 - Los paquetes autónomos pasan a utilizar comandos relativos al plugin, según Agent Plugins 1.0.0.
 - Los demás sistemas utilizan sus paquetes específicos. Sigue pendiente la prueba real del host ChatGPT Desktop.
+
+## 0.6.0-rc.4 — Runtime Windows integrado y actualización del marketplace
+
+- El ejecutable Node.js de Windows x64 se incorpora a Git y se inicia mediante una ruta relativa al plugin, sin Node externo.
+- Se cambia la versión para diferenciar este paquete del rc.3 anterior al runtime.
+- La disponibilidad del MCP requiere una sesión de ejecución local en ChatGPT y refrescar la instalación; cambiar la versión no garantiza por sí solo la actualización de caché.
 
 ## 0.6.0-rc.3 — Inicio de ChatGPT en solo lectura y host obligatorio
 

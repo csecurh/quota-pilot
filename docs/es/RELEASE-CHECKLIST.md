@@ -1,4 +1,4 @@
-# Checklist de código público — QuotaPilot 0.6.0-rc.3
+# Checklist de código público — QuotaPilot 0.6.0-rc.4
 
 **Idioma: [Español](RELEASE-CHECKLIST.md) · [English](../RELEASE-CHECKLIST.md)**
 
