@@ -52,7 +52,8 @@ if (isBundled) {
     if (!existing || existing.size !== sourceStat.size) {
       await copyFile(bundledRuntime, temp, 1 /* COPYFILE_EXCL */);
       if (process.platform !== 'win32') await chmod(temp, 0o700);
-      const handle = await open(temp, 'r');
+      // Windows FlushFileBuffers requires a writable handle; POSIX accepts read-only fsync.
+      const handle = await open(temp, process.platform === 'win32' ? 'r+' : 'r');
       try { await handle.sync(); } finally { await handle.close(); }
       await rename(temp, installedRuntime);
     }
