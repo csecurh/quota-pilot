@@ -8,7 +8,7 @@
 - [x] README with public HTTPS clone and Claude/Codex marketplace paths; experimental ChatGPT Desktop path marked clearly
 - [x] GitHub Issues templates with redaction guidance and SUPPORT.md
 - [x] Host-aware visible labels and provider-data privacy boundary
-- [x] Local diagnostics, unit/integration fixtures, syntax checks, static security scan, full-history heuristic scan
+- [x] Local diagnostics, unit/integration fixtures, syntax checks, static security scan, full-history heuristic scan (requires non-shallow Git history; use `git fetch --unshallow` first if needed)
 - [x] Linux/macOS/Windows CI with pinned actions and read-only workflow token
 - [x] CODEOWNERS and Dependabot config checked into source
 - [x] Synthetic HUD example explicitly identified as an illustration
