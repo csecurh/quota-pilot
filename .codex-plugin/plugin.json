@@ -10,5 +10,5 @@
       "onboardingSkill": "./skills/setup/SKILL.md"
     }
   },
-  "hooks": "./hooks/hooks.json"
+  "hooks": "./hooks/codex.json"
 }
