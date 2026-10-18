@@ -66,6 +66,7 @@ async function refresh(){
   }catch(e){$('state').textContent='OFFLINE';$('state').className='warn'}
 }
 function initial(){
+  if(window.openai){$('brand').textContent='ChatGPT';document.title='ChatGPT';}
   const first=window.openai?.toolOutput;
   if(first)render(first);
   window.addEventListener('message',event=>{
