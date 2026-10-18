@@ -38,7 +38,7 @@ try {
   assert.equal(info.arch,process.arch);
   assert.match(manifest.mcpServers['quota-pilot'].command,/\/runtime\/node(?:\.exe)?$/);
   assert.match(claude.mcpServers['quota-pilot'].command,/\/runtime\/node(?:\.exe)?$/);
-  assert.match(hooks.hooks.SessionStart[0].hooks[0].command,/ ensure-surfaces\.mjs" codex$/);
+  assert.match(hooks.hooks.SessionStart[0].hooks[0].command,/\/ensure-surfaces\.mjs" codex$/);
   assert.equal(market.plugins[0].source,'./');
   assert.ok((await stat(executable)).size>1024*1024);
   assert.ok((await stat(join(stage,'runtime','NODE-LICENSE'))).size>500);
