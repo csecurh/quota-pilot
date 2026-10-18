@@ -1,11 +1,9 @@
-# MIT license adopted for the private release candidate
+# MIT licensing in the public QuotaPilot repository
 
-The repository now includes the full canonical [MIT License](../LICENSE) and declares `"license": "MIT"` in `package.json`. Copyright notice: **Copyright (c) 2026 Cibersecurity-H**, matching the existing plugin author metadata.
+This repository includes the complete [MIT License](../LICENSE) and `package.json` declares `"license": "MIT"`. Copyright notice: **Copyright (c) 2026 Cibersecurity-H**, matching the current plugin author metadata.
 
-**MIT grants:** permission for commercial and personal use, modification, redistribution, sublicensing, and inclusion in proprietary software. Recipients must retain the copyright notice and full license text in copies or substantial portions. MIT contains a warranty and liability disclaimer.
+MIT permits personal and commercial use, copying, modification, sublicensing, and redistribution provided recipients retain the copyright and license text. It disclaims warranties and liability. GitHub source visibility and licensing are independent; **this repository is currently Public**.
 
-**Visibility is separate from licensing.** The repository is still **Private**; adding MIT does not publish its source. However, any person who lawfully receives a copy is granted MIT rights, so only do this for code you have the right to license.
+The copyright holder should confirm the notice is accurate and that all code, contributors and images are legally redistributable under the stated terms. External OpenAI/Anthropic trademarks are mentioned solely to describe host compatibility. QuotaPilot is **not affiliated with or endorsed by** those companies. The SVG preview is synthetic artwork checked into this repo, not a copied screenshot.
 
-**Remaining legal check before public release:** the actual copyright holder(s) must verify that the attribution Cibersecurity-H is appropriate, that they hold or have permission to license all code, and that all third-party assets or contributions are compatible. A license cannot cover someone else's copyrighted work without permission. The illustrative local SVG must not contain unlicensed materials.
-
-No public visibility change is authorized by this document. See [release checklist](RELEASE-CHECKLIST.md).
+More: [LICENSE](../LICENSE) and [release checklist](RELEASE-CHECKLIST.md).

@@ -1,6 +1,6 @@
 {
-  "name": "ai-usage-private",
-  "description": "Private host-aware usage HUD marketplace",
+  "name": "ai-usage",
+  "description": "Local-first quota HUD for Claude Code",
   "owner": {
     "name": "Cibersecurity-H"
   },
@@ -11,7 +11,7 @@
         "source": "github",
         "repo": "csecurh/quota-pilot"
       },
-      "description": "Local used/remaining quota, reset timing and pacing intelligence for Claude Code."
+      "description": "Private-by-design local usage, reset countdowns and pacing estimates for Claude Code."
     }
   ]
 }

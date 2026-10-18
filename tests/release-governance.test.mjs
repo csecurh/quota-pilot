@@ -36,15 +36,15 @@ test('github local repo security files cover owners, workflow pins and action up
   assert.match(workflow, /pull_request:/);
 });
 
-test('private release gate never claims branch protection or vulnerability reporting already enabled', async () => {
+test('public release governance explicitly keeps administrative controls pending', async () => {
   const docs = await read('docs/GITHUB-SECURITY-SETUP.md');
   assert.match(docs, /protected: false/);
-  assert.match(docs, /allow_forking: true/);
-  assert.match(docs, /Do not change visibility/);
+  assert.match(docs, /forks are enabled/);
+  assert.match(docs, /\*\*Public\*\*/);
   assert.match(docs, /Verify \(ubuntu-latest\)/);
   assert.match(docs, /Verify \(macos-latest\)/);
   assert.match(docs, /Verify \(windows-latest\)/);
   assert.match(docs, /Private vulnerability reporting/);
   const security = await read('SECURITY.md');
-  assert.match(security, /private.*only authorized collaborators/i);
+  assert.match(security, /Private vulnerability reporting/);
 });

@@ -1,0 +1,48 @@
+name: Bug report
+description: Report an installation or behavior issue without personal data
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please DO NOT submit credentials, OAuth tokens, logs with paths, transcripts, source code, session IDs, or vulnerabilities here. Security issues: see SECURITY.md.
+  - type: dropdown
+    id: host
+    attributes:
+      label: Host
+      options:
+        - Claude Code
+        - Codex CLI
+        - ChatGPT Desktop (experimental)
+        - Local MCP host
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Version information
+      placeholder: "QuotaPilot 0.5.0-rc.1, Node 22, host version (no identifiers)"
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior and steps to reproduce
+      description: Use synthetic data; sanitize any logs.
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Privacy check
+      options:
+        - label: I removed personal data, filesystem paths, credentials, prompts, responses and transcripts.
+          required: true

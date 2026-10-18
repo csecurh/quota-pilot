@@ -1,34 +1,31 @@
-# Release verification and evidence log
+# Public-source release candidate — verification evidence
 
-Current phase: **0.5.0-rc.1 private release candidate**, NOT public-ready certification.
+Project: quota-pilot, MIT, **GitHub Public**, `0.5.0-rc.1`. This file distinguishes automated results from actual installations.
 
-## What automated CI can establish
+## Automated verification
 
-- Tests and syntax checks are scheduled against pinned Node.js 22.13 in Linux, macOS and Windows runner environments; consult the latest Actions run for their actual result.
-- Static inspection for forbidden runtime network APIs, DOM injection surfaces, unsafe GitHub workflow configuration, sensitive file types and common secret token shapes.
-- A full reachable Git-object history audit in the Linux job, requiring an unshallow Git checkout.
-- Offline protocol, provider absence handling, rate limits, local filesystem, installer and native CLI diagnostics regression fixtures.
+The project includes `npm run check` (syntax, tests and static security), `npm run security:history` (reachable Git text objects, heuristic only) and `npm run doctor` (sanitized host configuration status). GitHub Actions tests Ubuntu, macOS and Windows under Node.js 22.13.0. The latest authoritative pass/fail result is visible in [GitHub Actions](https://github.com/csecurh/quota-pilot/actions/workflows/ci.yml).
 
-On Windows, POSIX inode identity and permission semantics are not assumed; a real Windows ACL review is still required.
+Security goals: local stdio MCP, read-only tools, bounded input, generic provider errors, minimized Claude snapshot, strict CSP denying network connections, no runtime npm dependencies, and no use of `innerHTML` for provider data.
 
-CI cannot prove the absence of all undiscovered secrets, malicious same-user processes, actual host integration, browser UX or legal right to grant third-party licenses.
+## Field validation still required
 
-## Evidence still needed from real systems
+| Surface | Expected behavior | Status |
+|---|---|---|
+| Claude Code | Marketplace/source installation, genuine 5h/7d rate limits, safe update/removal | NOT TESTED WITH REAL HOST |
+| Codex CLI | Marketplace/source installation, native quota footer, settings preserved | NOT TESTED WITH REAL HOST |
+| ChatGPT Desktop | Local plugin bridge, `open_hud`, inline widget/PiP and refresh on eligible host | EXPERIMENTAL — NOT VERIFIED |
+| Platforms | Real user Windows/macOS/Linux install/uninstall, file permissions/ACL checks | CI GREEN DOES NOT COVER FIELD TESTING |
+| Accessibility | Screen reader, color contrast and reduced motion on host surfaces | MANUAL CONFIRMATION PENDING |
+| Assets | Real anonymous screenshot/GIF, if used | SYNTHETIC MOCKUP ONLY |
+| GitHub governance | Active main ruleset, Code Security toggles, collaborators | REQUIRES ADMIN VERIFICATION |
+| Legal | Copyright ownership and third-party rights | COPYRIGHT-HOLDER ATTESTATION PENDING |
 
-| Area | Required evidence | Status |
-| --- | --- | --- |
-| Claude Code | Installed real status line with authenticated provider on current supported version; test update and removal | NOT VERIFIED |
-| Codex CLI | Footer with native quota tokens and preserved pre-existing config on current supported version; test removal | NOT VERIFIED |
-| ChatGPT Desktop | Current build supports local stdio MCP Apps, host-bridge APIs and conversation-scoped PiP | EXPERIMENTAL — NOT VERIFIED |
-| macOS / Windows / Linux | Manual install/upgrade/uninstall and file permission/ACL validation on supported OS | NOT VERIFIED |
-| Accessibility | Keyboard, accessible naming, color contrast, reduced motion, screen-reader check | MANUAL REVIEW REQUIRED |
-| Assets | Real anonymized, permission-cleared screenshot/GIF replacing or supplementing synthetic illustration | NOT CAPTURED |
-| GitHub security settings | Branch protection, fork settings, secret scanning, collaborators and actions permissions; public-repo vulnerability reporting at launch | ADMIN REVIEW REQUIRED (private plan restriction) |
-| Legal | MIT LICENSE is committed; copyright ownership/attribution and third-party asset clearance still need confirmation | MIT APPLIED; OWNER ATTESTATION REQUIRED |
+Use [HOST-TEST-PLAN.md](HOST-TEST-PLAN.md) to record a single completed host acceptance run **without sharing account data**.
 
-## Publication protocol
+## Constraints
 
-1. Record a completed real-host checklist and final CI SHA with all checks green.
-2. Resolve any historical-scanner warnings and independently review sensitive commit history.
-3. Confirm copyright-holder attribution for the committed MIT LICENSE, release notes, screenshots and administrative security settings.
-4. Request an explicit owner decision to flip visibility; do **not** change automatically.
+- A successful scanner cannot prove the entire historical repository never contained a secret.
+- A successful simulated MCP test cannot prove the ChatGPT desktop build exposes the required bridge.
+- Windows stat/inode semantics differ from POSIX; user files and ACLs need a separate real Windows review.
+- The GitHub repo can be used under MIT, but the universal plugin directory requires submission/review.

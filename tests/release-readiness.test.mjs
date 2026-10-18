@@ -25,10 +25,11 @@ test('widget renders estimates and local advisory without network or HTML inject
   assert.ok(text.includes("connect-src 'none'"));
   assert.doesNotMatch(text,/\.innerHTML\s*=|\bfetch\s*\(/);
 });
-test('public-facing readme labels preview as synthetic and does not falsely claim public distribution',async()=>{
+test('public README documents release candidate and synthetic example without universal directory claims',async()=>{
   const readme=await readFile(new URL('../README.md',import.meta.url),'utf8');
   assert.match(readme,/synthetic sample data/);
-  assert.match(readme,/Private preview/);
+  assert.match(readme,/Public GitHub source/i);
+  assert.match(readme,/not yet listed in the universal ChatGPT\/Codex Plugins Directory/);
   assert.match(readme,/docs\/INSTALL.md/);
   assert.match(readme,/docs\/RELEASE-CHECKLIST.md/);
 });

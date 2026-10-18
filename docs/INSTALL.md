@@ -1,53 +1,85 @@
-# Installation, upgrade and removal
+# Install QuotaPilot (public source, release candidate)
 
-**Status: private preview.** Obtain authorized access to the private GitHub repository first. Node.js >=22.13 is required. Review the scripts before running them; they change local host settings. No npm install is needed.
+QuotaPilot is published as source under [MIT](../LICENSE). **The GitHub repository is public; the plugin has not been admitted to the universal ChatGPT/Codex directory.** Automated CI does not replace real host tests.
 
-```bash
-git clone git@github.com:csecurh/quota-pilot.git
+## Prerequisites
+
+- Node.js **22.13+**, Git, a compatible host and (for live quotas) a locally authenticated Codex and/or Claude Code provider.
+- No `npm install`, Supabase project, cloud account or new provider token.
+- Local plugin hooks may change host settings after host trust approval. Review the scripts before proceeding.
+
+## Claude Code via marketplace
+
+In a current Claude Code session, run:
+
+~~~text
+/plugin marketplace add csecurh/quota-pilot
+/plugin install quota-pilot@ai-usage
+~~~
+
+Restart Claude Code, accept/trust the local hook according to Claude's prompt, and look for **Claude Code** 5h/7d used/remaining/reset values in its status line. The technical marketplace identity was previously `ai-usage-private` in pre-public 0.5.0-rc builds; remove/re-add the old marketplace if upgrading from that build.
+
+**Fallback direct setup:**
+
+~~~sh
+git clone https://github.com/csecurh/quota-pilot.git
 cd quota-pilot
+node scripts/install-claude-hud.mjs
+node scripts/doctor.mjs
+~~~
+
+The installer copies the status-line helper into `~/.quotapilot/` and updates `~/.claude/settings.json` only when there is no conflicting custom status line. Restart Claude Code afterward.
+
+## Codex CLI marketplace
+
+~~~sh
+codex plugin marketplace add csecurh/quota-pilot
+codex plugin marketplace list
+codex
+~~~
+
+In Codex run `/plugins`, choose **AI Usage → quota-pilot → Install**, then start a new trusted session. If the host supports the declared lifecycle hook, the native footer includes **five-hour-limit** and **weekly-limit**. If not, run the direct installer below. Codex does not expose a custom exact-reset persistent footer token; look at its `/status` view or `get_usage` MCP tool for fuller readings.
+
+~~~sh
+git clone https://github.com/csecurh/quota-pilot.git
+cd quota-pilot
+node scripts/install-codex-hud.mjs
+node scripts/doctor.mjs
+~~~
+
+The direct installer modifies only supported inline entries in `[tui].status_line` within `~/.codex/config.toml` and refuses ambiguous TOML instead of rewriting unrelated configuration.
+
+## ChatGPT Desktop — experimental, pending host smoke test
+
+The current [OpenAI plugin packaging guide](https://developers.openai.com/plugins/build/plugins) supports Git/local marketplaces on compatible desktop builds. To try it:
+
+1. Install a compatible ChatGPT Desktop/Codex distribution with **local plugin execution**.
+2. In the terminal run `codex plugin marketplace add csecurh/quota-pilot` if supported by your installed Codex CLI, or clone the repo and add its local marketplace root.
+3. Restart the ChatGPT Desktop app; open **Plugins**, select the **AI Usage** marketplace and install **quota-pilot** if available.
+4. Start a new conversation with the plugin enabled; ask: **“Abre mi HUD de uso de IA.”** The `open_hud` tool requests PiP; verify host permission and that `get_overview` refreshes the HUD while mounted.
+
+If ChatGPT Desktop doesn't load the local MCP App bridge, this integration is **not yet supported on your build**. **Do not** expose the local stdio server on the public Internet or paste credentials into an untrusted MCP host. The official remote Custom MCP Server flow uses a URL and is not a direct substitute for this local-only stdio plugin.
+
+## Updating and removing
+
+Update a cloned checkout with `git pull --ff-only`, run `npm run check` and rerun only your host's direct installer, if you use one; restart the host. Marketplace installations can be refreshed through the host's marketplace UI.
+
+- **Claude:** uninstall/disable in the plugin manager. For a *direct install*, remove `settings.statusLine` only when its command points to `~/.quotapilot/claude-statusline.mjs`; remove `~/.quotapilot/` only after inspecting its contents.
+- **Codex:** uninstall/disable in `/plugins`. For a *direct install*, remove the added `five-hour-limit` and `weekly-limit` entries from `~/.codex/config.toml`, retaining all other footer items.
+- **ChatGPT:** remove the local marketplace plugin entry or uninstall in Plugins. This plugin stores no provider credentials.
+
+## Diagnostics
+
+~~~sh
 npm run check
 npm run doctor
-```
+node scripts/doctor.mjs --json
+~~~
 
-## Claude Code (supported local installer)
+The doctor prints **statuses only**, not secrets, paths or settings. “not-configured” need not imply failure if that provider is not installed. Forecasts require separate readings at least five minutes apart. No provider metrics: authenticate in the native host first; do not paste a token into QuotaPilot.
 
-From checkout: `node scripts/install-claude-hud.mjs`. It writes a standalone status-line script and filesystem helper to `~/.quotapilot/` and sets a `statusLine` command in `~/.claude/settings.json` if a different custom status line is not configured. Restart Claude Code. Confirm five-hour/seven-day used/remaining/reset values in the native status line when Claude supplies these fields.
+## Report an issue or a security flaw
 
-Marketplace installation may additionally be possible in compatible Claude builds using the bundled `.claude-plugin/marketplace.json`; this is not an independently verified release-channel guarantee.
+File a [public bug report](https://github.com/csecurh/quota-pilot/issues/new/choose) using only synthetic inputs and sanitized screenshots. Follow [SECURITY.md](../SECURITY.md) for **private vulnerability reporting**; do not put security exploits, tokens or personal data in a public issue.
 
-## Codex CLI (supported local installer)
-
-From checkout: `node scripts/install-codex-hud.mjs`. The script conservatively updates `[tui].status_line` inside `~/.codex/config.toml`, preserving other keys and user entries, and refuses ambiguous TOML rather than rewriting it. Restart Codex. Confirm `five-hour-limit` and `weekly-limit` in the native footer. Codex cannot show an arbitrary reset countdown persistently there; use `/status` or a compatible MCP tool invocation.
-
-## ChatGPT Desktop (experimental host-dependent integration)
-
-The server requires a ChatGPT Desktop build or compatible host that can execute **local stdio MCP Apps** and expose the `window.openai` host bridge. Configure the local command `node /absolute/path/to/quota-pilot/server/index.mjs` according to the host's own settings, then invoke the read-only MCP `open_hud` tool. The rendered widget requests PiP and refreshes while mounted. If your ChatGPT installation exposes only the public app directory or remote connectors, **there is no validated one-command installation path** for this repo.
-
-Do not claim the widget overlays other applications, persists beyond the active conversation, or auto-installs from a GitHub link.
-
-## Updating
-
-Within the authorized checkout: `git pull --ff-only`; `npm run check`; `npm run doctor`; rerun the appropriate installer. Restart the host. Prefer an audited commit SHA when risk-sensitive. The Codex installer is idempotent for already-supported status line syntax.
-
-## Removing
-
-- **Codex:** edit `~/.codex/config.toml` and remove the added `five-hour-limit` / `weekly-limit` entries from `[tui].status_line` if no longer wanted. Keep other user entries.
-- **Claude Code:** remove the `statusLine` entry **only if it points to** `~/.quotapilot/claude-statusline.mjs`. Then remove `~/.quotapilot/` **only if you have checked that it contains no data you wish to keep**.
-- **ChatGPT or other MCP host:** remove the quota-pilot local MCP registration in the host settings. The plugin itself does not hold provider credentials.
-
-## Local diagnostics
-
-Run `node scripts/doctor.mjs` or `node scripts/doctor.mjs --json`. This checks local host configuration and minimal snapshot freshness without printing private paths, tokens or configuration values. It does **not** authenticate to providers, contact the network or prove that ChatGPT Desktop has a compatible local plugin bridge.
-
-## Troubleshooting
-
-| Symptom | Explanation / action |
-| --- | --- |
-| No metrics | Confirm the provider is locally authenticated; quota responses are host-dependent. Missing fields intentionally display a dash rather than fabricated data. |
-| No Claude line | Check whether an existing `statusLine` is present; QuotaPilot refuses to overwrite a different custom command. Restart the host. |
-| Codex installer rejects TOML | It deliberately does not rewrite complex/multiline/ambiguous status arrays; edit manually or use supported inline array syntax after backing up the file. |
-| ChatGPT does not show an install option | Local MCP Apps are host/build-dependent. Public ChatGPT app-directory availability is not part of this preview. |
-| Forecast is blank | Pacing needs two distinct observations at least five minutes apart; no historical records are uploaded or stored. |
-| PiP unavailable | The host may not support or grant PiP. The widget can still render inline where permitted. |
-
-Never paste API keys, OAuth tokens, prompts or transcript paths into an issue. Report suspected security defects privately following SECURITY.md.
+[Host smoke-test checklist](HOST-TEST-PLAN.md).

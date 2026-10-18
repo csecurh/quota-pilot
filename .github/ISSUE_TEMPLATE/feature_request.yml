@@ -1,0 +1,29 @@
+name: Feature request
+description: Suggest an improvement to the local HUD
+title: "[Feature]: "
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: Do not include provider credentials, user sessions, local paths or private account information.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem are you solving?
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested solution
+    validations:
+      required: true
+  - type: dropdown
+    id: host
+    attributes:
+      label: Relevant host
+      options:
+        - All
+        - Codex CLI
+        - Claude Code
+        - ChatGPT Desktop (experimental)

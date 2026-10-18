@@ -1,5 +1,7 @@
 # Privacy FAQ
 
+QuotaPilot is **publicly available source code under MIT**. This does not make it an official OpenAI or Anthropic app, or grant QuotaPilot access to your cloud accounts.
+
 **Do I need an account?** No additional QuotaPilot account, Supabase project or cloud backend.
 
 **Where does data come from?** The locally running Codex app-server rate-limit response, and selected rate-limit/context fields from Claude Code's status-line input. A provider must already be authenticated through its own client.

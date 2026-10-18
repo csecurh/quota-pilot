@@ -1,46 +1,40 @@
 # Security Policy
 
-QuotaPilot is designed as a local-first, read-only usage HUD. The default build has no runtime package dependencies, no application telemetry, and no network client.
+QuotaPilot is a **local-first, read-only** usage HUD. This public MIT-licensed project is unaffiliated with OpenAI or Anthropic. It has no runtime npm dependencies, no QuotaPilot-owned telemetry service and no direct HTTP client in the widget.
 
 ## Supported versions
 
-Security fixes are applied to the latest minor release on `main`. Version 0.4.x introduced the hardened runtime; the 0.5.0 release candidate adds broader CI, history scanning, local diagnostics and stricter missing-data handling. This is still a private preview, not an externally certified release.
+| Version | Security fixes |
+| --- | --- |
+| 0.5.0-rc.1 (current public source) | Maintained until subsequent pre-release or stable release |
+| 0.4.x and earlier | No further security fixes guaranteed |
+
+## Confidential reporting
+
+**Do not publish vulnerabilities, credentials, exploit details or private account information in public GitHub Issues.**
+
+If the repository's GitHub **Private vulnerability reporting** feature is enabled, visit [Security → Advisories → Report a vulnerability](https://github.com/csecurh/quota-pilot/security/advisories) to file a confidential report. If that option is unavailable, contact repository owner **@csecurh** through an existing trusted private channel. A public issue is **not** a substitute for confidential reporting; do not post sensitive proof-of-concept data.
+
+A useful report should include the affected commit/version, operating system, sanitized reproduction steps with synthetic data, estimated impact, and suggested mitigation. Avoid collecting or disclosing real user data.
 
 ## Data boundary
 
-The plugin is allowed to process only the minimum data required to display usage:
+The only provider data deliberately used is: Codex rate-limit windows via the locally authenticated Codex app-server, and quota/context percentages from Claude Code status-line input. Derived burn-rate and runway estimates live in process memory.
 
-- Codex rate-limit windows obtained from the locally authenticated Codex app-server.
-- Claude Code rate-limit and context percentages provided to the local status-line process.
-- Derived burn-rate/runway values computed in memory.
+A bounded private snapshot at `~/.quotapilot/claude-latest.json` stores selected Claude percentages, timestamps, and reset windows. QuotaPilot **does not intentionally persist** passwords, API keys, OAuth/session tokens, prompts, model IDs, responses, transcripts, source files, cwd paths, IP addresses, provider costs or browsing data. Host and provider binaries operate independently and may have their own network behavior.
 
-The plugin must not persist or transmit passwords, OAuth/session tokens, prompts, responses, transcripts, working-directory paths, source code, IP addresses, or behavioral analytics.
+## Security design
 
-Claude's local snapshot is stored at `~/.quotapilot/claude-latest.json` with private permissions. Its schema excludes session identifiers, model identifiers, cost details, cache details, paths, prompts, responses, and transcript metadata.
+- MCP over local stdio with strict argument schemas, request/response ceilings and local throttling.
+- Node child processes run with `shell: false`, with timeouts and generic provider errors.
+- Safe local file reads/writes, owner and type checks, size limits, POSIX private permissions, symlink rejection and atomic replacement.
+- Widget data only rendered through safe DOM text nodes; CSP includes `connect-src 'none'` and no third-party assets.
+- No runtime npm dependencies. GitHub Actions use pinned action SHAs, minimal token permissions, cross-platform tests, heuristic secret scanning of current sources and reachable history.
 
-## Network policy
+## Residual risks
 
-The runtime must not initiate external network connections. The ChatGPT widget CSP declares no `connectDomains` or `resourceDomains`. MCP communication is local stdio and provider access uses the providers' local processes/files.
+Quotas and forecasts depend on provider APIs and host support. Same-user malware or compromised host processes, Windows ACLs, parent-path swaps and historical secrets missed by heuristic scanning remain outside the software's absolute security guarantees. Read the [threat model](docs/THREAT-MODEL.md). GitHub branch protection and vulnerability-reporting **settings** must be verified as enabled by an administrator: files alone do not enforce them.
 
-## Reporting a vulnerability
+## Contribution requirements
 
-Do not include secrets, exploit payloads against real accounts, or private user data in public issues.
-
-While this repository remains **private**, only authorized collaborators can view its issues; report sensitive vulnerabilities directly to the maintainer using a trusted private channel, and do not paste real secrets into issues. GitHub's **Private Vulnerability Reporting** is designed for **public** repositories; after public launch, the maintainer should enable it via **Settings → Security and quality → Advanced Security**, so outside researchers can report privately.
-
-Include affected version/commit, operating system, reproduction steps using synthetic data, impact, and any proposed mitigation.
-
-## Security invariants
-
-Changes must keep these properties unless a separately reviewed design explicitly changes them:
-
-1. No runtime npm dependencies.
-2. No outbound network client in plugin runtime or widget.
-3. MCP tools remain read-only and non-destructive.
-4. Provider/tool inputs are server-side validated and size-limited.
-5. Provider errors are not reflected verbatim to the host.
-6. Local persistent files use private permissions and reject symlink targets.
-7. UI never renders provider data through `innerHTML`.
-8. CI actions are pinned to full commit SHAs and checkout does not persist credentials.
-9. No credentials, private keys, `.env` files, prompts, responses, transcripts, or source code are committed or persisted by the plugin.
-10. CI audits reachable Git history for common sensitive-file and credential patterns using a non-shallow checkout; manual history review remains necessary.
+No credentials, `.env` secrets, private keys, prompts, responses, transcripts or user source code should enter commits or reports. Review security-sensitive modifications to tools, CSP, snapshots, installers and workflows before merging.

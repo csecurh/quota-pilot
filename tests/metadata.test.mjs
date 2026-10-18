@@ -16,11 +16,11 @@ test('all distribution manifest versions align with the release candidate', asyn
 
 test('public launch claims and platform access remain honest', async () => {
   const readme = await text('README.md');
-  assert.match(readme, /private 0\.5\.0 release candidate/i);
+  assert.match(readme, /public.*release.candidate/i);
   assert.match(readme, /ChatGPT.*host/i);
   assert.match(readme, /LICENSE-DECISION\.md/);
   const checklist = await text('docs/RELEASE-CHECKLIST.md');
-  assert.match(checklist, /expressly authorizes a visibility change/);
+  assert.match(checklist, /GitHub source is PUBLIC/);
   assert.match(checklist, /unshallow/);
 });
 

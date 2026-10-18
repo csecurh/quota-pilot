@@ -2,7 +2,7 @@
 
 This project uses SemVer for plugin/runtime metadata. Release candidates are not public releases and may change before general availability.
 
-## 0.5.0-rc.1 — Private release candidate
+## 0.5.0-rc.1 — Public source, host-validation release candidate
 
 - Show advisory consumption rate, estimated runway and possible quota gap within the local HUD.
 - Add visual low-quota/critical and pacing alerts; missing provider metrics remain unavailable, never fabricated.
@@ -11,7 +11,8 @@ This project uses SemVer for plugin/runtime metadata. Release candidates are not
 - Add full reachable-history secret-pattern audit (`npm run security:history`) and Linux, macOS, Windows CI coverage.
 - Avoid side effects in Claude installer when the user has a different custom status line.
 - Normalize missing Claude percentages correctly and limit status-line input accumulation before appending data.
-- Add MIT licensing metadata, CODEOWNERS policy, GitHub Actions Dependabot monitoring and a step-by-step administrative security checklist. Administrative restrictions remain manual until plan/permissions permit.
+- Add MIT licensing metadata, CODEOWNERS policy, GitHub Actions Dependabot monitoring and a step-by-step administrative security checklist. Public GitHub source now supports admin-side protection; connected tooling cannot change branch settings.
+- Public marketplace naming (`ai-usage`), HTTPS installation documentation, sanitized GitHub issue templates and a host acceptance guide.
 - Retain all existing 0.4.x filesystem/protocol hardening and read-only/no-network invariants.
 
 ## 0.4.0 — Security hardening
@@ -19,4 +20,4 @@ This project uses SemVer for plugin/runtime metadata. Release candidates are not
 - Bounded MCP/provider input, private file handling, stronger CSP, generic errors and minimized Claude snapshots.
 - Read-only MCP tools and host-dependent branding with CI safety gates.
 
-See [release readiness](docs/RELEASE-CHECKLIST.md) for missing pre-publication evidence.
+See [release readiness](docs/RELEASE-CHECKLIST.md) for remaining real-host/admin validation evidence.

@@ -1,73 +1,76 @@
 # QuotaPilot
 
-**License: [MIT](LICENSE)** · Copyright © 2026 Cibersecurity-H · **Private preview** (not publicly listed)
-
 **Know your AI limits before they interrupt your work.**
 
-A privacy-first, local usage HUD for **ChatGPT Desktop, Codex CLI and Claude Code**. See quota **used · remaining · reset**, plus advisory **burn rate, runway and predicted time without quota** when enough data is available.
+[![CI](https://github.com/csecurh/quota-pilot/actions/workflows/ci.yml/badge.svg)](https://github.com/csecurh/quota-pilot/actions/workflows/ci.yml)
+[![MIT License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-> **Private preview:** this repository currently requires authorized GitHub access. This is NOT a publicly listed ChatGPT app. No public launch is claimed.
+QuotaPilot is an **open-source, local-first AI usage HUD** for Codex, Claude Code and compatible ChatGPT Desktop plugin hosts. Its visible name matches your host (**Codex**, **Claude Code**, **ChatGPT**; fallback **AI Usage**). The technical package ID remains `quota-pilot`.
 
-![Illustrative HUD preview](docs/assets/hud-preview.svg)
+> **Public source · 0.5.0 release candidate.** Automated checks are green; **real-host installation and PiP compatibility are awaiting user testing**. This repo is not yet listed in the universal ChatGPT/Codex Plugins Directory.
 
-**Why it helps:** stop guessing when your coding agent's rate limit resets, estimate whether current consumption can last until the reset, and keep that information near your work. No separate product account, no Supabase setup, no QuotaPilot telemetry server, no runtime npm dependencies.
+![Illustration of the local usage HUD, with synthetic metrics](docs/assets/hud-preview.svg)
 
-## Get started
+The HUD provides provider-reported **used**, **remaining** and **reset time**, plus **burn rate**, **estimated runway** and **visual quota alerts** when enough telemetry exists. Forecasts are estimates—not billing, guaranteed provider limits or desktop-wide notifications. Unknown data is shown as unavailable.
 
-**Requirements:** Node.js 22.13+; a compatible local host and an authenticated, locally installed Codex and/or Claude Code provider. Clone access is required during the private preview.
+## Install
 
-```bash
-git clone git@github.com:csecurh/quota-pilot.git
+**Requirements:** Node.js **22.13+**, Git, and the relevant host installed. Codex/Claude quota data requires a provider already authenticated through its own application. **No npm install, QuotaPilot account or API key is required.** Review any host's local hook/trust prompt before authorizing changes.
+
+| Host | Start here | Persistent surface |
+|---|---|---|
+| **Claude Code** | Open Claude Code and run `/plugin marketplace add csecurh/quota-pilot`, then `/plugin install quota-pilot@ai-usage` | Claude Code's native status line after a new trusted session |
+| **Codex CLI** | In your terminal: `codex plugin marketplace add csecurh/quota-pilot`; open `codex` → `/plugins` → marketplace **AI Usage** → install **quota-pilot** | Codex's native 5-hour / weekly footer |
+| **ChatGPT Desktop** | In a compatible local plugin host, add `csecurh/quota-pilot` as a Codex marketplace, restart Desktop, then find **AI Usage** in Plugins and install **quota-pilot** | Conversation-scoped HUD; it **requests** PiP where supported |
+
+**ChatGPT compatibility is experimental:** the desktop host must support local plugin execution, stdio MCP Apps and the MCP App UI bridge. A GitHub repository is not the same as a published universal ChatGPT app. There is no guaranteed global floating overlay, automatic availability in web/mobile ChatGPT, or universal directory listing. [OpenAI's marketplace/plugin guidance](https://developers.openai.com/plugins/build/plugins) explains the local installation model.
+
+**Alternative direct installers** (useful when a marketplace is not supported):
+
+~~~sh
+git clone https://github.com/csecurh/quota-pilot.git
+cd quota-pilot
+npm run check
+node scripts/install-claude-hud.mjs  # Claude Code ONLY
+# or:
+node scripts/install-codex-hud.mjs   # Codex CLI ONLY
+npm run doctor
+~~~
+
+Run **only the script for your host**. Restart the corresponding host afterward; a custom Claude status line will not be overwritten. The Codex footer relies on native tokens and cannot show arbitrary exact-reset custom fields.
+
+See [installation, troubleshooting, update and removal](docs/INSTALL.md) and the [real-host test guide](docs/HOST-TEST-PLAN.md).
+
+## What you get
+
+- **Local usage windows:** provider-reported percentages and reset deadlines; Claude 5-hour and 7-day windows when supplied.
+- **Pacing intelligence:** burn %/h, runway and estimated time without quota; only after at least two readings separated by five minutes.
+- **Local visual alerts:** low (20% remaining), critical (10%), and predicted exhaustion before reset. **No OS-level push alerts.**
+- **Host-native UI:** Claude Code status line, Codex footer and an MCP App HUD requesting PiP in compatible ChatGPT sessions.
+- **Privacy-first:** no QuotaPilot telemetry backend, no runtime npm dependencies, no direct widget network requests, no credentials requested or stored.
+
+## Privacy and security
+
+The MCP server runs **locally over stdio**. Codex supplies rate-limit windows through its local app-server; Claude supplies selected status-line usage fields. The minimized Claude snapshot at `~/.quotapilot/claude-latest.json` contains percentages, reset windows and timestamps only. The plugin never intentionally saves prompts, responses, transcripts, working-directory paths, source code, session/model IDs or credentials. Host applications and provider binaries independently control their own network connections.
+
+[Privacy FAQ](docs/PRIVACY.md) · [Security policy](SECURITY.md) · [Threat model](docs/THREAT-MODEL.md) · [Report a vulnerability](SECURITY.md#reporting-a-vulnerability)
+
+## Develop and verify
+
+~~~sh
+git clone https://github.com/csecurh/quota-pilot.git
 cd quota-pilot
 npm run check
 npm run doctor
-```
+npm run security:history
+~~~
 
-Choose the host below. These are **local installation paths**, not a claim of universal marketplace availability:
+The historical scan requires a **full, non-shallow** Git checkout and is heuristic. CI runs Node tests on Ubuntu, macOS and Windows plus a historical scan on Ubuntu. `node server/index.mjs` starts a stdio MCP server; it **does not open a browser**.
 
-| Host | Setup | Where the information appears |
-| --- | --- | --- |
-| Claude Code | `node scripts/install-claude-hud.mjs` | Native persistent Claude Code status line |
-| Codex CLI | `node scripts/install-codex-hud.mjs` | Native persistent Codex footer |
-| ChatGPT Desktop | Requires a host build supporting local stdio MCP Apps; configure `node /absolute/path/to/quota-pilot/server/index.mjs` as a local MCP server and invoke `open_hud` | Conversation-scoped ChatGPT HUD requesting PiP |
+Read-only MCP tools: `open_hud()`, `get_usage({provider:"codex"|"claude_code"})`, `get_overview()`. Technical IDs remain stable even as the host-facing HUD name changes.
 
-For host marketplace and lifecycle hook support, consult [installation and troubleshooting](docs/INSTALL.md). **Do not assume ChatGPT Desktop exposes arbitrary local plugins or a global HUD**. If your host does not support a local MCP Apps bridge, that integration cannot be installed via ChatGPT's public app directory.
+## Project status
 
-**Claude Code:** the installer safely leaves a pre-existing different status line untouched. When run from this checkout, it installs a standalone helper and an opt-in command in `~/.claude/settings.json`. Restart the host.
+**Public GitHub source, MIT licensed, release-candidate compatibility.** The illustration above uses **synthetic sample data**, not a real installed screenshot. The source is freely available; inclusion in any public plugin directory requires a separate review/submission process. [Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md) · [Support](SUPPORT.md) · [Release evidence](docs/RELEASE-VALIDATION.md).
 
-**Codex:** the installer preserves existing TOML and adds `five-hour-limit` and `weekly-limit` to `[tui].status_line`. Restart Codex. Codex's native footer does not expose a custom persistent exact-reset token; use `/status` or MCP tools when available.
-
-**To validate:**
-```bash
-npm run check
-node server/index.mjs
-```
-The last command starts the **stdio MCP server** and waits for a client; it is not a browser UI. See [docs/INSTALL.md](docs/INSTALL.md) for uninstall, upgrades and common failures. Run `node scripts/doctor.mjs --json` for a local diagnostic that redacts paths, settings and credentials.
-
-## Key capabilities
-
-- **Native surfaces:** ChatGPT conversation PiP request, Claude Code status line and Codex footer. Each visible HUD uses **ChatGPT / Claude Code / Codex**, with **AI Usage** as fallback.
-- **Quota windows:** used, remaining and reset (if supplied by the provider), including Claude five-hour/seven-day windows.
-- **Pacing estimates:** in-memory burn rate (%/hour), projected runway, and potential gap before reset when there are sufficient observations; values otherwise display **—**.
-- **Local visual alerts:** 20% low, 10% critical, or estimated depletion ahead of reset. These are **in-widget indicators**, not operating-system push notifications.
-- **Privacy by design:** read-only MCP tools; no external widget connections; minimized private Claude snapshot; provider credentials remain with provider applications.
-
-## What it looks like
-
-The SVG above is an **illustration with synthetic sample data**, not a screenshot or proof of live provider availability. Actual metrics depend on local provider support. Predictive numbers are estimates, not promises.
-
-## Data and security
-
-QuotaPilot accesses the local Codex rate-limit interface and selected usage fields from Claude Code's status-line input. A minimized Claude snapshot lives at `~/.quotapilot/claude-latest.json` with private permissions. **No credentials, prompts, responses, transcripts, source code, session IDs, cwd paths or provider cost details are stored by this plugin.** The externally installed provider/host maintains its own data and network policies. See [SECURITY.md](SECURITY.md), [threat model](docs/THREAT-MODEL.md) and [privacy FAQ](docs/PRIVACY.md).
-
-## MCP interface
-
-`open_hud()` · `get_usage({provider:"codex"|"claude_code"})` · `get_overview()`
-
-The protocol is local stdio. Hardening: bounded inputs, generic public errors, strict arguments, no widget `innerHTML`, restrictive CSP, private filesystem operations, CI SHA pinning.
-
-## Project status and contributing
-
-This repository is a **private 0.5.0 release candidate**, under active compatibility testing. See [GitHub security setup](docs/GITHUB-SECURITY-SETUP.md), [release readiness](docs/RELEASE-CHECKLIST.md), [validation evidence](docs/RELEASE-VALIDATION.md), [changelog](CHANGELOG.md) and [license decision](docs/LICENSE-DECISION.md). No public release, registration in ChatGPT's directory or guarantee of every host's plugin API is implied. Security disclosures: [SECURITY.md](SECURITY.md).
-
-For development, run `npm test`, `npm run check`, `npm run security:audit` or `npm run security:history` (requires the full Git history). CI checks Linux, macOS and Windows. No runtime npm packages are needed. Technical IDs such as `quota-pilot` and `ui://quotapilot/live.html` intentionally stay stable.
+**Copyright © 2026 Cibersecurity-H.** Licensed under [MIT](LICENSE).

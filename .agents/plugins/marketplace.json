@@ -1,7 +1,7 @@
 {
-  "name": "ai-usage-private",
+  "name": "ai-usage",
   "interface": {
-    "displayName": "AI Usage Private"
+    "displayName": "AI Usage"
   },
   "plugins": [
     {

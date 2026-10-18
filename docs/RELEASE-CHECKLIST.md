@@ -1,26 +1,32 @@
-# Public-release readiness gate
+# Public source release checklist — QuotaPilot 0.5.0-rc.1
 
-The repo MUST remain private until the owner expressly authorizes a visibility change. A successful CI run is necessary but **not sufficient** to declare a public release 100% ready.
+**GitHub source is PUBLIC and MIT licensed.** A public repository is not the same as a plugin accepted into the universal ChatGPT/Codex directory. This is a candidate for community installation and testing, not a claim of verified support for every host.
 
-- [ ] Confirm latest release-candidate HEAD, Private visibility, a green full Linux/macOS/Windows CI matrix, and pinned-SHA GitHub Actions.
-- [ ] Run `npm run security:history` on a full checkout, then manually review the entire current Git tree **and reachable history** for credentials, personal data, private URLs, accidental secrets and license-incompatible assets. Simple pattern scanning alone cannot certify history.
-- [x] Add canonical MIT LICENSE, `package.json` MIT metadata, and README attribution. Copyright attribution follows the existing Cibersecurity-H manifest metadata.
-- [ ] Copyright holder to confirm authorship and rights to relicense all source, plus third-party asset/contributor attribution review (see `docs/LICENSE-DECISION.md`).
-- [ ] Confirm install and uninstall on at least one real Windows, macOS and Linux environment where supported.
-- [ ] Smoke-test standalone Claude status-line, Codex footer and MCP protocol using a genuinely authenticated provider.
-- [ ] Independently verify the host-dependent ChatGPT Desktop local-MCP-App/PiP onboarding path or explicitly label it experimental and remove unsupported distribution claims.
-- [ ] Check plugin marketplace metadata and installation commands against actual current host implementations.
-- [ ] Verify accessibility, reduced-motion rendering, no-network widget CSP, and alerts that never misrepresent missing metrics.
-- [ ] Configure and **verify actual GitHub admin controls** for branch protection, secret scanning, minimal collaborators and appropriate fork policy. While private, GitHub currently restricts private branch protection on this plan; private vulnerability reporting is public-repository-only. See `docs/GITHUB-SECURITY-SETUP.md`.
-- [ ] Produce a real anonymized screenshot/GIF from working installations; keep the current illustration visibly labeled as synthetic.
-- [ ] Record versioned release notes, test evidence and rollback instructions.
-- [ ] Obtain owner's explicit written approval **separately** before converting to Public.
+## Complete in the repository
 
-Do not claim 100% readiness until all applicable gates are completed and evidenced.
+- [x] Public source, MIT LICENSE, clear authorship metadata and upgrade/disclosure documentation
+- [x] README with public HTTPS clone and Claude/Codex marketplace paths; experimental ChatGPT Desktop path marked clearly
+- [x] GitHub Issues templates with redaction guidance and SUPPORT.md
+- [x] Host-aware visible labels and provider-data privacy boundary
+- [x] Local diagnostics, unit/integration fixtures, syntax checks, static security scan, full-history heuristic scan
+- [x] Linux/macOS/Windows CI with pinned actions and read-only workflow token
+- [x] CODEOWNERS and Dependabot config checked into source
+- [x] Synthetic HUD example explicitly identified as an illustration
 
-## Automated release-candidate evidence
+## Administrative verification — cannot be enforced by committing files
 
-- `npm run check` runs syntax, unit/integration fixtures and static source-safety checks.
-- `npm run security:history` requires an unshallow Git repository and scans all reachable text blobs for common secret shapes; do not confuse this with a full manual review.
-- `npm run doctor` reads only locally expected configuration/snapshot paths and never prints their content or host credentials.
-- See [RELEASE-VALIDATION.md](RELEASE-VALIDATION.md) for the remaining host/platform/admin/legal gates.
+- [ ] **Activate** a branch rule/ruleset for `main` requiring successful CI, blocking force-push and deletion ([settings](GITHUB-SECURITY-SETUP.md))
+- [ ] Verify security settings: private vulnerability reporting, secret scanning and Dependabot alerts, least-privilege Actions/collaborators
+- [ ] Confirm legal copyright owner(s) and third-party attributions before a GA release
+- [ ] Review Git history manually for atypical credentials/private artifacts (automation only scans common signatures)
+- [ ] Optionally create a versioned GitHub pre-release after real-host smoke tests
+
+## Real-world host acceptance — next user testing stage
+
+- [ ] Claude Code installed through public marketplace **and** direct script on a real authenticated host; settings preserved, update/removal verified
+- [ ] Codex CLI public marketplace plugin and native footer verified with a real account; settings preserved, update/removal verified
+- [ ] ChatGPT Desktop local plugin installation tested on an eligible current build; bridge, MCP tools, inline/PiP and refresh validated or incompatibility documented
+- [ ] Manual Windows/macOS/Linux installation/permissions smoke checks on supported environments, screen-reader/contrast/reduced-motion confirmation
+- [ ] Replace/supplement synthetic mockup with a real **redacted** screenshot or short GIF if available
+
+See [HOST-TEST-PLAN.md](HOST-TEST-PLAN.md) for specific acceptance cases, [RELEASE-VALIDATION.md](RELEASE-VALIDATION.md) for evidence, and [GITHUB-SECURITY-SETUP.md](GITHUB-SECURITY-SETUP.md) for admin tasks. **Do not report administrative controls as enabled without checking GitHub state.**

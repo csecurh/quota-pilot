@@ -1,30 +1,34 @@
-# Contributing
+# Contributing to QuotaPilot
 
-**Private preview:** external contributions are not yet open to the public. Authorized collaborators may propose changes on a branch and request review. QuotaPilot is licensed under [MIT](LICENSE); submit only code you have permission to distribute under MIT. Repository visibility remains Private.
+QuotaPilot is [MIT licensed](LICENSE) and its GitHub source is **public**. Contributions, bug reports and documentation fixes are welcome. Runtime compatibility is still being tested for `0.5.0-rc.1`.
 
-## Local development
+## Development
 
-Use Node.js >=22.13, an authorized Git checkout and Git. No package installation is required.
+Use Node.js 22.13+, Git and a checkout. **Do not run `npm install`: no runtime/development dependencies are required.**
 
-```bash
+~~~sh
+git clone https://github.com/csecurh/quota-pilot.git
+cd quota-pilot
 npm run check
 npm run doctor
 npm run security:history
-```
+~~~
 
-The history audit requires full Git history (`git fetch --unshallow` in shallow clones). CI verifies Linux, macOS and Windows and checks reachable history on Linux.
+The historical scan requires a complete non-shallow checkout. CI checks syntax, tests and current source on Ubuntu, macOS and Windows; Ubuntu also audits reachable Git history.
 
-## Engineering rules
+## Before a pull request
 
-- Keep local stdio MCP and read-only tool semantics. Do not add runtime npm dependencies or network clients without an explicit security review.
-- Treat provider data, host arguments and local files as untrusted. Bound memory, execution time and output.
-- Do not introduce credentials, prompts, responses, transcripts, source code or session IDs into snapshots, telemetry, debug prints or fixture commits.
-- Preserve host configuration; refuse ambiguous TOML/JSON rather than deleting unknown fields.
-- Build widget DOM using `textContent` and ordinary nodes, never untrusted `innerHTML`.
-- All new user-visible features must include regression tests and update installation/privacy documentation where appropriate.
-- Keep **quota-pilot** as the technical identifier while using ChatGPT/Codex/Claude Code/AI Usage for host-visible HUD branding.
-- No public release or visibility change without owner approval and all applicable release-readiness requirements.
+- Work from a feature branch and open a pull request describing behavior and backward compatibility.
+- Add automated tests for changed features and include only **synthetic, sanitized** data.
+- Keep MCP tools read-only, validate inputs, limit memory and never reflect provider stderr/paths in public errors.
+- No outbound network clients, telemetry, dependencies, unsafe HTML sinks or accidental credential collection without an explicit security review.
+- Preserve Codex/Claude host settings; do not replace a user's custom status line.
+- Preserve the technical ID `quota-pilot` and the host-visible labels ChatGPT, Codex, Claude Code or AI Usage.
+- Check changes against [installation docs](docs/INSTALL.md), [privacy FAQ](docs/PRIVACY.md) and [LICENSE](LICENSE).
+- Do not include secrets or personal data in issues/PRs; follow [SECURITY.md](SECURITY.md) for vulnerabilities.
 
-## Reporting vulnerabilities
+## Review policy
 
-Follow [SECURITY.md](SECURITY.md). Avoid proof-of-concept payloads involving real secrets or personal data in issues.
+CODEOWNERS identifies the maintainer for sensitive files. **Review requirements only become enforceable when the GitHub admin activates a main branch protection rule or ruleset**; see [GITHUB-SECURITY-SETUP](docs/GITHUB-SECURITY-SETUP.md).
+
+By contributing, you affirm you have the right to submit your changes under MIT; please review third-party licenses for any external assets or code.
