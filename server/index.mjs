@@ -4,10 +4,12 @@ import { fileURLToPath } from 'node:url';
 import { burnRate, deadHours, risk, runwayHours } from './domain/analytics.mjs';
 import { readCodexUsage } from './providers/codex.mjs';
 import { readClaudeUsage } from './providers/claude.mjs';
+import { FALLBACK_BRAND, detectHostBrand } from './host.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const HUD_URI = 'ui://quotapilot/live.html';
 const history = new Map([['codex', []], ['claude_code', []]]);
+let hostBrand = FALLBACK_BRAND;
 
 function remember(usage) {
   if (!usage?.provider || !usage?.primary) return;
@@ -56,6 +58,7 @@ async function getOverview() {
 
   return {
     generatedAt: new Date().toISOString(),
+    host: hostBrand,
     constrainedProvider: constrained?.provider ?? null,
     providers,
   };
@@ -64,15 +67,15 @@ async function getOverview() {
 const hudMeta = {
   ui: { resourceUri: HUD_URI },
   'openai/outputTemplate': HUD_URI,
-  'openai/toolInvocation/invoking': 'Opening QuotaPilot HUD',
-  'openai/toolInvocation/invoked': 'QuotaPilot HUD active',
+  'openai/toolInvocation/invoking': 'Opening usage HUD',
+  'openai/toolInvocation/invoked': 'Usage HUD active',
 };
 
 const tools = [
   {
     name: 'open_hud',
-    title: 'Open QuotaPilot HUD',
-    description: 'Open the live QuotaPilot usage HUD. In ChatGPT the component requests picture-in-picture so it can remain visible while the conversation continues.',
+    title: 'Open usage HUD',
+    description: 'Open the live host-aware usage HUD. In ChatGPT the component requests picture-in-picture so it can remain visible while the conversation continues.',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -129,7 +132,7 @@ async function hudResource() {
     text: html,
     _meta: {
       ui: { prefersBorder: true },
-      'openai/widgetDescription': 'Live local quota HUD for Codex and Claude Code.',
+      'openai/widgetDescription': 'Live local host-aware quota HUD.',
       'openai/ui': {
         availableDisplayModes: ['inline', 'pip', 'fullscreen'],
       },
@@ -167,6 +170,7 @@ async function handle(message) {
   if (!message || message.jsonrpc !== '2.0') return;
 
   if (message.method === 'initialize') {
+    hostBrand = detectHostBrand(message.params?.clientInfo ?? {});
     ok(message.id, {
       protocolVersion: message.params?.protocolVersion ?? '2025-06-18',
       capabilities: {
@@ -174,7 +178,7 @@ async function handle(message) {
         resources: { subscribe: false, listChanged: false },
       },
       serverInfo: { name: 'quota-pilot', version: '0.2.0' },
-      instructions: 'QuotaPilot is a local usage HUD. Prefer open_hud for users who want persistent visual status. Never invent unavailable quota data.',
+      instructions: 'This is a local host-aware usage HUD. Prefer open_hud for users who want persistent visual status. Never invent unavailable quota data.',
     });
     return;
   }
@@ -195,8 +199,8 @@ async function handle(message) {
     ok(message.id, {
       resources: [{
         uri: HUD_URI,
-        name: 'QuotaPilot live HUD',
-        title: 'QuotaPilot',
+        name: 'Live usage HUD',
+        title: hostBrand.displayName,
         description: 'Live quota HUD with remaining, used and reset countdowns.',
         mimeType: 'text/html;profile=mcp-app',
       }],
