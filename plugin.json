@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "quota-pilot",
-  "version": "0.2.0",
-  "description": "Local-first usage intelligence for Codex and Claude Code: quota, reset windows, burn rate, runway, idle time and recommendations.",
+  "version": "0.3.0",
+  "description": "Host-aware local usage HUD for ChatGPT, Codex and Claude Code: used quota, remaining quota, reset windows and pacing intelligence.",
   "author": {
     "name": "Cibersecurity-H"
   },
@@ -21,16 +21,16 @@
       "hooks": "./hooks/codex.json",
       "onboardingSkill": "./skills/setup/SKILL.md",
       "interface": {
-        "displayName": "QuotaPilot",
-        "shortDescription": "Cuota, uso y reset siempre visibles.",
-        "longDescription": "HUD local-first para Codex y Claude Code con cuota usada/restante, resets, burn rate y runway.",
+        "displayName": "AI Usage",
+        "shortDescription": "El HUD toma el nombre del sistema donde se ejecuta.",
+        "longDescription": "HUD local-first que se presenta como ChatGPT, Codex o Claude Code según el host, mostrando cuota usada/restante, reset, burn rate y runway.",
         "developerName": "Cibersecurity-H",
         "category": "Productivity",
         "capabilities": [
           "Read"
         ],
         "defaultPrompt": [
-          "Abre QuotaPilot y mantén visible mi cuota.",
+          "Abre el HUD y mantén visible mi cuota.",
           "Muéstrame cuánto uso me queda y cuándo resetea."
         ]
       }
