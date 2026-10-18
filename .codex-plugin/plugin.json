@@ -1,6 +1,6 @@
 {
   "name": "quota-pilot",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Local-first usage intelligence for Codex and Claude Code.",
   "skills": "./skills/",
   "mcpServers": "./mcp.json",
@@ -9,5 +9,6 @@
       "requires_local_executor": true,
       "onboardingSkill": "./skills/setup/SKILL.md"
     }
-  }
+  },
+  "hooks": "./hooks/hooks.json"
 }
