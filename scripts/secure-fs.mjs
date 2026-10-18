@@ -46,7 +46,10 @@ export async function readSafeText(path, { maxBytes = MAX_LOCAL_BYTES, allowMiss
   try {
     const opened = await handle.stat();
     checkRegular(opened, { maxBytes, requirePrivate });
-    if (before.dev !== opened.dev || before.ino !== opened.ino) {
+    // Windows inode/device identifiers from lstat and fstat may not agree.
+    // POSIX verifies object identity; Windows still checks type, symlink, owner and size.
+    // Windows ACL and parent-directory substitution require separate OS-level assessment.
+    if (process.platform !== 'win32' && (before.dev !== opened.dev || before.ino !== opened.ino)) {
       throw new Error('Local file changed during read');
     }
 

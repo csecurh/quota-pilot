@@ -4,10 +4,12 @@ Current phase: **0.5.0-rc.1 private release candidate**, NOT public-ready certif
 
 ## What automated CI can establish
 
-- Tests and syntax checks executed against pinned Node.js 22.13 in Linux, macOS and Windows runner environments.
+- Tests and syntax checks are scheduled against pinned Node.js 22.13 in Linux, macOS and Windows runner environments; consult the latest Actions run for their actual result.
 - Static inspection for forbidden runtime network APIs, DOM injection surfaces, unsafe GitHub workflow configuration, sensitive file types and common secret token shapes.
 - A full reachable Git-object history audit in the Linux job, requiring an unshallow Git checkout.
 - Offline protocol, provider absence handling, rate limits, local filesystem, installer and native CLI diagnostics regression fixtures.
+
+On Windows, POSIX inode identity and permission semantics are not assumed; a real Windows ACL review is still required.
 
 CI cannot prove the absence of all undiscovered secrets, malicious same-user processes, actual host integration, browser UX or legal right to grant third-party licenses.
 

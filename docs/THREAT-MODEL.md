@@ -9,7 +9,7 @@ The product operates via a local MCP stdio server, Codex app-server subprocess, 
 | MCP host | JSON-RPC frames, method and args | 256 KiB frames, strict schemas, request limiter, max eight active operations, generic errors |
 | Codex subprocess | JSON messages or hang | shell disabled, stderr ignored, 1 MiB line limit, eight pending requests maximum, timeout |
 | Claude status-line | arbitrary host JSON | 256 KiB input cap, selected metrics only, private minimized snapshot |
-| Local filesystem | symlinks, file swaps, unsafe permissions | lstat, no-follow read open, fstat inode verification, size and ownership checks, 0600 files / 0700 app directories, randomized atomic writes |
+| Local filesystem | symlinks, file swaps, unsafe permissions | lstat, no-follow read open, POSIX fstat inode verification, size and ownership checks, 0600 files / 0700 app directories, randomized atomic writes |
 | Widget | provider values / tool results | DOM textContent, restrictive CSP, host bridge only, no direct HTTP |
 | GitHub Actions | mutable dependency and workflow references | SHA-pinned Actions, read-only permissions, no package install, static checks |
 
@@ -22,7 +22,7 @@ Quota-pilot does not intentionally inspect or persist credentials, OAuth tokens,
 ## Threats and residual limits
 
 1. A compromised OS account, hostile same-user process, compromised host or executable is outside the plugin's security boundary; filesystem permissions do not sandbox same-user malware.
-2. POSIX no-follow controls protect final paths and opened inode identity, not every ancestor component. Parent-directory replacement and unusual mount layouts remain an OS trust boundary. Windows ACLs are not independently audited.
+2. POSIX no-follow controls protect final paths and opened inode identity, not every ancestor component. Windows file identity checks are intentionally limited because lstat/fstat inode metadata may be inconsistent; final-path symlink, file type, ownership and size checks remain. Parent-directory replacement and unusual mount layouts remain an OS trust boundary. Windows ACLs are not independently audited.
 3. Codex config editing deliberately supports conservative inline status arrays; ambiguous or multiline syntax is rejected rather than altered. Complete TOML parsing is not claimed.
 4. UI forecasts are estimates, not guaranteed quotas or service uptime. Provider authenticity depends on the installed local host/executable.
 5. Static secret-pattern scans are heuristic and do not prove an absence of secrets in historical Git objects or detect every secret format.
