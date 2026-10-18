@@ -20,6 +20,17 @@ For a **verified local Codex CLI** agent, share the repo and ask explicitly: “
 
 For a **verified local Claude Code** agent, ask explicitly: “Install QuotaPilot for Claude Code and configure its status line.” The bootstrap requires `-HostType Claude` or `--host claude`. Follow the host's trust prompts; a custom existing status line must be preserved.
 
+## Troubleshooting: the skill loads, but MCP tools are missing
+
+If ChatGPT cites `AGENTS.md` or `chatgpt-hud`, then reports `open_hud` / `get_overview` as unavailable, **it has loaded instructions only**. No MCP server connection was established. Repeating the prompt cannot register tools.
+
+1. Open **ChatGPT Desktop → Plugins → AI Usage → quota-pilot** and verify an installed/enabled **local** plugin exposes an **MCP server**, not only skills. Restart Desktop and test in a new local conversation with an `@quota-pilot` mention when supported.
+2. The **GitHub source** currently uses `"command": "node"` in `mcp.json`. Without an accessible Node runtime in the **plugin execution environment**, the MCP process cannot start. A repository URL does not install an executable. The [portable release](PORTABLE.md) bundles its own runtime, but registering the source marketplace does not automatically install that bundle.
+3. The host must actually support local stdio MCP execution. A cloud conversation can read skills without having access to the Windows Desktop filesystem. When the Plugins details lack a local MCP server, **stop**; do not seek administrator access or edit Codex configuration.
+4. An available HUD does **not** mean ChatGPT subscription quotas are exposed through a documented API. Codex data still needs its own locally authenticated provider, and Claude Code supplies its own quota fields.
+
+**Acceptance criterion:** observe a real `open_hud` or `get_overview` tool invocation in ChatGPT Desktop, not just skill text. This is still unverified on the affected installation.
+
 ## Safety and limitations
 
 - The bootstrap refuses calls with no host and rejects `ChatGPT` as a host.

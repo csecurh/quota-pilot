@@ -20,6 +20,17 @@ Si utilizas un **agente Codex CLI local y verificado**, comparte el repositorio 
 
 Si utilizas un **agente Claude Code local y verificado**, solicita explícitamente la barra de estado. El instalador exige `-HostType Claude` o `--host claude`. Acepta los permisos propios del host y conserva una barra personalizada existente.
 
+## Diagnóstico: la skill aparece, pero no hay herramientas MCP
+
+Si ChatGPT cita `AGENTS.md` o la skill `chatgpt-hud` y responde que `open_hud` / `get_overview` no existen, **solo se cargaron instrucciones**. No hay conexión activa con el servidor MCP. Repetir el mismo prompt no habilita herramientas ni corrige la instalación.
+
+1. Revisa **ChatGPT Desktop → Plugins → AI Usage → quota-pilot** y confirma que se trata de un plugin **local** instalado/habilitado y que expone un **servidor MCP**, no únicamente skills. Reinicia Desktop y prueba una conversación local nueva mencionando `@quota-pilot`, cuando el host lo permita.
+2. El repositorio fuente actualmente declara `"command": "node"` en `mcp.json`. Si no existe Node.js en el entorno donde corre **el servidor del plugin**, el proceso no puede arrancar. Que el código fuente esté en GitHub no reemplaza la ejecución. La [distribución autónoma](PORTABLE.md) incorpora un runtime, pero no se instala automáticamente al agregar el marketplace de código fuente.
+3. El host debe poder ejecutar MCP local por stdio. Un chat en la nube puede leer una skill sin tener acceso a tu equipo Windows. Si la pantalla de Plugins no muestra herramientas MCP o servidor local, **detén los intentos**; no solicites permisos de administrador, carpetas `.quotapilot` ni configuración de Codex como solución.
+4. Incluso con el HUD conectado, QuotaPilot **no posee un API autorizado de cuota de suscripción ChatGPT**. Las cifras reales de Codex requieren su proveedor local autenticado, y Claude Code debe suministrar sus métricas.
+
+**Estado verificable:** el funcionamiento de la skill no prueba que el HUD se haya instalado. La integración ChatGPT Desktop sigue pendiente de una prueba con herramientas MCP reales.
+
 ## Seguridad y limitaciones
 
 - El bootstrap falla si no se especifica el host y rechaza `ChatGPT`.
