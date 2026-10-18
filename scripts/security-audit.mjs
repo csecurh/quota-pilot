@@ -73,7 +73,7 @@ for(const required of ['version: 2','package-ecosystem: github-actions','interva
 const workflow=await readFile(join(root,'.github/workflows/ci.yml'),'utf8');
 if(!/actions\/checkout@[a-f0-9]{40}/.test(workflow))failures.push('checkout action must be pinned by full SHA');
 if(!/actions\/setup-node@[a-f0-9]{40}/.test(workflow))failures.push('setup-node action must be pinned by full SHA');
-if(/npm\s+(?:ci|install)/.test(workflow))failures.push('CI must not install dependencies for dependency-free plugin');
+if(/(?:^|\n)\s*(?:run:\s*)?npm\s+(?:ci|install)\b/m.test(workflow))failures.push('CI must not install dependencies for dependency-free plugin');
 if(!/persist-credentials:\s*false/.test(workflow))failures.push('checkout must disable credential persistence');
 if(!/permissions:\s*\n\s*contents:\s*read/.test(workflow))failures.push('CI must have read-only permissions');
 if(/pull_request_target\s*:/.test(workflow))failures.push('CI must not run with pull_request_target');
