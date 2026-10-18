@@ -10,9 +10,9 @@ if (-not $PSBoundParameters.ContainsKey('HostType')) {
 }
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
-$tag = 'v0.6.0-rc.3'
+$tag = 'v0.6.0-rc.4'
 $bundle = 'quota-pilot-win32-x64'
-$digest = '710cbf8211bb094e49be635c8d2774f231f79a141b4ae36ea1dc5ebb5924ec1e'
+$digest = '7442e700e53e299502a3bd5dbd782073230640e64ef3a75335c1178661cafbcc'
 if (-not [Environment]::Is64BitOperatingSystem -or [Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString() -ne 'X64') { throw 'Windows x64 required' }
 if ($DryRun) { Write-Output "PLAN $tag $bundle $digest host=$HostType"; exit 0 }
 $homeDir = [Environment]::GetFolderPath('UserProfile')

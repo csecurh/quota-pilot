@@ -11,13 +11,13 @@ test('agent bootstrap pins immutable package SHA-256 digests instead of trusting
   const sh=await read('scripts/agent-bootstrap.sh');
   const ps=await read('scripts/agent-bootstrap.ps1');
   for(const digest of [
-    'b37098def34887c179b27d28cc6dafc2b02c34a96c167ca81710253534ccab85',
-    'a5305a83d8f57e191d80d0fbbf8c314c96679aea9c477dcaf2e34e7a1e0dd4ad',
-    'b03785aec51e4a507a140657415c08861e9677a3f86e7f99ffc9079023ec2734'
+    '8624a7915ac5df207e7d3c43e721c1977024dd8922e98e520de32f8633be8a20',
+    'e04cf6db691511f8a48bef8551f310785691676accc2777b870d65c2ea1527da',
+    '0b3c3d79d0b5c406f191b98e9c29e4c23138950a9451ff18fc23d2ecc44e5c13'
   ])assert.ok(sh.includes(digest));
-  assert.ok(ps.includes('710cbf8211bb094e49be635c8d2774f231f79a141b4ae36ea1dc5ebb5924ec1e'));
+  assert.ok(ps.includes('7442e700e53e299502a3bd5dbd782073230640e64ef3a75335c1178661cafbcc'));
   for(const s of [sh,ps]){
-    assert.match(s,/v0\.6\.0-rc\.3/);
+    assert.match(s,/v0\.6\.0-rc\.4/);
     assert.match(s,/github\.com\/csecurh\/quota-pilot\/releases\/download/);
     assert.doesNotMatch(s,/Invoke-Expression|curl[^ \n]*\s*\| *sh|Set-ExecutionPolicy|sudo |--insecure|--no-check-certificate/i);
     assert.match(s,/SHA-256|sha256|SHA256/i);
@@ -36,7 +36,7 @@ test('bootstrap is syntax-valid and can select a target using OS utilities',asyn
     env:{...process.env,PATH:isWindows?process.env.PATH:'/usr/bin:/bin'}
   });
   assert.equal(run.status,0,run.stderr);
-  assert.match(run.stdout,/PLAN v0\.6\.0-rc\.3 quota-pilot-/);
+  assert.match(run.stdout,/PLAN v0\.6\.0-rc\.4 quota-pilot-/);
   assert.match(run.stdout,/[a-f0-9]{64}/);
 });
 test('agent-first documentation stays bilingual and never guarantees unsupported local Desktop installs',async()=>{
