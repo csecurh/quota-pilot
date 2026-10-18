@@ -23,10 +23,11 @@ const packageJson=JSON.parse(await readFile(join(root,'package.json'),'utf8'));
 if(Object.keys(packageJson.dependencies??{}).length)failures.push('Runtime dependencies must remain empty');
 if(Object.keys(packageJson.devDependencies??{}).length)failures.push('Dev dependencies must remain empty');
 
-const runtime=textFiles.filter(p=>/\.(mjs|js|html)$/.test(p)&&!p.endsWith('scripts/security-audit.mjs'));
+const relativeUnix = (path) => relative(root, path).replaceAll('\\', '/');
+const runtime=textFiles.filter(p=>/\.(mjs|js|html)$/.test(p)&&relativeUnix(p)!=='scripts/security-audit.mjs');
 for(const path of runtime){
   const source=await readFile(path,'utf8');
-  const rel=relative(root,path);
+  const rel=relativeUnix(path);
   const banned=[
     [/\beval\s*\(/,'eval'],
     [/new\s+Function\b/,'new Function'],
@@ -76,14 +77,14 @@ const secretPatterns=[
   /AKIA[0-9A-Z]{16}/,
   /sb_secret_[A-Za-z0-9_-]{16,}/,
 ];
-for(const path of textFiles.filter(p=>!p.endsWith('scripts/security-audit.mjs'))){
+for(const path of textFiles.filter(p=>relativeUnix(p)!=='scripts/security-audit.mjs')){
   const source=await readFile(path,'utf8');
   for(const pattern of secretPatterns){
     if(pattern.test(source))failures.push(relative(root,path)+': possible committed secret');
   }
 }
 
-const allPaths=textFiles.map(p=>relative(root,p));
+const allPaths=textFiles.map(relativeUnix);
 for(const path of allPaths){
   if(/(^|\/)\.env$/.test(path)||/\.(?:pem|key|p12|pfx)$/.test(path))failures.push('Sensitive file type committed: '+path);
 }
