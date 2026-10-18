@@ -54,3 +54,16 @@ Download the platform archive from [PORTABLE.md](PORTABLE.md). Confirm the host 
 ## Agent-first test
 
 Paste only the repo URL into a **local shell-capable agent** and ask it to install. Check it verifies the pinned bundle, registers the local marketplace, respects plugin trust, and doesn't ask the user to download archives or install Node manually. A cloud agent without access to the desktop must report a limitation, not claim success.
+
+## ChatGPT Desktop: isolate installation from MCP activation (Windows x64)
+
+**No Codex CLI setup, PowerShell, extra Node.js, ZIP, or filesystem permission is needed for this diagnostic.**
+
+1. **Marketplace imported:** confirm AI Usage appears. This proves catalog discovery only.
+2. **Plugin installed and enabled:** confirm quota-pilot and its skills appear. This does not prove local MCP execution.
+3. **Correct source revision:** for a workspace GitHub import, use Admin console → Plugins → Marketplaces → **Sync now**; inspect its report. For an individually imported plugin, use its **Refresh** control if available. **Refresh plugin list** only refreshes the directory display; it does not fetch repository updates. A GitHub source pinned to a specific commit stays pinned until the source ref is changed. Do not remove the marketplace as a cache workaround. See https://help.openai.com/en/articles/20001504-importing-and-syncing-plugin-marketplaces-from-github .
+4. **Local execution:** reopen the actual ChatGPT Desktop app, start a new **local** desktop conversation (not a cloud Work task, web/mobile thread), select AI Usage and check whether the host makes `get_overview`, `get_usage`, and `open_hud` available. Mentioning a skill does not activate a missing MCP runtime.
+5. **MCP connection:** if those tools are absent, record **MCP NOT CONNECTED**; do not call this a widget defect. Check the host's own plugin/server status or sanitized error details. Distinguish unsupported local executor, blocked executable launch, stale plugin revision, and MCP initialize failure. Do not claim a specific cause without host diagnostics.
+6. **Tool and UI:** only after tools appear, invoke `get_overview` and `open_hud`. If the tool works but no UI appears, record **MCP CONNECTED / HUD UI NOT RENDERED** separately. Unknown provider quotas remain unavailable, never zero.
+
+Source validation: `mcp.json` uses `./runtime/node.exe` with `cwd=${PLUGIN_ROOT}` and `server/index.mjs` under that root. The Windows CI test executes the bundled binary with an empty PATH and performs MCP initialize, tools/list and open_hud. That proves repository-side launch in CI, **not that the end user's Desktop session has started it**. Local stdio plugins require compatible desktop execution: https://developers.openai.com/plugins/deploy/desktop-only .
