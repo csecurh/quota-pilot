@@ -1,7 +1,7 @@
 {
-  "name": "quotapilot-private",
+  "name": "ai-usage-private",
   "interface": {
-    "displayName": "QuotaPilot Private"
+    "displayName": "AI Usage Private"
   },
   "plugins": [
     {
