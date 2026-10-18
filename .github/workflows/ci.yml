@@ -29,7 +29,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup pinned Node for the build runner only
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
           node-version: 22.13.0
 
@@ -41,7 +41,7 @@ jobs:
         run: npm run security:history
 
       - name: Setup current Node 24 LTS for distributed runtime
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
           node-version: 24
 
