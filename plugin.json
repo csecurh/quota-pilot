@@ -18,7 +18,7 @@
   "extensions": {
     "com.openai": {
       "requires_local_executor": true,
-      "hooks": "./hooks/hooks.json",
+      "hooks": "./hooks/codex.json",
       "onboardingSkill": "./skills/setup/SKILL.md",
       "interface": {
         "displayName": "QuotaPilot",
