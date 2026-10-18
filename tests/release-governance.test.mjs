@@ -5,7 +5,7 @@ import { readFile } from 'node:fs/promises';
 const read = (path) => readFile(new URL('../' + path, import.meta.url), 'utf8');
 
 test('release candidate has MIT license and consistent copyright metadata', async () => {
-  const license = await read('LICENSE');
+  const license = (await read('LICENSE')).replace(/\r\n/g, '\n');
   const pkg = JSON.parse(await read('package.json'));
   const plugin = JSON.parse(await read('plugin.json'));
   assert.equal(pkg.license, 'MIT');
