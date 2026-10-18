@@ -1,12 +1,83 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>QuotaPilot</title>
 <style>
-  :root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#0b0d10;color:#f5f7fa;font:13px system-ui,sans-serif}.card{padding:16px;border:1px solid #252c34;border-radius:18px;background:#11151a;min-width:280px}.top,.row{display:flex;justify-content:space-between;align-items:center;gap:12px}.brand{font-weight:900}.badge{font-size:10px;color:#7ce38b}.provider{margin-top:15px}.name{font-size:11px;color:#8b96a1}.value{font-size:27px;font-weight:900}.bar{height:7px;background:#252c34;border-radius:99px;overflow:hidden;margin-top:7px}.fill{height:100%;background:#dbe2e9}.meta{margin-top:8px;color:#86919c;font-size:11px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:13px}.metric{background:#0c1014;border-radius:10px;padding:9px}.metric b{display:block;margin-top:3px}
+:root{color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:transparent;color:#f6f8fa;font:12px ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.card{min-width:292px;max-width:360px;padding:14px;border:1px solid rgba(255,255,255,.11);border-radius:18px;background:rgba(14,17,21,.96);box-shadow:0 16px 48px rgba(0,0,0,.28)}
+.top,.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.brand{font-size:13px;font-weight:900;letter-spacing:.2px}.live{font-size:9px;font-weight:900;letter-spacing:1px;color:#7ce38b}.provider{margin-top:13px}.name{font-size:10px;color:#818b96;text-transform:uppercase;font-weight:800;letter-spacing:.8px}
+.main{display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:8px;margin-top:8px}.metric{background:#0a0d10;border-radius:11px;padding:9px}.label{font-size:8px;color:#66717c;font-weight:900;letter-spacing:.8px}.value{display:block;margin-top:3px;font-size:17px;font-weight:900;white-space:nowrap}.reset{font-size:14px}
+.bar{height:6px;border-radius:99px;background:#252b32;overflow:hidden;margin-top:9px}.fill{height:100%;width:0;border-radius:99px;background:#dbe2e9;transition:width .25s ease}.footer{display:flex;justify-content:space-between;gap:10px;margin-top:11px;color:#64707b;font-size:9px}.warn{color:#ffbf69}.critical{color:#ff8c8c}.empty{padding:18px 4px;color:#818b96;text-align:center}.hidden{display:none}
 </style>
 </head>
-<body><div class="card"><div class="top"><span class="brand">QuotaPilot</span><span class="badge">LOCAL</span></div><div id="content" class="meta">Ask QuotaPilot for your usage overview.</div></div></body>
+<body>
+<div class="card">
+  <div class="top"><span class="brand">QuotaPilot</span><span id="state" class="live">LOCAL</span></div>
+  <div id="content"><div class="empty">Leyendo cuota local…</div></div>
+  <div class="footer"><span id="updated">—</span><span>auto · 30s</span></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const clamp=n=>Math.max(0,Math.min(100,Number(n)||0));
+const pct=n=>n==null?'—':Math.round(Number(n))+'%';
+const used=p=>p?.usedPercent!=null?Number(p.usedPercent):(p?.remainingPercent!=null?100-Number(p.remainingPercent):null);
+const remain=p=>p?.remainingPercent!=null?Number(p.remainingPercent):(p?.usedPercent!=null?100-Number(p.usedPercent):null);
+function countdown(iso){
+  if(!iso)return '—';
+  const target=typeof iso==='number'?iso*1000:Date.parse(iso);
+  if(!Number.isFinite(target))return '—';
+  let s=Math.max(0,Math.floor((target-Date.now())/1000));
+  const d=Math.floor(s/86400);s%=86400;const h=Math.floor(s/3600);s%=3600;const m=Math.floor(s/60);
+  if(d>0)return d+'d '+h+'h';
+  if(h>0)return h+'h '+m+'m';
+  return m+'m';
+}
+function providerLabel(p){return p?.provider==='claude_code'?'Claude Code':'Codex'}
+function severity(rem){if(rem==null)return '';if(rem<=15)return 'critical';if(rem<=30)return 'warn';return ''}
+function render(data){
+  const providers=data?.overview?.providers||data?.providers||[];
+  if(!providers.length){$('content').innerHTML='<div class="empty">Sin cuota disponible todavía.</div>';return}
+  $('content').innerHTML=providers.map(p=>{
+    const r=remain(p.primary),u=used(p.primary),reset=countdown(p.primary?.resetsAt);
+    return '<section class="provider">'+
+      '<div class="row"><span class="name">'+providerLabel(p)+'</span><span class="'+severity(r)+'">'+pct(r)+' restante</span></div>'+
+      '<div class="bar"><div class="fill" style="width:'+clamp(r)+'%"></div></div>'+
+      '<div class="main">'+
+        '<div class="metric"><span class="label">USADO</span><b class="value">'+pct(u)+'</b></div>'+
+        '<div class="metric"><span class="label">RESTANTE</span><b class="value '+severity(r)+'">'+pct(r)+'</b></div>'+
+        '<div class="metric"><span class="label">RESET</span><b class="value reset">'+reset+'</b></div>'+
+      '</div></section>'
+  }).join('');
+  $('updated').textContent='actualizado '+new Date(data?.overview?.generatedAt||data?.generatedAt||Date.now()).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+}
+async function refresh(){
+  try{
+    if(window.openai?.callTool){
+      const result=await window.openai.callTool('get_overview',{});
+      render(result?.structuredContent||result);
+    }
+  }catch(e){$('state').textContent='OFFLINE';$('state').className='warn'}
+}
+function initial(){
+  const first=window.openai?.toolOutput;
+  if(first)render(first);
+  window.addEventListener('message',event=>{
+    if(event.source!==window.parent)return;
+    const m=event.data;
+    if(m?.jsonrpc==='2.0'&&m?.method==='ui/notifications/tool-result')render(m.params?.structuredContent||m.params);
+  },{passive:true});
+  if(window.openai?.requestDisplayMode){
+    window.openai.requestDisplayMode({mode:'pip'}).catch(()=>{});
+  }
+  refresh();
+  setInterval(refresh,30000);
+  setInterval(()=>{const data=window.openai?.toolOutput;if(data)render(data)},15000);
+}
+initial();
+</script>
+</body>
 </html>
