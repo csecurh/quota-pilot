@@ -1,0 +1,5 @@
+{
+  "name": "quota-pilot",
+  "version": "0.1.0",
+  "description": "Local-first usage intelligence for Codex and Claude Code."
+}
