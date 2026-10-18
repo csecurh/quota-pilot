@@ -48,3 +48,27 @@ test('source Windows runtime can start with no external Node when run on Windows
  assert.equal(r.status,0);
  assert.match(r.stdout,/^v24\./);
 });
+
+test('bundled Windows MCP starts without system Node, lists tools and opens the HUD',async()=>{
+  if(process.platform!=='win32')return;
+  const {spawnSync}=await import('node:child_process');
+  const executable=join(root,'runtime','node.exe');
+  const input=[
+    {jsonrpc:'2.0',id:1,method:'initialize',params:{protocolVersion:'2025-06-18',clientInfo:{name:'ChatGPT',version:'test'}}},
+    {jsonrpc:'2.0',id:2,method:'tools/list'},
+    {jsonrpc:'2.0',id:3,method:'tools/call',params:{name:'open_hud',arguments:{},_meta:{progressToken:'must-not-leak'}}},
+  ].map(v=>JSON.stringify(v)).join('\n')+'\n';
+  const run=spawnSync(executable,[join(root,'server','index.mjs')],{
+    input,encoding:'utf8',windowsHide:true,timeout:15_000,maxBuffer:1024*1024,
+    env:{...process.env,PATH:'',PLUGIN_ROOT:root}
+  });
+  assert.equal(run.status,0,run.stderr?.slice(0,120));
+  const rows=run.stdout.trim().split('\n').map(x=>JSON.parse(x));
+  assert.equal(rows.find(x=>x.id===1)?.result?.serverInfo?.name,'quota-pilot');
+  const names=rows.find(x=>x.id===2)?.result?.tools?.map(x=>x.name);
+  assert.ok(names?.includes('open_hud'));
+  assert.ok(names?.includes('get_usage'));
+  assert.ok(names?.includes('get_overview'));
+  assert.equal(rows.find(x=>x.id===3)?.result?.isError,false);
+  assert.doesNotMatch(run.stdout,/must-not-leak/);
+});
