@@ -2,6 +2,8 @@
 
 **Know your AI limits before they interrupt your work.**
 
+**License: [MIT](LICENSE)** · Copyright © 2026 Cibersecurity-H
+
 [![CI](https://github.com/csecurh/quota-pilot/actions/workflows/ci.yml/badge.svg)](https://github.com/csecurh/quota-pilot/actions/workflows/ci.yml)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
@@ -71,6 +73,6 @@ Read-only MCP tools: `open_hud()`, `get_usage({provider:"codex"|"claude_code"})`
 
 ## Project status
 
-**Public GitHub source, MIT licensed, release-candidate compatibility.** The illustration above uses **synthetic sample data**, not a real installed screenshot. The source is freely available; inclusion in any public plugin directory requires a separate review/submission process. [Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md) · [Support](SUPPORT.md) · [Release evidence](docs/RELEASE-VALIDATION.md).
+**Public GitHub source, MIT licensed, release-candidate compatibility.** The illustration above uses **synthetic sample data**, not a real installed screenshot. The source is freely available; inclusion in any public plugin directory requires a separate review/submission process. [Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md) · [Support](SUPPORT.md) · [Release evidence](docs/RELEASE-VALIDATION.md) · [Release checklist](docs/RELEASE-CHECKLIST.md) · [MIT notice](docs/LICENSE-DECISION.md).
 
 **Copyright © 2026 Cibersecurity-H.** Licensed under [MIT](LICENSE).
