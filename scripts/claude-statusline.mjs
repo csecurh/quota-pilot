@@ -68,10 +68,10 @@ process.stdin.on('end', async () => {
       return days > 0 ? days + 'd' + hours + 'h' : hours > 0 ? hours + 'h' + mins + 'm' : mins + 'm';
     };
     const fmt = (label, window) => !window ? null : label + ' usado:' + (window.usedPercent == null ? '—' : Math.round(window.usedPercent) + '%') + ' rest:' + (window.remainingPercent == null ? '—' : Math.round(window.remainingPercent) + '%') + ' reset:' + countdown(window);
-    const parts = ['QuotaPilot', fmt('5h', primary), fmt('7d', secondary)].filter(Boolean);
+    const parts = ['Claude Code', fmt('5h', primary), fmt('7d', secondary)].filter(Boolean);
     if (Number.isFinite(ctxRemain)) parts.push('ctx:' + Math.round(ctxRemain) + '%');
     process.stdout.write(parts.join(' · '));
   } catch {
-    process.stdout.write('QuotaPilot · esperando métricas');
+    process.stdout.write('Claude Code · esperando métricas');
   }
 });
