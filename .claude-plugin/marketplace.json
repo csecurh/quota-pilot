@@ -1,0 +1,17 @@
+{
+  "name": "quotapilot-private",
+  "description": "Private QuotaPilot marketplace",
+  "owner": {
+    "name": "Cibersecurity-H"
+  },
+  "plugins": [
+    {
+      "name": "quota-pilot",
+      "source": {
+        "source": "github",
+        "repo": "csecurh/quota-pilot"
+      },
+      "description": "Quota, reset windows, burn rate, runway and dead-time estimates for Codex and Claude Code."
+    }
+  ]
+}
