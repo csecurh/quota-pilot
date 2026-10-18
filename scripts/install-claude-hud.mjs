@@ -14,6 +14,8 @@ const command = 'node "' + runtime.replaceAll('"', '\\"') + '"';
 await ensurePrivateDir(runtimeDir);
 const runtimeSource = await readFile(join(root, 'scripts', 'claude-statusline.mjs'), 'utf8');
 await atomicWritePrivate(runtime, runtimeSource);
+const helperSource = await readFile(join(root, 'scripts', 'secure-fs.mjs'), 'utf8');
+await atomicWritePrivate(join(runtimeDir, 'secure-fs.mjs'), helperSource);
 
 let settings = {};
 const raw = await readSafeText(settingsPath, { maxBytes: 512 * 1024, allowMissing: true });

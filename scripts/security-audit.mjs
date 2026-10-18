@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 import { readdir, readFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
 import { join, relative, resolve } from 'node:path';
 
-const root=resolve(new URL('..',import.meta.url).pathname);
+const root=resolve(fileURLToPath(new URL('..',import.meta.url)));
 const failures=[];
 const skip=new Set(['.git','node_modules']);
 const textFiles=[];
@@ -12,7 +13,8 @@ async function walk(dir){
     if(skip.has(entry.name))continue;
     const path=join(dir,entry.name);
     if(entry.isDirectory())await walk(path);
-    else textFiles.push(path);
+    else if(entry.isSymbolicLink())failures.push(relative(root,path)+': symlinks are not accepted in repository source');
+    else if(entry.isFile())textFiles.push(path);
   }
 }
 await walk(root);
@@ -54,6 +56,17 @@ if(!/actions\/checkout@[a-f0-9]{40}/.test(workflow))failures.push('checkout acti
 if(!/actions\/setup-node@[a-f0-9]{40}/.test(workflow))failures.push('setup-node action must be pinned by full SHA');
 if(/npm\s+(?:ci|install)/.test(workflow))failures.push('CI must not install dependencies for dependency-free plugin');
 if(!/persist-credentials:\s*false/.test(workflow))failures.push('checkout must disable credential persistence');
+if(!/permissions:\s*\n\s*contents:\s*read/.test(workflow))failures.push('CI must have read-only permissions');
+if(/pull_request_target\s*:/.test(workflow))failures.push('CI must not run with pull_request_target');
+
+const widget=await readFile(join(root,'ui/quota-widget.html'),'utf8');
+for(const requirement of ["connect-src 'none'", "default-src 'none'", "base-uri 'none'", "form-action 'none'"]){
+  if(!widget.includes(requirement))failures.push('widget missing restrictive CSP directive: '+requirement);
+}
+if(!widget.includes("window.openai.callTool('get_overview'"))failures.push('widget must use only the MCP host bridge');
+const secureFs=await readFile(join(root,'scripts/secure-fs.mjs'),'utf8');
+if(!secureFs.includes('O_NOFOLLOW'))failures.push('safe reader missing no-follow protection');
+if(!secureFs.includes('randomUUID'))failures.push('atomic writes must use unpredictable temp names');
 
 const secretPatterns=[
   /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/,

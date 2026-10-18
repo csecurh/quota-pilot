@@ -258,7 +258,8 @@ async function handle(message) {
   if (method === 'tools/call') {
     const name = boundedText(message.params?.name, 64);
     if (!tools.some((tool) => tool.name === name)) return fail(message.id, -32601, 'Unknown tool');
-    return ok(message.id, await toolResult(name, message.params?.arguments ?? {}));
+    const args = Object.hasOwn(message.params, 'arguments') ? message.params.arguments : {};
+    return ok(message.id, await toolResult(name, args));
   }
 
   if (message.id != null) fail(message.id, -32601, 'Method not found');

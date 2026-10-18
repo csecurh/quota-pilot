@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'none'; object-src 'none'; frame-src 'none'; connect-src 'none'; img-src 'none'; font-src 'none'; form-action 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'" />
 <title>AI Usage</title>
 <style>
 :root{color-scheme:dark}*{box-sizing:border-box}
@@ -76,7 +77,11 @@ function render(data){
   const generated=Date.parse(overview?.generatedAt);
   $('updated').textContent='actualizado '+new Date(Number.isFinite(generated)?generated:Date.now()).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
 }
+let updating=false;
 async function refresh(){
+  if(updating||document.hidden)return;
+  if(!window.openai?.callTool)return;
+  updating=true;
   try{
     if(window.openai?.callTool){
       const result=await window.openai.callTool('get_overview',{});
@@ -84,16 +89,12 @@ async function refresh(){
       $('state').textContent='LOCAL';$('state').className='live';
     }
   }catch{$('state').textContent='OFFLINE';$('state').className='warn'}
+  finally{updating=false;}
 }
 function initial(){
   if(window.openai){$('brand').textContent='ChatGPT';document.title='ChatGPT';}
   const first=window.openai?.toolOutput;
   if(first)render(first);
-  window.addEventListener('message',event=>{
-    if(event.source!==window.parent)return;
-    const message=event.data;
-    if(message?.jsonrpc==='2.0'&&message?.method==='ui/notifications/tool-result')render(message.params?.structuredContent||message.params);
-  },{passive:true});
   window.openai?.requestDisplayMode?.({mode:'pip'}).catch(()=>{});
   refresh();
   setInterval(refresh,30000);

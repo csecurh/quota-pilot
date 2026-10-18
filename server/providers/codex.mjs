@@ -29,8 +29,8 @@ export async function readCodexUsage({ bin = 'codex', timeoutMs = 12_000 } = {})
   };
 
   child.once('error', () => abort('Codex executable unavailable'));
-  child.once('exit', (code) => {
-    if (code !== 0 && pending.size) abort('Codex app-server exited unexpectedly');
+  child.once('exit', () => {
+    if (pending.size) abort('Codex app-server exited unexpectedly');
   });
 
   child.stdout.on('data', (chunk) => {

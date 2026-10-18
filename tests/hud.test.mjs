@@ -73,3 +73,24 @@ test('Codex HUD installer preserves existing status line entries', async () => {
     await rm(home, { recursive: true, force: true });
   }
 });
+
+
+test('installed Claude status line runs independently using the copied secure filesystem helper', async () => {
+  const home = await mkdtemp(join(tmpdir(), 'quotapilot-installed-claude-'));
+  try {
+    await mkdir(join(home, '.claude'), { recursive: true });
+    const setup = await run('scripts/install-claude-hud.mjs', { home });
+    assert.equal(JSON.parse(setup.stdout).changed, true);
+    const settings = JSON.parse(await readFile(join(home, '.claude', 'settings.json'), 'utf8'));
+    assert.match(settings.statusLine.command, /claude-statusline\.mjs/);
+    const standalone = await run(join(home, '.quotapilot', 'claude-statusline.mjs'), {
+      home,
+      input: JSON.stringify({ rate_limits: { five_hour: { used_percentage: 50 } } }),
+    });
+    assert.match(standalone.stdout, /Claude Code · 5h usado:50% rest:50%/);
+    const snapshot = JSON.parse(await readFile(join(home, '.quotapilot', 'claude-latest.json'), 'utf8'));
+    assert.equal(snapshot.payload.primary.remainingPercent, 50);
+  } finally {
+    await rm(home, { recursive: true, force: true });
+  }
+});

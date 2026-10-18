@@ -59,3 +59,41 @@ test('safe reader rejects files above configured size', async () => {
     await assert.rejects(()=>readSafeText(path,{maxBytes:1024}),/Unsafe local file/);
   }finally{await rm(home,{recursive:true,force:true});}
 });
+
+
+test('Claude snapshots exceeding 64 KB are rejected even with private permissions', async () => {
+  const home = await mkdtemp(join(tmpdir(), 'quotapilot-snapshot-'));
+  try {
+    const path = join(home, 'oversized.json');
+    await writeFile(path, JSON.stringify({
+      provider: 'claude_code',
+      capturedAt: new Date().toISOString(),
+      payload: { primary: { usedPercent: 12 } },
+      untrusted: 'x'.repeat(66 * 1024),
+    }), { mode: 0o600 });
+    assert.equal(await readClaudeUsage({ path }), null);
+  } finally { await rm(home, { recursive: true, force: true }); }
+});
+
+test('private writer rejects overwriting files larger than the config safety limit', async () => {
+  const home = await mkdtemp(join(tmpdir(), 'quotapilot-size-write-'));
+  try {
+    const path = join(home, 'large.toml');
+    await writeFile(path, 'x'.repeat(1024 * 1024 + 1));
+    await assert.rejects(() => atomicWritePrivate(path, 'overwrite'), /Unsafe local file/);
+    assert.equal((await lstat(path)).size, 1024 * 1024 + 1);
+  } finally { await rm(home, { recursive: true, force: true }); }
+});
+
+test('private writer sets 0600 permissions and 0700 for its own directory', async () => {
+  if (process.platform === 'win32') return;
+  const home = await mkdtemp(join(tmpdir(), 'quotapilot-mode-'));
+  try {
+    const dir = join(home, 'private');
+    const path = join(dir, 'snapshot.json');
+    await atomicWritePrivate(path, '{"usage":0}');
+    assert.equal((await lstat(path)).mode & 0o777, 0o600);
+    assert.equal((await lstat(dir)).mode & 0o777, 0o700);
+    assert.equal(await readSafeText(path, { requirePrivate: true }), '{"usage":0}');
+  } finally { await rm(home, { recursive: true, force: true }); }
+});

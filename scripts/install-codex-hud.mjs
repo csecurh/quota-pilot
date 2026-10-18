@@ -3,69 +3,73 @@ import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { atomicWritePrivate, readSafeText } from './secure-fs.mjs';
 
+const REQUIRED = ['five-hour-limit', 'weekly-limit'];
+const DEFAULT_ITEMS = ['model-with-reasoning', 'context-remaining', ...REQUIRED];
 const configPath = join(homedir(), '.codex', 'config.toml');
-let source = await readSafeText(configPath, { maxBytes: 1024 * 1024, allowMissing: true });
 
-const required = ['five-hour-limit', 'weekly-limit'];
-const preferred = ['model-with-reasoning', 'context-remaining', ...required];
-
-function parseStatusItems(content) {
-  const matches = [...content.matchAll(/status_line\s*=\s*\[([\s\S]*?)\]/gm)];
-  if (matches.length > 1) throw new Error('Ambiguous Codex status_line configuration');
-  if (!matches.length) return { match: null, items: [] };
-
-  const body = matches[0][1];
-  const items = [...body.matchAll(/["']([a-z0-9-]{1,64})["']/gi)].map((m) => m[1]);
-  const residue = body.replace(/["'][a-z0-9-]{1,64}["']/gi, '').replace(/[\s,]/g, '');
-  if (residue) throw new Error('Unsupported Codex status_line syntax');
-  return { match: matches[0], items };
+function parseInlineArray(line) {
+  const match = /^(\s*status_line\s*=\s*)\[([^\]]*)\](\s*(?:#.*)?)$/.exec(line);
+  if (!match) throw new Error('Unsupported Codex status_line syntax; config not changed');
+  const body = match[2].trim();
+  const tokens = body ? body.split(',') : [];
+  if (tokens.at(-1)?.trim() === '') tokens.pop();
+  const items = tokens.map((token) => {
+    const parsed = /^\s*(["'])([A-Za-z0-9_-]{1,64})\1\s*$/.exec(token);
+    if (!parsed) throw new Error('Unsupported Codex status_line item; config not changed');
+    return parsed[2];
+  });
+  return { prefix: match[1], suffix: match[3], items };
 }
 
-function updateTuiSection(input) {
-  const lines = input.replace(/\r\n/g, '\n').split('\n');
-  const tuiStarts = lines.map((line, index) => /^\s*\[tui\]\s*$/.test(line) ? index : -1).filter((x) => x >= 0);
-  if (tuiStarts.length > 1) throw new Error('Multiple [tui] sections are not supported safely');
+export function updateCodexConfig(source) {
+  if (typeof source !== 'string' || Buffer.byteLength(source) > 1024 * 1024) {
+    throw new Error('Unsafe Codex configuration');
+  }
+  const newline = source.includes('\r\n') ? '\r\n' : '\n';
+  const lines = source.split(/\r?\n/);
+  const starts = lines.flatMap((line, i) => /^\s*\[tui\]\s*(?:#.*)?$/.test(line) ? [i] : []);
+  if (starts.length > 1) throw new Error('Ambiguous Codex [tui] sections; config not changed');
 
-  let start = tuiStarts[0] ?? -1;
+  if (!starts.length) {
+    const preamble = source ? source + (source.endsWith('\n') ? newline : newline + newline) : '';
+    return preamble + '[tui]' + newline
+      + 'status_line = [' + DEFAULT_ITEMS.map((s) => '"' + s + '"').join(', ') + ']' + newline
+      + 'status_line_use_colors = true' + newline;
+  }
+
+  const start = starts[0];
   let end = lines.length;
-  if (start < 0) {
-    const prefix = input.trimEnd();
-    const section = [
-      '[tui]',
-      'status_line = [' + preferred.map((x) => '"' + x + '"').join(', ') + ']',
-      'status_line_use_colors = true',
-      '',
-    ].join('\n');
-    return (prefix ? prefix + '\n\n' : '') + section;
-  }
-
   for (let i = start + 1; i < lines.length; i++) {
-    if (/^\s*\[[^\]]+\]\s*$/.test(lines[i])) {
-      end = i;
-      break;
-    }
+    if (/^\s*\[[^\r\n]+\]\s*(?:#.*)?$/.test(lines[i])) { end = i; break; }
+  }
+  const section = lines.slice(start + 1, end);
+  const statusIndexes = section.flatMap((line, i) => /^\s*status_line\s*=/.test(line) ? [i] : []);
+  const colorIndexes = section.flatMap((line, i) => /^\s*status_line_use_colors\s*=/.test(line) ? [i] : []);
+  if (statusIndexes.length > 1 || colorIndexes.length > 1) {
+    throw new Error('Ambiguous Codex status configuration; config not changed');
   }
 
-  let section = lines.slice(start, end).join('\n');
-  const parsed = parseStatusItems(section);
-  const items = [...parsed.items];
-  for (const item of preferred) if (!items.includes(item)) items.push(item);
+  if (statusIndexes.length) {
+    const index = statusIndexes[0];
+    const parsed = parseInlineArray(section[index]);
+    const items = [...parsed.items];
+    for (const item of REQUIRED) if (!items.includes(item)) items.push(item);
+    const rewritten = parsed.prefix + '[' + items.map((s) => '"' + s + '"').join(', ') + ']' + parsed.suffix;
+    if (items.length !== parsed.items.length) section[index] = rewritten;
+  } else {
+    section.push('status_line = [' + DEFAULT_ITEMS.map((s) => '"' + s + '"').join(', ') + ']');
+  }
+  if (!colorIndexes.length) section.push('status_line_use_colors = true');
 
-  const rendered = 'status_line = [' + items.map((x) => '"' + x + '"').join(', ') + ']';
-  if (parsed.match) section = section.replace(parsed.match[0], rendered);
-  else section = section.trimEnd() + '\n' + rendered + '\n';
-
-  const colorMatches = [...section.matchAll(/status_line_use_colors\s*=/g)];
-  if (colorMatches.length > 1) throw new Error('Ambiguous Codex status_line_use_colors configuration');
-  if (!colorMatches.length) section = section.trimEnd() + '\nstatus_line_use_colors = true\n';
-
-  return [
-    ...lines.slice(0, start),
-    ...section.trimEnd().split('\n'),
-    ...lines.slice(end),
-  ].join('\n').replace(/\n{3,}/g, '\n\n');
+  return [...lines.slice(0, start + 1), ...section, ...lines.slice(end)].join(newline);
 }
 
-source = updateTuiSection(source);
-await atomicWritePrivate(configPath, source.trimEnd() + '\n');
-process.stdout.write(JSON.stringify({ ok: true, changed: true, host: 'Codex', surface: 'codex-native-footer', items: required }));
+if (process.argv[1] && import.meta.url === new URL('file://' + process.argv[1]).href) {
+  const source = await readSafeText(configPath, { maxBytes: 1024 * 1024, allowMissing: true });
+  const updated = updateCodexConfig(source);
+  if (updated !== source) await atomicWritePrivate(configPath, updated);
+  process.stdout.write(JSON.stringify({
+    ok: true, changed: updated !== source, host: 'Codex',
+    surface: 'codex-native-footer', items: REQUIRED,
+  }));
+}

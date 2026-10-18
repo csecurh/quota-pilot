@@ -13,7 +13,8 @@ export function boundedText(value, max = 128) {
 }
 
 export function safePercent(value) {
-  const number = Number(value);
+  if (value === null || value === undefined || value === '' || typeof value === 'boolean') return null;
+  const number = typeof value === 'number' || (typeof value === 'string' && /^\d+(?:\.\d+)?$/.test(value)) ? Number(value) : NaN;
   return Number.isFinite(number) ? Math.max(0, Math.min(100, number)) : null;
 }
 

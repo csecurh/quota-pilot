@@ -1,19 +1,13 @@
-import { lstat, readFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { MAX_CLAUDE_SNAPSHOT_BYTES, isPlainObject, safePercent, safeWindow } from '../security.mjs';
-
-function validOwner(stat) {
-  return typeof process.getuid !== 'function' || stat.uid === process.getuid();
-}
+import { readSafeText } from '../../scripts/secure-fs.mjs';
 
 export async function readClaudeUsage({ path = join(homedir(), '.quotapilot', 'claude-latest.json'), maxAgeMs = 30 * 60 * 1000 } = {}) {
   try {
-    const stat = await lstat(path);
-    if (!stat.isFile() || stat.isSymbolicLink() || stat.size > MAX_CLAUDE_SNAPSHOT_BYTES || !validOwner(stat)) return null;
-    if (process.platform !== 'win32' && (stat.mode & 0o077) !== 0) return null;
-
-    const raw = JSON.parse(await readFile(path, 'utf8'));
+    const text = await readSafeText(path, { maxBytes: MAX_CLAUDE_SNAPSHOT_BYTES, allowMissing: true, requirePrivate: true });
+    if (!text) return null;
+    const raw = JSON.parse(text);
     if (!isPlainObject(raw) || raw.provider !== 'claude_code' || !isPlainObject(raw.payload)) return null;
 
     const capturedMs = Date.parse(raw.capturedAt);
