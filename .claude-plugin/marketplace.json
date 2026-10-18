@@ -1,6 +1,6 @@
 {
-  "name": "quotapilot-private",
-  "description": "Private QuotaPilot marketplace",
+  "name": "ai-usage-private",
+  "description": "Private host-aware usage HUD marketplace",
   "owner": {
     "name": "Cibersecurity-H"
   },
@@ -11,7 +11,7 @@
         "source": "github",
         "repo": "csecurh/quota-pilot"
       },
-      "description": "Quota, reset windows, burn rate, runway and dead-time estimates for Codex and Claude Code."
+      "description": "Local used/remaining quota, reset timing and pacing intelligence for Claude Code."
     }
   ]
 }
