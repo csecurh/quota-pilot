@@ -31,3 +31,17 @@ test('visible widget is host-aware and does not hard-code QuotaPilot branding', 
   assert.match(html, /ChatGPT/);
   assert.equal(html.includes('>QuotaPilot<'), false);
 });
+
+
+test('persistent visible surfaces never hard-code QuotaPilot branding', async () => {
+  const visibleFiles = [
+    '../ui/quota-widget.html',
+    '../scripts/claude-statusline.mjs',
+    '../hooks/hooks.json',
+    '../hooks/codex.json',
+  ];
+  for (const relative of visibleFiles) {
+    const source = await readFile(new URL(relative, import.meta.url), 'utf8');
+    assert.equal(source.includes('QuotaPilot'), false, relative + ' must be host-branded');
+  }
+});
