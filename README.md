@@ -1,5 +1,7 @@
 # QuotaPilot
 
+**License: [MIT](LICENSE)** · Copyright © 2026 Cibersecurity-H · **Private preview** (not publicly listed)
+
 **Know your AI limits before they interrupt your work.**
 
 A privacy-first, local usage HUD for **ChatGPT Desktop, Codex CLI and Claude Code**. See quota **used · remaining · reset**, plus advisory **burn rate, runway and predicted time without quota** when enough data is available.
@@ -66,6 +68,6 @@ The protocol is local stdio. Hardening: bounded inputs, generic public errors, s
 
 ## Project status and contributing
 
-This repository is a **private 0.5.0 release candidate**, under active compatibility testing. See [release readiness](docs/RELEASE-CHECKLIST.md), [validation evidence](docs/RELEASE-VALIDATION.md), [changelog](CHANGELOG.md) and [license decision](docs/LICENSE-DECISION.md). No public release, registration in ChatGPT's directory or guarantee of every host's plugin API is implied. Security disclosures: [SECURITY.md](SECURITY.md).
+This repository is a **private 0.5.0 release candidate**, under active compatibility testing. See [GitHub security setup](docs/GITHUB-SECURITY-SETUP.md), [release readiness](docs/RELEASE-CHECKLIST.md), [validation evidence](docs/RELEASE-VALIDATION.md), [changelog](CHANGELOG.md) and [license decision](docs/LICENSE-DECISION.md). No public release, registration in ChatGPT's directory or guarantee of every host's plugin API is implied. Security disclosures: [SECURITY.md](SECURITY.md).
 
 For development, run `npm test`, `npm run check`, `npm run security:audit` or `npm run security:history` (requires the full Git history). CI checks Linux, macOS and Windows. No runtime npm packages are needed. Technical IDs such as `quota-pilot` and `ui://quotapilot/live.html` intentionally stay stable.

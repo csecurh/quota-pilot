@@ -1,6 +1,6 @@
 # Contributing
 
-**Private preview:** external contributions are not yet open to the public. Authorized collaborators may propose changes on a branch and request review.
+**Private preview:** external contributions are not yet open to the public. Authorized collaborators may propose changes on a branch and request review. QuotaPilot is licensed under [MIT](LICENSE); submit only code you have permission to distribute under MIT. Repository visibility remains Private.
 
 ## Local development
 

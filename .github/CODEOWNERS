@@ -1,1 +1,9 @@
+# Maintainer review coverage; enforced only after branch protection is enabled.
 * @csecurh
+/.github/ @csecurh
+/.github/workflows/ @csecurh
+/LICENSE @csecurh
+/SECURITY.md @csecurh
+/scripts/ @csecurh
+/server/ @csecurh
+/ui/ @csecurh

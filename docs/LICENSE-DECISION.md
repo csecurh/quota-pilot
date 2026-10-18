@@ -1,13 +1,11 @@
-# Open-source license — owner decision required
+# MIT license adopted for the private release candidate
 
-**No public open-source license is granted by this document.** The repository must stay private and distribution decisions require the owner's explicit authorization.
+The repository now includes the full canonical [MIT License](../LICENSE) and declares `"license": "MIT"` in `package.json`. Copyright notice: **Copyright (c) 2026 Cibersecurity-H**, matching the existing plugin author metadata.
 
-Before going public, the copyright holder should select a license and add its unmodified authoritative text as `LICENSE`:
+**MIT grants:** permission for commercial and personal use, modification, redistribution, sublicensing, and inclusion in proprietary software. Recipients must retain the copyright notice and full license text in copies or substantial portions. MIT contains a warranty and liability disclaimer.
 
-- **MIT:** permissive, short, attribution/license notice required; no explicit patent grant clause.
-- **Apache-2.0:** permissive, includes explicit patent-license terms, NOTICE rules and more detailed conditions.
-- **GPL-3.0-only:** reciprocal distribution obligations and stronger requirements for modified works.
+**Visibility is separate from licensing.** The repository is still **Private**; adding MIT does not publish its source. However, any person who lawfully receives a copy is granted MIT rights, so only do this for code you have the right to license.
 
-The choice grants important downstream legal rights and cannot be inferred solely from wanting a public GitHub repository. Decide on the intended modification, redistribution, patent and commercial use policy first. Also review authorship and third-party asset attribution. Consider professional legal advice for consequential releases.
+**Remaining legal check before public release:** the actual copyright holder(s) must verify that the attribution Cibersecurity-H is appropriate, that they hold or have permission to license all code, and that all third-party assets or contributions are compatible. A license cannot cover someone else's copyrighted work without permission. The illustrative local SVG must not contain unlicensed materials.
 
-Do not claim the code is open source simply because repository visibility is set to Public. For now, it remains source available only to authorized collaborators.
+No public visibility change is authorized by this document. See [release checklist](RELEASE-CHECKLIST.md).

@@ -14,5 +14,6 @@
   "engines": {
     "node": ">=22.13.0"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "license": "MIT"
 }

@@ -22,6 +22,7 @@ await walk(root);
 const packageJson=JSON.parse(await readFile(join(root,'package.json'),'utf8'));
 if(Object.keys(packageJson.dependencies??{}).length)failures.push('Runtime dependencies must remain empty');
 if(Object.keys(packageJson.devDependencies??{}).length)failures.push('Dev dependencies must remain empty');
+if(packageJson.license!=='MIT')failures.push('package.json must declare MIT license');
 
 const relativeUnix = (path) => relative(root, path).replaceAll('\\', '/');
 const runtime=textFiles.filter(p=>/\.(mjs|js|html)$/.test(p)&&relativeUnix(p)!=='scripts/security-audit.mjs');
@@ -52,6 +53,23 @@ for(const required of [
   'validateToolArguments',
 ])if(!server.includes(required))failures.push('server/index.mjs missing security control: '+required);
 
+const license=await readFile(join(root,'LICENSE'),'utf8');
+for(const required of [
+  'MIT License',
+  'Copyright (c) 2026 Cibersecurity-H',
+  'Permission is hereby granted, free of charge',
+  'The above copyright notice and this permission notice shall be included',
+  'THE SOFTWARE IS PROVIDED "AS IS"',
+])if(!license.includes(required))failures.push('LICENSE missing MIT requirement: '+required);
+
+const owners=await readFile(join(root,'.github/CODEOWNERS'),'utf8');
+for(const required of ['* @csecurh','/.github/ @csecurh','/LICENSE @csecurh'])
+  if(!owners.includes(required))failures.push('CODEOWNERS missing '+required);
+
+const dependabot=await readFile(join(root,'.github/dependabot.yml'),'utf8');
+for(const required of ['version: 2','package-ecosystem: github-actions','interval: weekly'])
+  if(!dependabot.includes(required))failures.push('Dependabot configuration missing: '+required);
+
 const workflow=await readFile(join(root,'.github/workflows/ci.yml'),'utf8');
 if(!/actions\/checkout@[a-f0-9]{40}/.test(workflow))failures.push('checkout action must be pinned by full SHA');
 if(!/actions\/setup-node@[a-f0-9]{40}/.test(workflow))failures.push('setup-node action must be pinned by full SHA');
@@ -59,6 +77,14 @@ if(/npm\s+(?:ci|install)/.test(workflow))failures.push('CI must not install depe
 if(!/persist-credentials:\s*false/.test(workflow))failures.push('checkout must disable credential persistence');
 if(!/permissions:\s*\n\s*contents:\s*read/.test(workflow))failures.push('CI must have read-only permissions');
 if(/pull_request_target\s*:/.test(workflow))failures.push('CI must not run with pull_request_target');
+if(!/^\s*pull_request\s*:/m.test(workflow))failures.push('CI must validate pull requests');
+if(!/ubuntu-latest.*macos-latest.*windows-latest/.test(workflow))failures.push('CI must retain three-platform matrix');
+const actionCalls=[...workflow.matchAll(/^\s*uses:\s*([^\s#]+)/gm)].map(match=>match[1]);
+if(actionCalls.length<2)failures.push('CI must run expected GitHub-owned actions');
+for(const action of actionCalls){
+  if(!/^actions\/(?:checkout|setup-node)@[a-f0-9]{40}$/.test(action))
+    failures.push('CI contains unexpected or unpinned action');
+}
 
 const widget=await readFile(join(root,'ui/quota-widget.html'),'utf8');
 for(const requirement of ["connect-src 'none'", "default-src 'none'", "base-uri 'none'", "form-action 'none'"]){

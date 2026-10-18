@@ -26,7 +26,7 @@ The runtime must not initiate external network connections. The ChatGPT widget C
 
 Do not include secrets, exploit payloads against real accounts, or private user data in public issues.
 
-If GitHub Private Vulnerability Reporting is enabled for this repository, use **Security → Report a vulnerability**. Otherwise contact the repository owner through a private channel before disclosing technical details publicly.
+While this repository remains **private**, only authorized collaborators can view its issues; report sensitive vulnerabilities directly to the maintainer using a trusted private channel, and do not paste real secrets into issues. GitHub's **Private Vulnerability Reporting** is designed for **public** repositories; after public launch, the maintainer should enable it via **Settings → Security and quality → Advanced Security**, so outside researchers can report privately.
 
 Include affected version/commit, operating system, reproduction steps using synthetic data, impact, and any proposed mitigation.
 

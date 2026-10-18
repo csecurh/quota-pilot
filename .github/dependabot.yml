@@ -1,0 +1,9 @@
+# GitHub-managed dependency updates; no third-party updater is involved.
+# Runtime packages remain dependency-free.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5

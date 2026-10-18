@@ -23,12 +23,12 @@ CI cannot prove the absence of all undiscovered secrets, malicious same-user pro
 | macOS / Windows / Linux | Manual install/upgrade/uninstall and file permission/ACL validation on supported OS | NOT VERIFIED |
 | Accessibility | Keyboard, accessible naming, color contrast, reduced motion, screen-reader check | MANUAL REVIEW REQUIRED |
 | Assets | Real anonymized, permission-cleared screenshot/GIF replacing or supplementing synthetic illustration | NOT CAPTURED |
-| GitHub security settings | Private vulnerability reporting, branch protection, secret scanning, collaborators/forks | ADMIN REVIEW REQUIRED |
-| Legal | Copyright ownership, OSS license and third-party asset clearance | OWNER DECISION REQUIRED |
+| GitHub security settings | Branch protection, fork settings, secret scanning, collaborators and actions permissions; public-repo vulnerability reporting at launch | ADMIN REVIEW REQUIRED (private plan restriction) |
+| Legal | MIT LICENSE is committed; copyright ownership/attribution and third-party asset clearance still need confirmation | MIT APPLIED; OWNER ATTESTATION REQUIRED |
 
 ## Publication protocol
 
 1. Record a completed real-host checklist and final CI SHA with all checks green.
 2. Resolve any historical-scanner warnings and independently review sensitive commit history.
-3. Add the owner-approved LICENSE, release notes, screenshots and security settings.
+3. Confirm copyright-holder attribution for the committed MIT LICENSE, release notes, screenshots and administrative security settings.
 4. Request an explicit owner decision to flip visibility; do **not** change automatically.

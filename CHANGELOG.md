@@ -11,6 +11,7 @@ This project uses SemVer for plugin/runtime metadata. Release candidates are not
 - Add full reachable-history secret-pattern audit (`npm run security:history`) and Linux, macOS, Windows CI coverage.
 - Avoid side effects in Claude installer when the user has a different custom status line.
 - Normalize missing Claude percentages correctly and limit status-line input accumulation before appending data.
+- Add MIT licensing metadata, CODEOWNERS policy, GitHub Actions Dependabot monitoring and a step-by-step administrative security checklist. Administrative restrictions remain manual until plan/permissions permit.
 - Retain all existing 0.4.x filesystem/protocol hardening and read-only/no-network invariants.
 
 ## 0.4.0 — Security hardening
