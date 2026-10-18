@@ -30,7 +30,7 @@ test('agent bootstrap pins immutable package SHA-256 digests instead of trusting
 test('bootstrap is syntax-valid and can select a target using OS utilities',async()=>{
   const isWindows=process.platform==='win32';
   const exe=isWindows?join(process.env.SystemRoot||'C:\\Windows','System32','WindowsPowerShell','v1.0','powershell.exe'):'/bin/sh';
-  const args=isWindows?['-NoProfile','-NonInteractive','-File',join(root,'scripts/agent-bootstrap.ps1'),'-DryRun']:[join(root,'scripts/agent-bootstrap.sh'),'--dry-run'];
+  const args=isWindows?['-NoProfile','-NonInteractive','-File',join(root,'scripts/agent-bootstrap.ps1'),'-HostType','Codex','-DryRun']:[join(root,'scripts/agent-bootstrap.sh'),'--dry-run','--host','codex'];
   const run=spawnSync(exe,args,{
     cwd:root,encoding:'utf8',timeout:10000,
     env:{...process.env,PATH:isWindows?process.env.PATH:'/usr/bin:/bin'}
@@ -46,9 +46,23 @@ test('agent-first documentation stays bilingual and never guarantees unsupported
   ]);
   assert.match(en,/\[Español\]\(es\/AGENT-INSTALL\.md\)/);
   assert.match(es,/\[English\]\(\.\.\/AGENT-INSTALL\.md\)/);
-  assert.match(agents,/cloud-only|cloud environment/);
+  assert.match(agents,/cloud execution environment/);
   assert.match(agents,/agent-bootstrap\.ps1/);
-  assert.match(setup,/scripts\/agent-bootstrap\.sh/);
+  assert.match(setup,/agent-bootstrap\.sh/);
   assert.match(readme,/docs\/AGENT-INSTALL\.md/);
-  assert.match(es,/no puede instalarlo en tu Windows|no instala automáticamente/);
+  assert.match(es,/no lo instala en tu Windows|no instala automáticamente/);
+});
+
+test('agent bootstrap refuses ambiguous host or ChatGPT before any installation',async()=>{
+  const isWindows=process.platform==='win32';
+  const exe=isWindows?join(process.env.SystemRoot||'C:\\Windows','System32','WindowsPowerShell','v1.0','powershell.exe'):'/bin/sh';
+  const script=join(root,'scripts',isWindows?'agent-bootstrap.ps1':'agent-bootstrap.sh');
+  const prefix=isWindows?['-NoProfile','-NonInteractive','-File',script]:[script];
+  const cases=isWindows?[[],['-HostType','ChatGPT']]:[[],['--host','chatgpt']];
+  for(const args of cases){
+    const result=spawnSync(exe,[...prefix,...args],{cwd:root,encoding:'utf8',timeout:10000});
+    assert.notEqual(result.status,0);
+    assert.match(result.stderr,/Host required|HostType|ChatGPT onboarding|host codex|codex or --host claude/i);
+    assert.doesNotMatch(result.stdout,/INSTALLED |ALREADY_INSTALLED /);
+  }
 });

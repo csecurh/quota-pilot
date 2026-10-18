@@ -4,13 +4,15 @@
 
 QuotaPilot is published as source under [MIT](../LICENSE). **The GitHub repository is public; the plugin has not been admitted to the universal ChatGPT/Codex directory.** Automated CI does not replace real host tests.
 
-## Preferred: agent-first installation
+## First choose the host
 
-Share **https://github.com/csecurh/quota-pilot** with a locally executing agent and ask it to follow [AGENTS.md](../AGENTS.md) and [agent installation](AGENT-INSTALL.md). The agent handles runtime preparation and registration without asking you to download ZIPs or install Node/npm. Permission and restart dialogs depend on the host.
+**ChatGPT Desktop / Work:** Use **Plugins** to enable an already registered local QuotaPilot plugin. Then call `open_hud` and `get_overview`. The ChatGPT onboarding skill does **not** download anything or change the Codex footer. If the local MCP executor is unavailable, stop; repeating a failing agent bootstrap does not repair it. The official plugin manager may itself persist enable/disable preferences in `~/.codex/config.toml`, which is distinct from QuotaPilot manually editing the Codex status line.
+
+**Codex CLI / Claude Code:** If your agent runs locally, share the GitHub URL and identify your host. Follow [agent installation](AGENT-INSTALL.md); bootstraps require explicit host approval/selection. No separate Node/npm download is requested.
 
 ## Alternative: portable package
 
-Download the self-contained package from [GitHub Releases](https://github.com/csecurh/quota-pilot/releases/tag/v0.6.0-rc.2) and register the extracted folder with your compatible plugin host. The archive contains its own runtime. See [PORTABLE.md](PORTABLE.md) for platform selection, integrity checks and host limitations.
+Download the self-contained package from [GitHub Releases](https://github.com/csecurh/quota-pilot/releases/tag/v0.6.0-rc.3) and register the extracted folder with your compatible plugin host. The archive contains its own runtime. See [PORTABLE.md](PORTABLE.md) for platform selection, integrity checks and host limitations.
 
 ## Prerequisites (source installation only)
 

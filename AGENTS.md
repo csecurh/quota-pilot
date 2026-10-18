@@ -1,30 +1,29 @@
-# QuotaPilot — install from a GitHub repository
+# QuotaPilot — installation and host safety rules
 
-## Mandatory host and permission preflight
+These instructions apply when someone pastes `https://github.com/csecurh/quota-pilot` into an agent and asks to use QuotaPilot. **A desktop window does not establish that this agent can write to the user's actual desktop filesystem.** The agent may be operating in a separate ChatGPT Work/cloud execution environment.
 
-**Before requesting Internet, filesystem modification or hook trust, identify the actual execution surface.** The label “ChatGPT Desktop” does not prove that tools run on the user's Windows machine. ChatGPT Work may operate in an isolated cloud computer. Determine whether you have verified access to the user's local machine and its supported plugin manager. If not, perform read-only research and report that installation on their computer cannot be completed; **do not request write permission to try anyway**.
+## Mandatory dispatch: determine which host is being configured
 
-- **ChatGPT Desktop / ChatGPT Work:** do not run Codex/Claude status-line installers. Never request access to `~/.codex/config.toml`, `~/.claude/settings.json` or their directories. Never edit a global `plugins/` directory or `config.toml` in order to guess how to register a local plugin. Only use a documented ChatGPT plugin-manager API/UI, if present, and a proven **local** executor. Network access and a narrow user-private `~/.quotapilot/agent-installs` destination may be requested **separately** after confirming local installation is supported and obtaining authorization. When this is not available, stop and explain; do not treat cloud-workspace access as desktop installation.
-- **Codex:** edit `~/.codex/config.toml` *only* if the user specifically authorizes configuring the **Codex CLI native footer**, the CLI is accessible locally, and the agent is running in that local Codex environment. Plugin registration/installation itself must not edit Codex's TOML. Use `scripts/install-codex-hud.mjs` only for that separate, optional operation. Respect pre-existing settings.
-- **Claude Code:** modify `~/.claude/settings.json` *only* for a local Claude Code status-line setup when the user has authorized it and the host supports that operation.
+### ChatGPT Desktop / ChatGPT Work
 
-OpenAI's shared plugin manifest intentionally loads `hooks/openai-safe.json`, with no automatic filesystem writes. Codex native-footer setup is optional; the Claude-native hook remains in `hooks/hooks.json`. **Do not use the Codex hook to bootstrap ChatGPT.**
+**Read-only onboarding; NEVER execute an installer.** The root `plugin.json` invokes `skills/chatgpt-hud/SKILL.md`. Call existing `get_overview` and `open_hud` MCP tools if available. If they are not available, return a clear unavailable status; there is no authorized workaround by creating folders in the agent workspace.
 
-When a user provides `https://github.com/csecurh/quota-pilot` and asks you to **install, set up or activate** QuotaPilot, act as an installation assistant **only if you have access to the user's local computer**, a shell, and the host's plugin configuration or plugin manager.
+- Do not run `scripts/agent-bootstrap.ps1` or `scripts/agent-bootstrap.sh`. They are explicitly gated for Codex CLI / Claude Code.
+- Do not run `scripts/install-codex-hud.mjs`, `scripts/install-claude-hud.mjs`, or `scripts/ensure-surfaces.mjs`.
+- Do not request broad Internet + write permissions, create `.quotapilot` or `tmp`, manually edit `plugins/` or `config.toml`, attempt administrator elevation or repeat a denied write.
+- **Platform nuance:** ChatGPT's built-in plugin manager may itself use `~/.codex/config.toml` to save enable/disable preferences. That controlled **host action** is different from an agent editing Codex's native footer. A prompt from the official plugin manager is not automatically unsafe because it contains `config.toml`; inspect the exact requested action and scope. The QuotaPilot setup skill must not initiate either operation programmatically.
+- If the platform doesn't expose a local stdio MCP server/plugin executor, ChatGPT can't load this local-only quota HUD. A skill or GitHub URL alone is not an executable server. Never pretend an unavailable HUD or real ChatGPT subscription metrics work.
 
-**The user-facing workflow is just sharing the GitHub URL and granting the host's requested permissions. Do not ask them to download ZIPs, open PowerShell, install Node.js, npm or Git manually.**
+### Codex CLI (only when explicitly requested)
 
-1. Check your current host and whether your tools execute **on the same machine** as the user's Codex/Claude/ChatGPT Desktop. A cloud-only agent cannot install a plugin locally on the user's PC. In that case, report the limitation; don't falsely claim success.
-2. Inspect `scripts/agent-bootstrap.sh` (macOS/Linux) or `scripts/agent-bootstrap.ps1` (Windows). These fetch a **pinned GitHub release**, verify a hard-coded SHA-256 and store its bundled Node runtime under the user's `~/.quotapilot/agent-installs/` without administrator privileges. Downloads are initiated only for an explicit installation request, subject to normal host approval. There is no third-party SaaS.
-3. On Windows execute `powershell -NoProfile -File scripts/agent-bootstrap.ps1` or from PowerShell `./scripts/agent-bootstrap.ps1`. On macOS/Linux execute `sh scripts/agent-bootstrap.sh`. Neither needs Node/npm/Git **at runtime**. Never pipe unreviewed remote shell code into a shell.
-4. Read the `INSTALLED <directory>` or `ALREADY_INSTALLED <directory>` response and use that directory as the **local plugin root**, not the source checkout. Do not expose local paths in public issue reports. If installation fails, report the exact safe status and do not silently disable OS security mechanisms.
-5. Only **after** passing the host preflight, use the host's **documented** plugin management capability to register that local marketplace/plugin and enable `quota-pilot@ai-usage` if supported:
-   - **Codex with CLI:** `codex plugin marketplace add "<installed-directory>"`, then use the host's /plugins capability to enable QuotaPilot. Only if the user **separately requests a Codex footer** and approves the TOML modification, invoke the bundled runtime to run `scripts/install-codex-hud.mjs`.
-   - **Claude Code:** use the host's `/plugin marketplace add <installed-directory>` and `/plugin install quota-pilot@ai-usage`. When needed, invoke the bundled runtime to run `scripts/install-claude-hud.mjs`; preserve an existing custom status line. Respect the host's hook trust dialog.
-   - **ChatGPT Desktop:** only if the local desktop Plugins UI can load a Git/local marketplace, use its documented UI to add the installed plugin root. If your agent cannot interact with this UI or the host does not support local stdio MCP, tell the user. Never substitute a fake remote HTTP MCP or claim PiP works without testing. Do not request edits to Codex config, global plugin directories or temporary files to force a ChatGPT install.
-6. **Verify** the host recognizes `get_overview`, `open_hud` and `get_usage` or its native footer/status line. Differentiate an unavailable provider from MCP `-32602`; missing quotas should display as unknown. Provider authentication remains the original host's responsibility. Codex subscription metrics require an accessible authenticated Codex app-server.
-7. Explain what was actually installed, what requires a host restart/trust step, and what you were unable to test. No credentials, cookies, prompts or transcripts should be requested.
+Require evidence the agent operates in the user's actual local Codex CLI and user has consented to install. Review and run `scripts/agent-bootstrap.ps1 -HostType Codex` (PowerShell) or `sh scripts/agent-bootstrap.sh --host codex` (macOS/Linux). Download only the pinned GitHub release with SHA-256 verification, without asking for manual Node/npm installation; use the resulting local plugin root with documented marketplace controls. **Native Codex footer is a separate opt-in**: change `~/.codex/config.toml` only if the user explicitly asks for the Codex CLI footer and permits this precise file change.
 
-Maintain English/Spanish responses according to user language. Never modify another repository, bypass endpoint permissions, disable Gatekeeper or Windows antivirus, or assume an agent operating only in the cloud can access the user's computer.
+### Claude Code (only when explicitly requested)
 
-See [docs/AGENT-INSTALL.md](docs/AGENT-INSTALL.md) / [docs/es/AGENT-INSTALL.md](docs/es/AGENT-INSTALL.md).
+Require a verified local Claude Code environment and permission to install. Review and run `scripts/agent-bootstrap.ps1 -HostType Claude` or `sh scripts/agent-bootstrap.sh --host claude`. Register the local plugin using native Claude Code commands and preserve custom `statusLine`; do not modify Codex configuration.
+
+## Completion checklist
+
+Only report installation success after checking the installed host recognizes the plugin and the correct read-only tools or native surface. If the provider lacks telemetry, show unavailable, never fabricated data. Host approval dialogs remain mandatory. No user credentials, cookies, prompts, transcripts, source code or sensitive filesystem paths should be collected or published.
+
+Use the user's language (English or Spanish). Read [English installation guide](docs/AGENT-INSTALL.md) / [guía en español](docs/es/AGENT-INSTALL.md). No changes to other repositories.

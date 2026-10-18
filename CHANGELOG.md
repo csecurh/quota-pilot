@@ -4,6 +4,13 @@
 
 This project uses SemVer for plugin/runtime metadata. Release candidates are not public releases and may change before general availability.
 
+## 0.6.0-rc.3 — Read-only ChatGPT onboarding and explicit host gates
+
+- ChatGPT's default onboarding skill now verifies already connected read-only MCP tools instead of invoking native Codex/Claude installers or requesting combined network/filesystem permissions.
+- The Bash and PowerShell agent bootstraps refuse execution without an explicitly selected Codex or Claude host; ChatGPT is not an allowed bootstrap target.
+- Document that the first-party ChatGPT Plugins manager may store enable/disable preferences in Codex's config.toml, which is **not** authorization for QuotaPilot to install a native Codex footer.
+- Add host-scoping regression tests and package the read-only ChatGPT skill with the self-contained distributions. ChatGPT local MCP compatibility still depends on the desktop host.
+
 ## 0.6.0-rc.2 — Host-scoped permissions and safe OpenAI hooks
 
 - OpenAI's shared ChatGPT/Codex manifest now loads an explicitly empty hook, preventing plugin installation from automatically editing Codex `config.toml` in ChatGPT Desktop/Work.

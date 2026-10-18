@@ -1,12 +1,20 @@
 # Agent-assisted Windows bootstrap. Non-admin PowerShell, no system Node/npm/Git.
-param([switch]$DryRun)
+param(
+  [ValidateSet('Codex','Claude')][string]$HostType,
+  [switch]$DryRun
+)
+# Fail closed before ANY network, filesystem or installer operation.
+# ChatGPT Desktop onboarding is read-only; this script is for dedicated local hosts.
+if (-not $PSBoundParameters.ContainsKey('HostType')) {
+  throw 'Host required: -HostType Codex or -HostType Claude. ChatGPT onboarding must not run this installer.'
+}
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 $tag = 'v0.6.0-rc.2'
 $bundle = 'quota-pilot-win32-x64'
 $digest = 'd83de9b67f87597c654e3bfd1a0f4824dec6253d56875fab83eefd8adb69bca9'
 if (-not [Environment]::Is64BitOperatingSystem -or [Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString() -ne 'X64') { throw 'Windows x64 required' }
-if ($DryRun) { Write-Output "PLAN $tag $bundle $digest"; exit 0 }
+if ($DryRun) { Write-Output "PLAN $tag $bundle $digest host=$HostType"; exit 0 }
 $homeDir = [Environment]::GetFolderPath('UserProfile')
 $privateRoot = Join-Path $homeDir '.quotapilot'
 $base = Join-Path $privateRoot 'agent-installs'

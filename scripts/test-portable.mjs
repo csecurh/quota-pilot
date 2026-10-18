@@ -32,6 +32,16 @@ try {
   const manifest=JSON.parse(await readFile(join(stage,'mcp.json'),'utf8'));
   const plugin = JSON.parse(await readFile(join(stage,'plugin.json'),'utf8'));
   const openaiHooks = JSON.parse(await readFile(join(stage,'hooks','openai-safe.json'),'utf8'));
+  const onboarding = await readFile(join(stage,'skills','chatgpt-hud','SKILL.md'),'utf8');
+  const agentsGuide = await readFile(join(stage,'AGENTS.md'),'utf8');
+  assert.equal(plugin.extensions['com.openai'].onboardingSkill,'./skills/chatgpt-hud/SKILL.md');
+  assert.match(onboarding,/read-only by default/i);
+  assert.match(onboarding,/Do not run an installation script/);
+  assert.match(onboarding,/get_overview/);
+  assert.match(onboarding,/open_hud/);
+  assert.match(agentsGuide,/ChatGPT Desktop \/ ChatGPT Work/);
+  assert.match(agentsGuide,/read-only tools/);
+
   assert.equal(plugin.extensions['com.openai'].hooks,'./hooks/openai-safe.json');
   assert.deepEqual(openaiHooks,{hooks:{}},'ChatGPT must not invoke Codex filesystem configuration');
 

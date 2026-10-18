@@ -26,9 +26,22 @@ test('Agent onboarding forbids ChatGPT Desktop from editing Codex or Claude host
     read('AGENTS.md'),read('skills/setup/SKILL.md'),read('docs/AGENT-INSTALL.md'),read('docs/es/AGENT-INSTALL.md')
   ]);
   assert.match(agents,/ChatGPT Desktop \/ ChatGPT Work/);
-  assert.match(agents,/Never request access to \`~\/\.codex\/config\.toml\`/);
-  assert.match(setup,/Do \*\*not\*\* call \`scripts\/install-codex-hud\.mjs\`/);
-  assert.match(agents,/cloud computer/);
+  assert.match(agents,/Read-only onboarding; NEVER execute an installer/);
+  assert.match(setup,/NO-INSTALL, NO-WRITE PATH/);
+  assert.match(agents,/cloud execution environment/);
   assert.match(en,/decline/);
   assert.match(es,/rechaza esa solicitud/);
+});
+
+test('OpenAI onboarding is ChatGPT-only and cannot bootstrap the Codex CLI footer',async()=>{
+  const manifest=JSON.parse(await read('plugin.json'));
+  assert.equal(manifest.extensions['com.openai'].onboardingSkill,'./skills/chatgpt-hud/SKILL.md');
+  const chat=await read('skills/chatgpt-hud/SKILL.md');
+  assert.match(chat,/NEVER execute an installer/);
+  assert.match(chat,/get_overview/);
+  assert.match(chat,/open_hud/);
+  assert.match(chat,/if tools are not available/i);
+  assert.match(chat,/Do not automatically switch to Codex setup/);
+  assert.match(chat,/ChatGPT Work can execute in an isolated cloud/);
+  assert.doesNotMatch(manifest.extensions['com.openai'].interface.defaultPrompt.join(' '),/configurar codex|install codex|Codex footer/i);
 });

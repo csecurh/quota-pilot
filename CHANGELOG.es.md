@@ -4,6 +4,13 @@
 
 QuotaPilot utiliza versionado semántico. Las versiones candidatas pueden cambiar antes de una versión estable.
 
+## 0.6.0-rc.3 — Inicio de ChatGPT en solo lectura y host obligatorio
+
+- La skill inicial de ChatGPT comprueba únicamente herramientas MCP ya conectadas; no ejecuta instaladores Codex/Claude ni solicita permisos conjuntos de Internet y escritura.
+- Los instaladores asistidos en Bash y PowerShell exigen indicar Codex o Claude; las llamadas sin host o desde ChatGPT se rechazan.
+- Se aclara que el gestor oficial de Plugins puede guardar preferencias en config.toml, sin autorizar al plugin a cambiar el footer nativo de Codex.
+- Pruebas de regresión y empaquetado autónomo con la skill de ChatGPT de solo lectura. La compatibilidad del MCP local continúa dependiendo del host Desktop.
+
 ## 0.6.0-rc.2 — Permisos limitados por host y hooks seguros
 
 - El manifiesto compartido de OpenAI ahora carga un hook vacío que evita modificar automáticamente `config.toml` de Codex al instalar en ChatGPT Desktop/Work.

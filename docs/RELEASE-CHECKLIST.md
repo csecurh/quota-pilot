@@ -1,4 +1,4 @@
-# Public source release checklist — QuotaPilot 0.6.0-rc.2
+# Public source release checklist — QuotaPilot 0.6.0-rc.3
 
 **Language / Idioma: English · [Español](es/RELEASE-CHECKLIST.md)**
 

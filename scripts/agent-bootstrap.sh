@@ -1,7 +1,28 @@
 #!/bin/sh
 # Local agent installer. No system Node/npm/Git. User/host must approve shell execution.
 set -eu
-case "${1:-}" in --dry-run) dry_run=1;; '') dry_run=0;; *) echo 'Unsupported option' >&2; exit 2;; esac
+# Require an explicitly requested local host. ChatGPT's onboarding must never call a bootstrap.
+host=''
+dry_run=0
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --host)
+      shift
+      host="${1:-}"
+      ;;
+    --dry-run)
+      dry_run=1
+      ;;
+    *)
+      echo 'Unsupported option' >&2; exit 2
+      ;;
+  esac
+  shift
+done
+case "$host" in
+  codex|claude) ;;
+  *) echo 'Explicit --host codex or --host claude is required; ChatGPT onboarding is read-only' >&2; exit 2 ;;
+esac
 tag=v0.6.0-rc.2
 case "$(uname -s):$(uname -m)" in
   Linux:x86_64) bundle=quota-pilot-linux-x64; digest=f89bbd4dfa90727105081fa72b9c1a610957e3ddb480190bd5e2f6a1ccbfc6b0;;
@@ -9,7 +30,7 @@ case "$(uname -s):$(uname -m)" in
   Darwin:arm64) bundle=quota-pilot-darwin-arm64; digest=18869fff83f173e49d8e32a7ff5b3a19ac6f255bebd2d6e8d5c2e2f258765019;;
   *) echo 'Unsupported OS or architecture' >&2; exit 2;;
 esac
-if [ "$dry_run" -eq 1 ]; then printf 'PLAN %s %s %s\n' "$tag" "$bundle" "$digest"; exit 0; fi
+if [ "$dry_run" -eq 1 ]; then printf 'PLAN %s %s %s host=%s\n' "$tag" "$bundle" "$digest" "$host"; exit 0; fi
 umask 077
 root="$HOME/.quotapilot"
 base="$root/agent-installs"

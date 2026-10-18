@@ -23,7 +23,7 @@ await mkdir(staging, { recursive: true, mode: 0o700 });
 const directories = ['server','scripts','ui','hooks','skills','.claude-plugin','.codex-plugin','.agents','docs'];
 const rootFiles = ['plugin.json','mcp.json','.mcp.json','LICENSE','README.md','README.es.md',
   'SECURITY.md','SECURITY.es.md','SUPPORT.md','SUPPORT.es.md','CONTRIBUTING.md','CONTRIBUTING.es.md',
-  'CHANGELOG.md','CHANGELOG.es.md','package.json'];
+  'CHANGELOG.md','CHANGELOG.es.md','AGENTS.md','CLAUDE.md','package.json'];
 for (const dir of directories) {
   await cp(join(root, dir), join(staging, dir), { recursive: true, dereference: false, errorOnExist: true });
 }

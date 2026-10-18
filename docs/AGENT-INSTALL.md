@@ -1,31 +1,31 @@
-# Install QuotaPilot by asking your AI agent (English)
+# Installing QuotaPilot from an AI agent
 
 **Language / Idioma: English · [Español](es/AGENT-INSTALL.md)**
 
-The **preferred onboarding** is to provide the URL **`https://github.com/csecurh/quota-pilot`** to an agent that can execute commands **on the user's computer** and ask it to install the plugin. Users should **not manually download a ZIP, install Node/npm, or run a PowerShell command**.
+## ChatGPT Desktop / Work — use the plugin UI, not an installer
 
-### Copy into your local agent
+**ChatGPT onboarding does not run an installation script.** When the QuotaPilot MCP tools are already connected, call `get_overview` and `open_hud`. If they are absent, the local MCP server is not connected in that session; installing an executable in a cloud workspace is **not** installation on the user's Windows computer.
 
-> Install QuotaPilot from https://github.com/csecurh/quota-pilot for my current AI host. Follow AGENTS.md and use the bundled agent bootstrap. Don't ask me to install Node, npm or Git manually. Request host permissions as needed, preserve my settings, and verify that the HUD or native status line works. Report any host limitations.
+Open ChatGPT's **Plugins** browser, choose the configured local/repo marketplace **AI Usage**, and enable `quota-pilot` if supported. A host capable of executing **local stdio MCP servers on the user's computer** is required; the source checkout also needs a runtime unless a host has already installed the portable distribution. A GitHub URL or skill cannot create an executable runtime in a restricted cloud session. Public plugin-directory distribution of local servers is subject to additional OpenAI eligibility/review.
 
-The agent should obtain or inspect the repo, run `scripts/agent-bootstrap.ps1` on Windows or `scripts/agent-bootstrap.sh` on macOS/Linux, and use the resulting local folder as its plugin marketplace root. It can register and enable the plugin using **supported native host controls**. The bootstrap downloads a **SHA-256-pinned release asset automatically**, checks it locally, and uses the included runtime. It does not use an elevated shell, a third-party service, or a remote install script piped into a shell. The host may ask you to **approve** execution or trust a plugin hook; approval cannot be bypassed.
+**When you see a permission request to access Internet plus `.quotapilot`, `plugins`, `config.toml` and `tmp` because the agent wants to “configure Codex”: decline that specific agent operation.** QuotaPilot's ChatGPT onboarding must not install Codex's native TUI footer, execute `agent-bootstrap`, or retry a denied folder operation.
 
-**Important technical distinction:** cloning/adding the *source* marketplace by URL is not enough to execute its Node-based MCP server on machines without Node. The agent bootstrap prepares the already-tested self-contained local marketplace and the agent registers **that** package. The release archive is downloaded **by the agent behind the scenes**, not by the user.
+**Nuance:** ChatGPT's *own plugin manager* may legitimately update `~/.codex/config.toml` when saving a plugin enable/disable preference. That is different from an agent manually editing Codex footer settings. Evaluate a host-managed permission prompt based on its specific action rather than simply on the filename.
 
-### ChatGPT Desktop: permissions are not installation proof
+## Codex CLI — optional native footer
 
-If ChatGPT asks for Internet **and** permission to edit `.quotapilot`, `plugins`, `config.toml`, and `tmp` during a ChatGPT Desktop setup, **decline**. QuotaPilot does not need to change Codex `config.toml` for a ChatGPT HUD. The shared OpenAI hook now performs no filesystem writes. A ChatGPT Work cloud computer may be isolated from your local Windows PC, even when the ChatGPT Desktop application displays that conversation.
+For a **verified local Codex CLI** agent, share the repo and ask explicitly: “Install QuotaPilot for Codex CLI and configure its native footer.” The agent must seek your consent for the footer settings separately. The agent bootstrap requires `scripts/agent-bootstrap.ps1 -HostType Codex` on Windows or `sh scripts/agent-bootstrap.sh --host codex` on macOS/Linux. It downloads an official, SHA-256 pinned QuotaPilot release and registers the local plugin through supported CLI/host controls; it does not require you to manually install Node/npm.
 
-Check that the agent can register plugins via a documented ChatGPT **local** plugin manager on the **user's actual machine** before authorizing a download to `.quotapilot`. If it cannot, do not grant extra write permissions or claim that the desktop plugin is active. Codex footer setup and Claude status-line setup are separate, explicitly authorized actions.
+## Claude Code — optional status line
 
-### What depends on the host
+For a **verified local Claude Code** agent, ask explicitly: “Install QuotaPilot for Claude Code and configure its status line.” The bootstrap requires `-HostType Claude` or `--host claude`. Follow the host's trust prompts; a custom existing status line must be preserved.
 
-- **Codex CLI and Claude Code** agents commonly provide a local shell and local plugin management. The agent can complete the bootstrap and use the host-native plugin commands, subject to user trust prompts.
-- **ChatGPT Desktop / ChatGPT Work:** it only works if your installation supports **local plugin execution** and the agent can operate the actual **local** computer/plugin manager. A cloud computer does not automatically install on your Windows desktop. Registering a GitHub repository doesn't guarantee a local stdio executor or PiP. Universal public Plugins Directory listing is a separate submission process.
-- **Provider telemetry:** bundled Node is free to run locally, but obtaining real Codex quotas still requires an authenticated accessible Codex provider. QuotaPilot does not read ChatGPT browser cookies or undocumented subscription APIs. Claude Code supplies status-line usage when available.
+## Safety and limitations
 
-### Security and verification
+- The bootstrap refuses calls with no host and rejects `ChatGPT` as a host.
+- The ChatGPT setup skill only uses already connected read-only tools; it never downloads releases, creates `.quotapilot` folders or modifies Codex/Claude settings.
+- An isolated cloud agent may not be able to install into your Windows PC; it must say so rather than requesting additional filesystem permissions.
+- If the host offers no local MCP app bridge, the widget cannot run. Provider quotas may also be unavailable; never invent them.
+- Never paste tokens, cookies, prompts, source code, transcripts or confidential error logs into public issues.
 
-The scripts pin the four official release SHA-256 checksums directly in source, download from GitHub HTTPS, reject mismatches and unsafe extraction targets and install only in a user-private location. Always review the bootstrap and release provenance before granting execution permission. The agent should verify `open_hud` / `get_overview`, safe errors and native footer or status line. A disabled host bridge or missing provider must be reported as such, **not as a successful installation**.
-
-Manual archives still exist for offline/developer workflows at [PORTABLE.md](PORTABLE.md), but are **not the recommended user onboarding**.
+For manually installing a portable bundle on eligible hosts, see [PORTABLE.md](PORTABLE.md); it is an alternative, **not** something ChatGPT Work should try as a workaround.

@@ -4,13 +4,15 @@
 
 QuotaPilot está disponible públicamente como código fuente [MIT](../../LICENSE). **No significa que esté publicado en el directorio universal de plugins de ChatGPT.** Las pruebas automáticas no sustituyen las pruebas en clientes reales.
 
-## Recomendado: instalación asistida por tu agente
+## Primero identifica el host
 
-Comparte **https://github.com/csecurh/quota-pilot** con un agente que se ejecute localmente y pídele seguir [AGENTS.md](../../AGENTS.md) y la [guía asistida](AGENT-INSTALL.md). El agente prepara y registra el plugin sin exigir descargar ZIP o instalar Node/npm manualmente. Los permisos y reinicios dependen del host.
+**ChatGPT Desktop / Work:** usa **Plugins** para activar QuotaPilot si ya aparece en un marketplace local compatible. Prueba `open_hud` y `get_overview`. La skill inicial de ChatGPT **no descarga nada ni configura el footer de Codex**. Si no existe un ejecutor MCP local, detente: repetir un instalador bloqueado no lo soluciona. El gestor oficial puede guardar preferencias en `~/.codex/config.toml`, distinto de editar manualmente la barra de Codex.
+
+**Codex CLI / Claude Code:** si el agente tiene terminal local, comparte la URL del repositorio indicando cuál host deseas configurar. Sigue la [guía para agentes](AGENT-INSTALL.md); los instaladores exigen indicar el host. No es necesario instalar Node/npm por separado.
 
 ## Alternativa: paquete autónomo
 
-Descarga el paquete desde [GitHub Releases](https://github.com/csecurh/quota-pilot/releases/tag/v0.6.0-rc.2) y registra la carpeta extraída en el gestor de plugins de un host compatible. El runtime viene incluido. Consulta la [guía autónoma](PORTABLE.md) para elegir el sistema, comprobar su integridad y entender las limitaciones.
+Descarga el paquete desde [GitHub Releases](https://github.com/csecurh/quota-pilot/releases/tag/v0.6.0-rc.3) y registra la carpeta extraída en el gestor de plugins de un host compatible. El runtime viene incluido. Consulta la [guía autónoma](PORTABLE.md) para elegir el sistema, comprobar su integridad y entender las limitaciones.
 
 ## Requisitos (solo código fuente)
 

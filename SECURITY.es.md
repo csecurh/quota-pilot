@@ -8,7 +8,7 @@ QuotaPilot es un HUD **local y de solo lectura**. El proyecto público está lic
 
 | Versión | Soporte de seguridad |
 |---|---|
-| 0.6.0-rc.2 (código público actual) | Hasta la siguiente versión candidata o estable |
+| 0.6.0-rc.3 (código público actual) | Hasta la siguiente versión candidata o estable |
 | 0.4.x y anteriores | No se garantiza mantenimiento adicional |
 
 ## Cómo reportar una vulnerabilidad

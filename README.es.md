@@ -9,23 +9,23 @@
 
 QuotaPilot es un **HUD de consumo de IA, local y de código abierto** para Codex, Claude Code y hosts compatibles de ChatGPT Desktop. Su nombre visible se adapta al host: **Codex**, **Claude Code**, **ChatGPT** o **AI Usage** como alternativa. Su identificador técnico permanece como `quota-pilot`.
 
-> **Código público · versión candidata 0.6.0-rc.2.** Las verificaciones automáticas pasan, pero **falta probar la instalación real y Picture-in-Picture en los hosts**. El repositorio no está publicado en el directorio universal de plugins de ChatGPT/Codex.
+> **Código público · versión candidata 0.6.0-rc.3.** Las verificaciones automáticas pasan, pero **falta probar la instalación real y Picture-in-Picture en los hosts**. El repositorio no está publicado en el directorio universal de plugins de ChatGPT/Codex.
 
 ![Ilustración del HUD local con datos sintéticos](docs/assets/hud-preview.svg)
 
 Permite ver las métricas de **uso**, **cuota restante** y **reinicio**, cuando el proveedor las entrega, además de **velocidad de consumo**, **autonomía estimada** y **alertas visuales** cuando hay suficientes muestras. Las predicciones son orientativas: no sustituyen información de facturación ni garantizan límites. Los datos desconocidos se muestran como no disponibles.
 
-**Permisos en ChatGPT Desktop:** si el instalador solicita cambiar `config.toml` o `plugins/` junto con acceso a Internet, **rechaza esa solicitud**. El HUD de ChatGPT no necesita modificar ajustes de Codex. Comprueba que el agente trabaja realmente en tu equipo, no en un ordenador remoto. Consulta la [guía de instalación segura](docs/es/AGENT-INSTALL.md).
+**Permisos en ChatGPT Desktop:** rechaza una solicitud del agente para instalar el footer de Codex o crear `.quotapilot` desde ChatGPT Work. El gestor oficial sí puede guardar preferencias de plugins en `~/.codex/config.toml`, que es distinto de editar la barra de Codex mediante scripts. [Guía por host](docs/es/AGENT-INSTALL.md).
 
-## Instalación pegando el repositorio en tu agente
+## Instalar sin solicitudes incorrectas de permisos
 
-**Recomendado:** comparte **https://github.com/csecurh/quota-pilot** con un agente que tenga acceso a una terminal **en tu mismo equipo** y pídele instalarlo. Sin ZIP, Node, npm ni Git que debas instalar tú. El agente comprueba el SHA-256 de la versión oficial y registra el plugin, respetando los permisos del host. Un agente solo en la nube no puede instalarlo en tu Windows.
+**ChatGPT Desktop:** abre el gestor oficial de **Plugins**, instala o habilita **AI Usage → quota-pilot** desde un marketplace local compatible y prueba `open_hud`. **No pidas a un agente de ChatGPT Work que instale Codex.** Se necesita un ejecutor MCP local por stdio: pegar la URL de GitHub no lo proporciona automáticamente. En algunos clientes esta integración sigue sin verificarse. El gestor de Plugins puede guardar preferencias en `~/.codex/config.toml`, pero la configuración de QuotaPilot en ChatGPT no debe instalar el footer de Codex ni crear `.quotapilot` por su cuenta.
 
-[Guía de instalación desde agente](docs/es/AGENT-INSTALL.md) · [English](docs/AGENT-INSTALL.md).
+**Codex CLI o Claude Code:** con un agente que tenga terminal **en tu propio equipo**, comparte **https://github.com/csecurh/quota-pilot** e indica claramente cuál host quieres instalar. El agente puede utilizar el paquete autónomo con verificación SHA-256 sin pedir que instales Node/npm manualmente. [Guía en español](docs/es/AGENT-INSTALL.md) · [English](docs/AGENT-INSTALL.md).
 
 ## Alternativa: paquete portátil manual
 
-**Recomendado:** descarga el paquete adecuado desde [GitHub Releases de QuotaPilot 0.6.0](https://github.com/csecurh/quota-pilot/releases/tag/v0.6.0-rc.2). Hay versiones Windows x64, Linux x64 y macOS Intel/Apple Silicon, con Node.js y avisos de licencia incluidos. Extrae el archivo y registra la carpeta como **plugin o marketplace local** en un host compatible. **No necesitas instalar Node ni npm.** [Guía completa en español](docs/es/PORTABLE.md) · [English](docs/PORTABLE.md).
+**Recomendado:** descarga el paquete adecuado desde [GitHub Releases de QuotaPilot 0.6.0](https://github.com/csecurh/quota-pilot/releases/tag/v0.6.0-rc.3). Hay versiones Windows x64, Linux x64 y macOS Intel/Apple Silicon, con Node.js y avisos de licencia incluidos. Extrae el archivo y registra la carpeta como **plugin o marketplace local** en un host compatible. **No necesitas instalar Node ni npm.** [Guía completa en español](docs/es/PORTABLE.md) · [English](docs/PORTABLE.md).
 
 El runtime integrado **no** incluye Codex autenticado: las cuotas de Codex dependen de la aplicación original. ChatGPT Desktop debe ser compatible con MCP Apps locales. El ZIP no publica el plugin en el directorio universal ni garantiza PiP global.
 

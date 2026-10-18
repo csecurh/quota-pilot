@@ -40,7 +40,7 @@ El repositorio es público, pero la instalación y ejecución deben comprobarse 
 
 | SO | Host y versión | Versión del plugin | Instalación | Interfaz correcta | Métricas | Actualización/desinstalación | Resultado |
 |---|---|---|---|---|---|---|---|
-| Solo ejemplo | Claude Code (versión anonimizada) | 0.6.0-rc.2 | Sí | Sí | Sintéticas | Sí | OK |
+| Solo ejemplo | Claude Code (versión anonimizada) | 0.6.0-rc.3 | Sí | Sí | Sintéticas | Sí | OK |
 
 Solo se deben compartir estados anonimizados o capturas con información privada censurada.
 

@@ -2,7 +2,7 @@
 
 **Idioma: [Español](SUPPORT.es.md) · [English](SUPPORT.md)**
 
-QuotaPilot es público y está licenciado bajo MIT. La versión **0.6.0-rc.2** es candidata y las integraciones con los hosts siguen en validación real.
+QuotaPilot es público y está licenciado bajo MIT. La versión **0.6.0-rc.3** es candidata y las integraciones con los hosts siguen en validación real.
 
 - Instalación, actualización, eliminación y limitaciones: [guía en español](docs/es/INSTALL.md).
 - Para diagnosticar sin compartir rutas privadas ni configuración: ejecuta `npm run doctor`.
