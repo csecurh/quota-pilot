@@ -1,7 +1,12 @@
+import { readFile } from 'node:fs/promises';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { burnRate, deadHours, risk, runwayHours } from './domain/analytics.mjs';
 import { readCodexUsage } from './providers/codex.mjs';
 import { readClaudeUsage } from './providers/claude.mjs';
 
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const HUD_URI = 'ui://quotapilot/live.html';
 const history = new Map([['codex', []], ['claude_code', []]]);
 
 function remember(usage) {
@@ -56,7 +61,26 @@ async function getOverview() {
   };
 }
 
+const hudMeta = {
+  ui: { resourceUri: HUD_URI },
+  'openai/outputTemplate': HUD_URI,
+  'openai/toolInvocation/invoking': 'Opening QuotaPilot HUD',
+  'openai/toolInvocation/invoked': 'QuotaPilot HUD active',
+};
+
 const tools = [
+  {
+    name: 'open_hud',
+    title: 'Open QuotaPilot HUD',
+    description: 'Open the live QuotaPilot usage HUD. In ChatGPT the component requests picture-in-picture so it can remain visible while the conversation continues.',
+    inputSchema: {
+      type: 'object',
+      properties: {},
+      additionalProperties: false,
+    },
+    annotations: { readOnlyHint: true, openWorldHint: false },
+    _meta: hudMeta,
+  },
   {
     name: 'get_usage',
     title: 'Get AI usage',
@@ -74,13 +98,14 @@ const tools = [
   {
     name: 'get_overview',
     title: 'Get quota overview',
-    description: 'Compare local Codex and Claude Code usage and return the most constrained provider.',
+    description: 'Compare local Codex and Claude Code usage and return remaining, used, reset windows and derived pacing estimates.',
     inputSchema: {
       type: 'object',
       properties: {},
       additionalProperties: false,
     },
     annotations: { readOnlyHint: true, openWorldHint: false },
+    _meta: hudMeta,
   },
 ];
 
@@ -96,15 +121,60 @@ function fail(id, code, message) {
   send({ jsonrpc: '2.0', id, error: { code, message } });
 }
 
+async function hudResource() {
+  const html = await readFile(resolve(ROOT, 'ui/quota-widget.html'), 'utf8');
+  return {
+    uri: HUD_URI,
+    mimeType: 'text/html;profile=mcp-app',
+    text: html,
+    _meta: {
+      ui: { prefersBorder: true },
+      'openai/widgetDescription': 'Live local quota HUD for Codex and Claude Code.',
+      'openai/ui': {
+        availableDisplayModes: ['inline', 'pip', 'fullscreen'],
+      },
+    },
+  };
+}
+
+async function toolResult(name, args) {
+  if (name === 'get_usage') {
+    const data = await readProvider(args.provider);
+    return {
+      content: [{ type: 'text', text: JSON.stringify(data, null, 2) }],
+      structuredContent: { usage: data },
+      isError: false,
+    };
+  }
+
+  if (name === 'get_overview' || name === 'open_hud') {
+    const data = await getOverview();
+    return {
+      content: [{ type: 'text', text: JSON.stringify(data, null, 2) }],
+      structuredContent: { overview: data },
+      isError: false,
+      _meta: {
+        ui: { resourceUri: HUD_URI },
+        'openai/outputTemplate': HUD_URI,
+      },
+    };
+  }
+
+  throw new Error(`Unknown tool: ${name}`);
+}
+
 async function handle(message) {
   if (!message || message.jsonrpc !== '2.0') return;
 
   if (message.method === 'initialize') {
     ok(message.id, {
       protocolVersion: message.params?.protocolVersion ?? '2025-06-18',
-      capabilities: { tools: { listChanged: false } },
-      serverInfo: { name: 'quota-pilot', version: '0.1.0' },
-      instructions: 'Use QuotaPilot to inspect local Codex and Claude Code quota, reset windows, burn rate, runway and predicted dead time. Never invent unavailable quota data.',
+      capabilities: {
+        tools: { listChanged: false },
+        resources: { subscribe: false, listChanged: false },
+      },
+      serverInfo: { name: 'quota-pilot', version: '0.2.0' },
+      instructions: 'QuotaPilot is a local usage HUD. Prefer open_hud for users who want persistent visual status. Never invent unavailable quota data.',
     });
     return;
   }
@@ -121,23 +191,31 @@ async function handle(message) {
     return;
   }
 
+  if (message.method === 'resources/list') {
+    ok(message.id, {
+      resources: [{
+        uri: HUD_URI,
+        name: 'QuotaPilot live HUD',
+        title: 'QuotaPilot',
+        description: 'Live quota HUD with remaining, used and reset countdowns.',
+        mimeType: 'text/html;profile=mcp-app',
+      }],
+    });
+    return;
+  }
+
+  if (message.method === 'resources/read') {
+    if (message.params?.uri !== HUD_URI) {
+      fail(message.id, -32002, 'Resource not found');
+      return;
+    }
+    ok(message.id, { contents: [await hudResource()] });
+    return;
+  }
+
   if (message.method === 'tools/call') {
     try {
-      const name = message.params?.name;
-      const args = message.params?.arguments ?? {};
-      let data;
-      if (name === 'get_usage') data = await readProvider(args.provider);
-      else if (name === 'get_overview') data = await getOverview();
-      else {
-        fail(message.id, -32601, `Unknown tool: ${name}`);
-        return;
-      }
-
-      ok(message.id, {
-        content: [{ type: 'text', text: JSON.stringify(data, null, 2) }],
-        structuredContent: name === 'get_usage' ? { usage: data } : { overview: data },
-        isError: false,
-      });
+      ok(message.id, await toolResult(message.params?.name, message.params?.arguments ?? {}));
     } catch (error) {
       ok(message.id, {
         content: [{ type: 'text', text: error instanceof Error ? error.message : String(error) }],
