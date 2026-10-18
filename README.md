@@ -76,3 +76,16 @@ No branding setup is required after installing from GitHub.
 - Unknown host → visible fallback: `AI Usage`
 
 The technical IDs `quota-pilot`, `ui://quotapilot/live.html`, and `~/.quotapilot/` remain stable on purpose so upgrades do not break installed configurations.
+
+
+## Security posture (v0.4.0)
+
+The default runtime is dependency-free and local-only. It has no HTTP client or telemetry path, the widget CSP allows no external connections/resources, MCP tools are read-only, provider errors are redacted, inputs are bounded/validated, and local snapshots/config writes use private atomic filesystem operations.
+
+Run the complete local gate with:
+
+```bash
+npm run check
+```
+
+See `SECURITY.md` and `docs/SECURITY-AUDIT-2026-10-17.md` for threat model, findings, controls and residual risks.

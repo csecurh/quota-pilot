@@ -1,7 +1,7 @@
 {
   "name": "quota-pilot",
-  "version": "0.3.0",
-  "description": "Host-aware local usage HUD for Codex.",
+  "version": "0.4.0",
+  "description": "Security-hardened local usage HUD for Codex.",
   "skills": "./skills/",
   "mcpServers": "./mcp.json",
   "extensions": {

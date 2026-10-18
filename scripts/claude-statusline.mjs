@@ -1,75 +1,92 @@
 #!/usr/bin/env node
-import { mkdir, rename, writeFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
+import { atomicWritePrivate } from './secure-fs.mjs';
 
+const MAX_INPUT_BYTES = 256 * 1024;
 let raw = '';
+let oversized = false;
+
 process.stdin.setEncoding('utf8');
-process.stdin.on('data', (chunk) => { raw += chunk; });
+process.stdin.on('data', (chunk) => {
+  if (oversized) return;
+  raw += chunk;
+  if (Buffer.byteLength(raw, 'utf8') > MAX_INPUT_BYTES) {
+    oversized = true;
+    raw = '';
+  }
+});
+
+function percent(value) {
+  const number = Number(value);
+  return Number.isFinite(number) ? Math.max(0, Math.min(100, number)) : null;
+}
+
+function resetIso(value) {
+  const ms = typeof value === 'number'
+    ? (value > 10_000_000_000 ? value : value * 1000)
+    : (typeof value === 'string' && value.length <= 64 ? Date.parse(value) : NaN);
+  if (!Number.isFinite(ms) || ms < Date.now() - 86_400_000 || ms > Date.now() + 31 * 86_400_000) return null;
+  return new Date(ms).toISOString();
+}
+
+function normalizeWindow(value, duration) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
+  const usedPercent = percent(value.used_percentage ?? value.usedPercent);
+  return {
+    usedPercent,
+    remainingPercent: usedPercent == null ? null : Math.max(0, 100 - usedPercent),
+    windowDurationMins: duration,
+    resetsAt: resetIso(value.resets_at ?? value.resetsAt),
+  };
+}
+
+function countdown(window) {
+  if (!window?.resetsAt) return '—';
+  let mins = Math.max(0, Math.floor((Date.parse(window.resetsAt) - Date.now()) / 60000));
+  const days = Math.floor(mins / 1440); mins %= 1440;
+  const hours = Math.floor(mins / 60); mins %= 60;
+  return days > 0 ? days + 'd' + hours + 'h' : hours > 0 ? hours + 'h' + mins + 'm' : mins + 'm';
+}
+
 process.stdin.on('end', async () => {
+  if (oversized) {
+    process.stdout.write('Claude Code · métricas no disponibles');
+    return;
+  }
+
   try {
     const input = raw ? JSON.parse(raw) : {};
     const rate = input.rate_limits ?? input.rateLimits ?? {};
-    const five = rate.five_hour ?? rate.fiveHour ?? null;
-    const week = rate.seven_day ?? rate.sevenDay ?? null;
-    const normalizeWindow = (value, duration) => {
-      if (!value) return null;
-      const used = Number(value.used_percentage ?? value.usedPercent);
-      const resetRaw = value.resets_at ?? value.resetsAt ?? null;
-      const resetMs = typeof resetRaw === 'number' ? (resetRaw > 10000000000 ? resetRaw : resetRaw * 1000) : Date.parse(resetRaw ?? '');
-      return {
-        usedPercent: Number.isFinite(used) ? Math.max(0, Math.min(100, used)) : null,
-        remainingPercent: Number.isFinite(used) ? Math.max(0, 100 - used) : null,
-        windowDurationMins: duration,
-        resetsAt: Number.isFinite(resetMs) ? new Date(resetMs).toISOString() : null,
-      };
-    };
-    const primary = normalizeWindow(five, 300);
-    const secondary = normalizeWindow(week, 10080);
+    const primary = normalizeWindow(rate.five_hour ?? rate.fiveHour, 300);
+    const secondary = normalizeWindow(rate.seven_day ?? rate.sevenDay, 10080);
     const ctx = input.context_window ?? input.contextWindow ?? {};
-    const ctxUsed = Number(ctx.used_percentage ?? ctx.usedPercent);
-    const ctxRemain = Number(ctx.remaining_percentage ?? ctx.remainingPercent);
-    const model = input.model ?? {};
-    const cache = input.prompt_cache ?? input.promptCache ?? {};
-    const payload = {
+    const contextUsed = percent(ctx.used_percentage ?? ctx.usedPercent);
+    const contextRemaining = percent(ctx.remaining_percentage ?? ctx.remainingPercent);
+
+    const snapshot = {
+      schemaVersion: 2,
       provider: 'claude_code',
-      sourceType: 'measured',
       capturedAt: new Date().toISOString(),
       payload: {
-        modelId: model.id ?? null,
-        modelName: model.display_name ?? model.displayName ?? null,
         primary,
         secondary,
         context: {
-          usedPercent: Number.isFinite(ctxUsed) ? ctxUsed : null,
-          remainingPercent: Number.isFinite(ctxRemain) ? ctxRemain : null,
-          windowTokens: ctx.context_window_size ?? ctx.contextWindowSize ?? null,
+          usedPercent: contextUsed,
+          remainingPercent: contextRemaining,
         },
-        promptCache: {
-          warm: typeof cache.warm === 'boolean' ? cache.warm : null,
-          hitRatio: Number.isFinite(Number(cache.hit_ratio ?? cache.hitRatio)) ? Number(cache.hit_ratio ?? cache.hitRatio) : null,
-        },
-        sessionCostUsdEstimate: Number.isFinite(Number(input.cost?.total_cost_usd)) ? Number(input.cost.total_cost_usd) : null,
       },
     };
 
-    const dir = join(homedir(), '.quotapilot');
-    const target = join(dir, 'claude-latest.json');
-    const temp = target + '.tmp';
-    await mkdir(dir, { recursive: true });
-    await writeFile(temp, JSON.stringify(payload), { mode: 0o600 });
-    await rename(temp, target);
+    await atomicWritePrivate(join(homedir(), '.quotapilot', 'claude-latest.json'), JSON.stringify(snapshot));
 
-    const countdown = (window) => {
-      if (!window?.resetsAt) return '—';
-      let mins = Math.max(0, Math.floor((Date.parse(window.resetsAt) - Date.now()) / 60000));
-      const days = Math.floor(mins / 1440); mins %= 1440;
-      const hours = Math.floor(mins / 60); mins %= 60;
-      return days > 0 ? days + 'd' + hours + 'h' : hours > 0 ? hours + 'h' + mins + 'm' : mins + 'm';
-    };
-    const fmt = (label, window) => !window ? null : label + ' usado:' + (window.usedPercent == null ? '—' : Math.round(window.usedPercent) + '%') + ' rest:' + (window.remainingPercent == null ? '—' : Math.round(window.remainingPercent) + '%') + ' reset:' + countdown(window);
+    const fmt = (label, window) => !window ? null
+      : label + ' usado:' + (window.usedPercent == null ? '—' : Math.round(window.usedPercent) + '%')
+      + ' rest:' + (window.remainingPercent == null ? '—' : Math.round(window.remainingPercent) + '%')
+      + ' reset:' + countdown(window);
+
     const parts = ['Claude Code', fmt('5h', primary), fmt('7d', secondary)].filter(Boolean);
-    if (Number.isFinite(ctxRemain)) parts.push('ctx:' + Math.round(ctxRemain) + '%');
+    if (contextRemaining != null) parts.push('ctx:' + Math.round(contextRemaining) + '%');
     process.stdout.write(parts.join(' · '));
   } catch {
     process.stdout.write('Claude Code · esperando métricas');

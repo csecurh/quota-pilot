@@ -6,3 +6,9 @@ node_modules/
 *.log
 coverage/
 dist/
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+.quotapilot/

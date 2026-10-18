@@ -1,37 +1,34 @@
 #!/usr/bin/env node
-import { copyFile, mkdir, readFile, writeFile } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
-import { dirname, join, resolve } from 'node:path';
+import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { atomicWritePrivate, ensurePrivateDir, readSafeText } from './secure-fs.mjs';
 
-const here = dirname(fileURLToPath(import.meta.url));
+const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const runtimeDir = join(homedir(), '.quotapilot');
 const runtime = join(runtimeDir, 'claude-statusline.mjs');
 const settingsPath = join(homedir(), '.claude', 'settings.json');
-const backupPath = join(homedir(), '.claude', 'settings.quotapilot-backup.json');
 const command = 'node "' + runtime.replaceAll('"', '\\"') + '"';
 
-async function readSettings() {
-  try { return JSON.parse(await readFile(settingsPath, 'utf8')); }
-  catch (e) {
-    if (e?.code === 'ENOENT') return {};
-    throw e;
-  }
+await ensurePrivateDir(runtimeDir);
+const runtimeSource = await readFile(join(root, 'scripts', 'claude-statusline.mjs'), 'utf8');
+await atomicWritePrivate(runtime, runtimeSource);
+
+let settings = {};
+const raw = await readSafeText(settingsPath, { maxBytes: 512 * 1024, allowMissing: true });
+if (raw) {
+  try { settings = JSON.parse(raw); }
+  catch { throw new Error('Claude settings are not valid JSON'); }
 }
+if (!settings || typeof settings !== 'object' || Array.isArray(settings)) throw new Error('Claude settings are invalid');
 
-await mkdir(runtimeDir, { recursive: true });
-await mkdir(dirname(settingsPath), { recursive: true });
-await copyFile(resolve(here, 'claude-statusline.mjs'), runtime);
-
-const settings = await readSettings();
 const current = settings.statusLine;
-
 if (current?.command && current.command !== command) {
   process.stdout.write(JSON.stringify({ ok: true, changed: false, reason: 'custom-statusline-present' }));
   process.exit(0);
 }
 
-try { await copyFile(settingsPath, backupPath); } catch {}
 settings.statusLine = { type: 'command', command, refreshInterval: 30, padding: 1 };
-await writeFile(settingsPath, JSON.stringify(settings, null, 2) + '\n', { mode: 0o600 });
-process.stdout.write(JSON.stringify({ ok: true, changed: true, surface: 'claude-statusline' }));
+await atomicWritePrivate(settingsPath, JSON.stringify(settings, null, 2) + '\n');
+process.stdout.write(JSON.stringify({ ok: true, changed: true, host: 'Claude Code', surface: 'claude-statusline' }));

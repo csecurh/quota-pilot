@@ -1,20 +1,11 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "quota-pilot",
-  "version": "0.3.0",
-  "description": "Host-aware local usage HUD for ChatGPT, Codex and Claude Code: used quota, remaining quota, reset windows and pacing intelligence.",
-  "author": {
-    "name": "Cibersecurity-H"
-  },
+  "version": "0.4.0",
+  "description": "Security-hardened host-aware local usage HUD for ChatGPT, Codex and Claude Code.",
+  "author": { "name": "Cibersecurity-H" },
   "repository": "https://github.com/csecurh/quota-pilot",
-  "keywords": [
-    "codex",
-    "claude-code",
-    "usage",
-    "quota",
-    "mcp",
-    "local-first"
-  ],
+  "keywords": ["codex","claude-code","usage","quota","mcp","local-first","privacy"],
   "extensions": {
     "com.openai": {
       "requires_local_executor": true,
@@ -22,13 +13,11 @@
       "onboardingSkill": "./skills/setup/SKILL.md",
       "interface": {
         "displayName": "AI Usage",
-        "shortDescription": "El HUD toma el nombre del sistema donde se ejecuta.",
-        "longDescription": "HUD local-first que se presenta como ChatGPT, Codex o Claude Code según el host, mostrando cuota usada/restante, reset, burn rate y runway.",
+        "shortDescription": "HUD local de cuota, sin telemetría ni backend propio.",
+        "longDescription": "HUD local-first que se presenta como ChatGPT, Codex o Claude Code y muestra cuota usada/restante, reset y estimaciones sin enviar métricas fuera del dispositivo.",
         "developerName": "Cibersecurity-H",
         "category": "Productivity",
-        "capabilities": [
-          "Read"
-        ],
+        "capabilities": ["Read"],
         "defaultPrompt": [
           "Abre el HUD y mantén visible mi cuota.",
           "Muéstrame cuánto uso me queda y cuándo resetea."

@@ -7,16 +7,35 @@ const here = dirname(fileURLToPath(import.meta.url));
 
 function run(name) {
   return new Promise((resolvePromise) => {
-    const child = spawn(process.execPath, [resolve(here, name)], { stdio: ['ignore', 'pipe', 'pipe'], env: process.env });
-    let out = '';
-    child.stdout.on('data', (d) => { out += String(d); });
-    child.once('error', () => resolvePromise(''));
-    child.once('exit', () => resolvePromise(out.trim()));
+    const child = spawn(process.execPath, [resolve(here, name)], {
+      stdio: ['ignore', 'pipe', 'ignore'],
+      env: process.env,
+      shell: false,
+      windowsHide: true,
+    });
+    let output = '';
+    const timer = setTimeout(() => {
+      try { child.kill(); } catch {}
+      resolvePromise('');
+    }, 5000);
+    timer.unref?.();
+
+    child.stdout.on('data', (data) => {
+      if (output.length < 4096) output += String(data).slice(0, 4096 - output.length);
+    });
+    child.once('error', () => {
+      clearTimeout(timer);
+      resolvePromise('');
+    });
+    child.once('exit', () => {
+      clearTimeout(timer);
+      resolvePromise(output.trim());
+    });
   });
 }
 
 let result = '';
-if (process.env.PLUGIN_ROOT) result = await run('install-codex-hud.mjs');
-else if (process.env.CLAUDE_PLUGIN_ROOT) result = await run('install-claude-hud.mjs');
+if (process.env.CLAUDE_PLUGIN_ROOT) result = await run('install-claude-hud.mjs');
+else if (process.env.PLUGIN_ROOT) result = await run('install-codex-hud.mjs');
 
 if (result) process.stdout.write(result);

@@ -1,67 +1,103 @@
 import { spawn } from 'node:child_process';
-import { remainingFromUsed } from '../domain/analytics.mjs';
+import { MAX_PROVIDER_LINE_BYTES, safeWindow } from '../security.mjs';
 
-export async function readCodexUsage({ bin = process.env.CODEX_BIN || 'codex', timeoutMs = 12000 } = {}) {
-  const child = spawn(bin, ['app-server', '--listen', 'stdio://'], { stdio: ['pipe', 'pipe', 'pipe'], shell: false });
+function rejectAll(pending, message) {
+  const error = new Error(message);
+  for (const waiter of pending.values()) waiter.reject(error);
+  pending.clear();
+}
+
+export async function readCodexUsage({ bin = 'codex', timeoutMs = 12_000 } = {}) {
+  if (typeof bin !== 'string' || !bin || bin.length > 512) throw new Error('Codex executable unavailable');
+
+  const child = spawn(bin, ['app-server', '--listen', 'stdio://'], {
+    stdio: ['pipe', 'pipe', 'ignore'],
+    shell: false,
+    windowsHide: true,
+  });
+
   let buffer = '';
   let seq = 1;
-  let stderr = '';
+  let failed = false;
   const pending = new Map();
 
-  child.stderr.on('data', (d) => { stderr += String(d); });
+  const abort = (message) => {
+    if (failed) return;
+    failed = true;
+    rejectAll(pending, message);
+    try { child.kill(); } catch {}
+  };
+
+  child.once('error', () => abort('Codex executable unavailable'));
+  child.once('exit', (code) => {
+    if (code !== 0 && pending.size) abort('Codex app-server exited unexpectedly');
+  });
+
   child.stdout.on('data', (chunk) => {
+    if (failed) return;
     buffer += String(chunk);
+    if (Buffer.byteLength(buffer, 'utf8') > MAX_PROVIDER_LINE_BYTES) {
+      abort('Codex response exceeded safety limit');
+      return;
+    }
+
     while (true) {
       const idx = buffer.indexOf('\n');
       if (idx < 0) break;
       const line = buffer.slice(0, idx).trim();
       buffer = buffer.slice(idx + 1);
       if (!line) continue;
+      if (Buffer.byteLength(line, 'utf8') > MAX_PROVIDER_LINE_BYTES) {
+        abort('Codex response exceeded safety limit');
+        return;
+      }
+
       let msg;
       try { msg = JSON.parse(line); } catch { continue; }
-      if (msg.id != null && pending.has(msg.id)) {
-        const p = pending.get(msg.id);
+      if (msg?.id != null && pending.has(msg.id)) {
+        const waiter = pending.get(msg.id);
         pending.delete(msg.id);
-        msg.error ? p.reject(new Error(JSON.stringify(msg.error))) : p.resolve(msg.result);
+        msg.error ? waiter.reject(new Error('Codex app-server request failed')) : waiter.resolve(msg.result);
       }
     }
   });
 
   const send = (method, params) => new Promise((resolve, reject) => {
+    if (failed || child.killed || !child.stdin.writable) {
+      reject(new Error('Codex app-server unavailable'));
+      return;
+    }
+    if (pending.size >= 8) {
+      reject(new Error('Codex request limit reached'));
+      return;
+    }
     const id = seq++;
     pending.set(id, { resolve, reject });
     child.stdin.write(JSON.stringify({ id, method, ...(params === undefined ? {} : { params }) }) + '\n');
   });
 
-  const timer = setTimeout(() => {
-    for (const p of pending.values()) p.reject(new Error(`Codex timeout: ${stderr.slice(-300)}`));
-    pending.clear();
-    child.kill();
-  }, timeoutMs);
+  const timer = setTimeout(() => abort('Codex request timed out'), Math.max(1000, Math.min(30_000, timeoutMs)));
+  timer.unref?.();
 
   try {
     await send('initialize', {
-      clientInfo: { name: 'quota-pilot', title: 'QuotaPilot', version: '0.1.0' },
-      capabilities: { experimentalApi: true }
+      clientInfo: { name: 'quota-pilot', title: 'AI Usage', version: '0.4.0' },
+      capabilities: { experimentalApi: true },
     });
     child.stdin.write(JSON.stringify({ method: 'initialized', params: {} }) + '\n');
+
     const result = await send('account/rateLimits/read', { excludeResetCreditDetails: true });
-    const r = result?.rateLimits ?? result?.rate_limits ?? {};
-    const mapWindow = (w) => w ? {
-      usedPercent: w.usedPercent ?? w.used_percent ?? null,
-      remainingPercent: remainingFromUsed(w.usedPercent ?? w.used_percent),
-      resetsAt: w.resetsAt ?? null,
-      windowDurationMins: w.windowDurationMins ?? w.window_minutes ?? null
-    } : null;
+    const rateLimits = result?.rateLimits ?? result?.rate_limits ?? {};
+
     return {
       provider: 'codex',
       capturedAt: new Date().toISOString(),
-      planType: r.planType ?? r.plan_type ?? null,
-      primary: mapWindow(r.primary),
-      secondary: mapWindow(r.secondary)
+      primary: safeWindow(rateLimits.primary, 300),
+      secondary: safeWindow(rateLimits.secondary, 10080),
     };
   } finally {
     clearTimeout(timer);
+    rejectAll(pending, 'Codex request closed');
     try { child.kill(); } catch {}
   }
 }
