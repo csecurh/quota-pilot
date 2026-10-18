@@ -1,0 +1,16 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "quota-pilot",
+  "version": "0.1.0",
+  "description": "Local-first usage intelligence for Codex and Claude Code: quota, reset windows, burn rate, runway, idle time and recommendations.",
+  "author": {
+    "name": "Cibersecurity-H"
+  },
+  "repository": "https://github.com/csecurh/quota-pilot",
+  "keywords": ["codex", "claude-code", "usage", "quota", "mcp", "local-first"],
+  "extensions": {
+    "com.openai": {
+      "requires_local_executor": true
+    }
+  }
+}
