@@ -54,7 +54,7 @@ The portable MCP manifest starts the bundled `runtime/node[.exe]` directly using
 - **Codex metrics:** require an already installed and authenticated Codex executable accessible to the host; shipping Node with QuotaPilot does not ship the proprietary Codex CLI.
 - **Claude metrics:** require the locally installed Claude Code host to provide status-line quota fields; missing fields remain unavailable.
 - The PiP window is conversation-scoped when supported, **not** a guaranteed desktop-wide overlay.
-- **GitHub source marketplace installs remain developer-oriented** and currently reference `node`. Use the portable package if you do not want to install Node on your computer. A release archive is not automatically installed just because a GitHub repository is public.
+- The **GitHub source marketplace on Windows x64** directly carries `runtime/node.exe` and launches it via `./runtime/node.exe`. macOS/Linux source-marketplace users need their platform-specific portable package. A release archive is not automatically installed merely because a repository is public.
 
 ## Technical verification and release status
 

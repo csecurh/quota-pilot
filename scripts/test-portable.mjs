@@ -51,7 +51,7 @@ try {
   const info=JSON.parse(await readFile(join(stage,'PORTABLE-BUILD.json'),'utf8'));
   assert.equal(info.platform,process.platform);
   assert.equal(info.arch,process.arch);
-  assert.match(manifest.mcpServers['quota-pilot'].command,/\/runtime\/node(?:\.exe)?$/);
+  assert.equal(manifest.mcpServers['quota-pilot'].command,'./runtime/'+(process.platform==='win32'?'node.exe':'node'));
   assert.match(claude.mcpServers['quota-pilot'].command,/\/runtime\/node(?:\.exe)?$/);
   assert.match(hooks.hooks.SessionStart[0].hooks[0].command,/\/ensure-surfaces\.mjs" codex$/);
   assert.equal(market.plugins[0].source,'./');

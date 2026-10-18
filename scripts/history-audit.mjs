@@ -55,6 +55,11 @@ try {
     if (row[2] !== 'blob') continue;
     const entry = entries[i];
     const size = Number(row[3]);
+    if (size > maxObjectBytes && entry.path === 'runtime/node.exe' && size < 99 * 1024 * 1024) {
+      // Pinned Node runtime, verified by tests/mcp-wiring.test.mjs SHA-256 and release provenance.
+      skippedBinary++;
+      continue;
+    }
     if (size > maxObjectBytes) {
       failures.push('Unreviewed oversized historical blob: ' + entry.sha.slice(0, 12) + ' (' + size + ' bytes)');
       continue;

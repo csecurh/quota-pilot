@@ -4,6 +4,13 @@
 
 This project uses SemVer for plugin/runtime metadata. Release candidates are not public releases and may change before general availability.
 
+## Git source runtime vendoring (2026-10-18)
+
+- Windows x64 Git marketplace now launches `./runtime/node.exe` included in the repository; no external Node/npm or runtime download on launch.
+- Pin runtime provenance to immutable 0.6.0-rc.3 release SHA-256, check the Node license and exact binary hash on CI, and explicitly allow just this oversized binary in history scans.
+- Correct portable-package MCP commands to plugin-relative paths required by Agent Plugins 1.0.0.
+- Other platforms continue to use their own OS-specific builds; Desktop host support must be tested separately.
+
 ## 0.6.0-rc.3 — Read-only ChatGPT onboarding and explicit host gates
 
 - ChatGPT's default onboarding skill now verifies already connected read-only MCP tools instead of invoking native Codex/Claude installers or requesting combined network/filesystem permissions.

@@ -1,0 +1,65 @@
+name: Vendor verified Windows runtime (one-time source marketplace packaging)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/vendor-windows-runtime.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  vendor:
+    if: github.repository == 'csecurh/quota-pilot' && github.ref == 'refs/heads/main'
+    runs-on: windows-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout exact main HEAD
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 1
+          persist-credentials: true
+      - name: Download hash-pinned public 0.6.0-rc.3 runtime
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $sha256 = '710cbf8211bb094e49be635c8d2774f231f79a141b4ae36ea1dc5ebb5924ec1e'
+          $source = 'https://github.com/csecurh/quota-pilot/releases/download/v0.6.0-rc.3/quota-pilot-win32-x64.zip'
+          $temp = Join-Path $env:RUNNER_TEMP 'verified-windows-runtime.zip'
+          Invoke-WebRequest -Uri $source -OutFile $temp -TimeoutSec 180 -MaximumRedirection 5
+          if ((Get-FileHash -LiteralPath $temp -Algorithm SHA256).Hash.ToLowerInvariant() -ne $sha256) { throw 'Immutable asset SHA-256 mismatch' }
+          $extract = Join-Path $env:RUNNER_TEMP 'quota-pilot-verified-runtime'
+          Expand-Archive -LiteralPath $temp -DestinationPath $extract
+          $src = Join-Path $extract 'quota-pilot-win32-x64/runtime'
+          New-Item -ItemType Directory -Force -Path 'runtime' | Out-Null
+          Copy-Item -LiteralPath (Join-Path $src 'node.exe') -Destination 'runtime/node.exe'
+          Copy-Item -LiteralPath (Join-Path $src 'NODE-LICENSE') -Destination 'runtime/NODE-LICENSE'
+          $bytes = (Get-Item -LiteralPath 'runtime/node.exe').Length
+          if ($bytes -lt 10000000 -or $bytes -gt 99000000) { throw "Unexpected binary size: $bytes" }
+          $version = (& .\runtime\node.exe --version).Trim()
+          if ($version -notmatch '^v24\.') { throw "Unexpected Node version" }
+          $digest = (Get-FileHash -LiteralPath 'runtime/node.exe' -Algorithm SHA256).Hash.ToLowerInvariant()
+          $provenance = [ordered]@{
+            origin = $source
+            archiveSha256 = $sha256
+            binarySha256 = $digest
+            nodeVersion = $version
+            sizeBytes = $bytes
+            license = 'runtime/NODE-LICENSE'
+          } | ConvertTo-Json -Depth 3
+          [IO.File]::WriteAllText((Join-Path (Get-Location) 'runtime/NODE-PROVENANCE.json'), $provenance+"\n", (New-Object System.Text.UTF8Encoding($false)))
+          Write-Output "Verified portable Windows runtime $version, size $bytes"
+      - name: Publish bundled Windows runtime directly to Git main
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- runtime/node.exe runtime/NODE-LICENSE runtime/NODE-PROVENANCE.json
+          git commit -m 'build: include verified Windows runtime for source marketplace'
+          if ($LASTEXITCODE -ne 0) { throw 'Git commit failed' }
+          git push origin HEAD:main
+          if ($LASTEXITCODE -ne 0) { throw 'Git push failed; main may have advanced or branch protection is active' }

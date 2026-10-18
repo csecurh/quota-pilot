@@ -19,6 +19,12 @@ The HUD provides provider-reported **used**, **remaining** and **reset time**, p
 
 **ChatGPT Desktop permissions:** decline broad requests to install the Codex footer or write into `.quotapilot` from a ChatGPT Work session. The official ChatGPT plugin manager may itself save enable/disable preferences in `~/.codex/config.toml`; that is separate from a script editing the native Codex footer. [Host-specific guidance](docs/AGENT-INSTALL.md).
 
+## Windows Git marketplace: bundled runtime, no Node installation
+
+The **Windows x64 GitHub marketplace now carries its own Node.js runtime** at `runtime/node.exe` (directly checked into the repository, under official Node licensing). The root `mcp.json` starts `./runtime/node.exe` rather than a system `node` command. **No ZIP download, PowerShell command or Node/npm install is required of the user** when a compatible **local** host installs the complete repository. The plugin server never downloads its runtime on startup. Confirm `runtime/NODE-PROVENANCE.json` before installing. This increases repository size.
+
+**macOS/Linux:** use the platform-specific prepackaged marketplace/release; this Windows source manifest is not a universal launcher. If ChatGPT is running in a cloud session or does not execute local stdio MCP, even the bundled executable cannot open the HUD.
+
 ## Install without a setup loop
 
 **ChatGPT Desktop:** open the official **Plugins** browser, install/enable **AI Usage → quota-pilot** from a compatible local marketplace, and try `open_hud`. **Do not ask a ChatGPT Work agent to run a Codex installer.** The plugin requires a local stdio MCP executor; a GitHub link alone does not provide it, and the local ChatGPT feature remains unverified on some builds. An existing ChatGPT plugin manager may store enable/disable preferences in `~/.codex/config.toml`, but QuotaPilot's ChatGPT setup must never configure the Codex CLI footer or create `.quotapilot` itself.
@@ -31,7 +37,7 @@ The HUD provides provider-reported **used**, **remaining** and **reset time**, p
 
 The bundled runtime **does not** provide a Codex account or authenticated Codex executable: Codex quota data still requires the original Codex application. ChatGPT Desktop requires local MCP Apps support. Installing this ZIP does not put the plugin in the universal directory or guarantee global PiP.
 
-## Install from source (Node.js required)
+## Developer source commands (Node.js required for development or non-Windows checkout)
 
 **Source installation requirements only:** Node.js **22.13+**, Git, and the relevant host installed. Codex/Claude quota data requires a provider already authenticated through its own application. **No npm install, QuotaPilot account or API key is required.** Review any host's local hook/trust prompt before authorizing changes.
 

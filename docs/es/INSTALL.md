@@ -4,6 +4,10 @@
 
 QuotaPilot está disponible públicamente como código fuente [MIT](../../LICENSE). **No significa que esté publicado en el directorio universal de plugins de ChatGPT.** Las pruebas automáticas no sustituyen las pruebas en clientes reales.
 
+## Instalación directa por Git en Windows x64
+
+En un host local compatible puedes instalar **csecurh/quota-pilot directamente desde el marketplace GitHub**, sin instalar Node.js. El repositorio incluye `runtime/node.exe`; `mcp.json` ejecuta `./runtime/node.exe`. No necesitas PowerShell, ZIP ni descarga automática al iniciar MCP. Comprueba el origen y SHA-256 en `runtime/NODE-PROVENANCE.json`. Solo Windows x64; macOS/Linux requieren el paquete específico.
+
 ## Primero identifica el host
 
 **ChatGPT Desktop / Work:** usa **Plugins** para activar QuotaPilot si ya aparece en un marketplace local compatible. Prueba `open_hud` y `get_overview`. La skill inicial de ChatGPT **no descarga nada ni configura el footer de Codex**. Si no existe un ejecutor MCP local, detente: repetir un instalador bloqueado no lo soluciona. El gestor oficial puede guardar preferencias en `~/.codex/config.toml`, distinto de editar manualmente la barra de Codex.

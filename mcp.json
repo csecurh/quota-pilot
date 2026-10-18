@@ -3,8 +3,10 @@
   "mcpServers": {
     "quota-pilot": {
       "type": "stdio",
-      "command": "node",
-      "args": ["${PLUGIN_ROOT}/server/index.mjs"],
+      "command": "./runtime/node.exe",
+      "args": [
+        "${PLUGIN_ROOT}/server/index.mjs"
+      ],
       "cwd": "${PLUGIN_ROOT}"
     }
   }

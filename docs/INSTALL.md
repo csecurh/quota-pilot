@@ -4,6 +4,10 @@
 
 QuotaPilot is published as source under [MIT](../LICENSE). **The GitHub repository is public; the plugin has not been admitted to the universal ChatGPT/Codex directory.** Automated CI does not replace real host tests.
 
+## Direct Windows x64 Git install
+
+A compatible local ChatGPT Desktop / Codex client can now install **csecurh/quota-pilot directly from the Git marketplace** without a separate Node installation. The repository itself includes `runtime/node.exe`; `mcp.json` launches `./runtime/node.exe`. No PowerShell install, ZIP download or automatic runtime download is part of MCP startup. Check `runtime/NODE-PROVENANCE.json` to confirm its signed-off source and digest. This is Windows x64 only; macOS/Linux use their platform-specific portable bundle.
+
 ## First choose the host
 
 **ChatGPT Desktop / Work:** Use **Plugins** to enable an already registered local QuotaPilot plugin. Then call `open_hud` and `get_overview`. The ChatGPT onboarding skill does **not** download anything or change the Codex footer. If the local MCP executor is unavailable, stop; repeating a failing agent bootstrap does not repair it. The official plugin manager may itself persist enable/disable preferences in `~/.codex/config.toml`, which is distinct from QuotaPilot manually editing the Codex status line.

@@ -17,6 +17,12 @@ Permite ver las métricas de **uso**, **cuota restante** y **reinicio**, cuando 
 
 **Permisos en ChatGPT Desktop:** rechaza una solicitud del agente para instalar el footer de Codex o crear `.quotapilot` desde ChatGPT Work. El gestor oficial sí puede guardar preferencias de plugins en `~/.codex/config.toml`, que es distinto de editar la barra de Codex mediante scripts. [Guía por host](docs/es/AGENT-INSTALL.md).
 
+## Instalación directa desde GitHub en Windows, sin Node.js
+
+El **marketplace del repositorio para Windows x64 incluye su propio Node.js** en `runtime/node.exe`, junto con el aviso legal. El archivo raíz `mcp.json` inicia directamente `./runtime/node.exe`. **No tendrás que descargar ZIP, ejecutar PowerShell ni instalar Node/npm** si tu versión de ChatGPT Desktop instala el repositorio completo y permite MCP local. Tampoco hay descargas automáticas en el arranque. Consulta `runtime/NODE-PROVENANCE.json` para verificar el origen del ejecutable; esto aumenta el tamaño del repositorio.
+
+**macOS/Linux:** deben usar la distribución específica para su plataforma; el manifiesto del código fuente está orientado a Windows. Un chat ejecutado en la nube o sin soporte MCP local no puede abrir el HUD aunque el plugin lleve el runtime incluido.
+
 ## Instalar sin solicitudes incorrectas de permisos
 
 **ChatGPT Desktop:** abre el gestor oficial de **Plugins**, instala o habilita **AI Usage → quota-pilot** desde un marketplace local compatible y prueba `open_hud`. **No pidas a un agente de ChatGPT Work que instale Codex.** Se necesita un ejecutor MCP local por stdio: pegar la URL de GitHub no lo proporciona automáticamente. En algunos clientes esta integración sigue sin verificarse. El gestor de Plugins puede guardar preferencias en `~/.codex/config.toml`, pero la configuración de QuotaPilot en ChatGPT no debe instalar el footer de Codex ni crear `.quotapilot` por su cuenta.
@@ -29,7 +35,7 @@ Permite ver las métricas de **uso**, **cuota restante** y **reinicio**, cuando 
 
 El runtime integrado **no** incluye Codex autenticado: las cuotas de Codex dependen de la aplicación original. ChatGPT Desktop debe ser compatible con MCP Apps locales. El ZIP no publica el plugin en el directorio universal ni garantiza PiP global.
 
-## Instalación desde código fuente (requiere Node.js)
+## Desarrollo desde código fuente (Node.js solo para desarrollo o sistemas distintos de Windows)
 
 **Requisitos solo para el código fuente:** Node.js **22.13+**, Git y el host correspondiente instalado. Para obtener métricas reales, debes haber iniciado sesión en Codex o Claude Code por sus propios medios. **No necesitas ejecutar `npm install`, crear una cuenta QuotaPilot ni introducir claves API.** Revisa y acepta conscientemente los avisos de confianza de hooks locales.
 

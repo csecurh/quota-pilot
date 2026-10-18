@@ -51,7 +51,7 @@ for(const item of [{ path:'mcp.json', env:'PLUGIN_ROOT', portable:true },
   const path = join(staging,item.path);
   const doc = JSON.parse(await readFile(path,'utf8'));
   const server = doc.mcpServers['quota-pilot'];
-  server.command = '$'+'{'+item.env+'}/runtime/'+nodeName;
+  server.command = './runtime/'+nodeName;
   server.args = ['$'+'{'+item.env+'}/server/index.mjs'];
   if(item.portable)server.cwd='$'+'{PLUGIN_ROOT}';
   await writeFile(path,JSON.stringify(doc,null,2)+'\n');

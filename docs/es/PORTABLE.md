@@ -53,7 +53,7 @@ El MCP inicia `runtime/node[.exe]` de este paquete y no busca `node` en PATH. Lo
 - **Codex:** las métricas necesitan un Codex CLI **ya instalado y autenticado**. Empaquetar Node no incluye ese ejecutable ni autoriza el acceso a sus datos.
 - **Claude:** las cuotas dependen de los campos que el host Claude Code entregue a la barra de estado.
 - **PiP:** puede funcionar en una conversación compatible; **no es un flotante universal y permanente del escritorio**.
-- El **marketplace GitHub del código fuente** continúa orientado a desarrolladores y puede necesitar Node. Para no instalar Node, utiliza el paquete autónomo de Releases.
+- El **marketplace GitHub del repositorio fuente en Windows x64** incluye `runtime/node.exe` y lo ejecuta directamente desde `mcp.json`. Para macOS/Linux utiliza el paquete autónomo correspondiente.
 
 ## Validación técnica
 

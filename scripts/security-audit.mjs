@@ -7,6 +7,7 @@ const root=resolve(fileURLToPath(new URL('..',import.meta.url)));
 const failures=[];
 const skip=new Set(['.git','node_modules','dist']);
 const textFiles=[];
+const relativeUnixBinary=(path)=>relative(root,path).replaceAll('\\','/');
 
 async function walk(dir){
   for(const entry of await readdir(dir,{withFileTypes:true})){
@@ -14,7 +15,9 @@ async function walk(dir){
     const path=join(dir,entry.name);
     if(entry.isDirectory())await walk(path);
     else if(entry.isSymbolicLink())failures.push(relative(root,path)+': symlinks are not accepted in repository source');
-    else if(entry.isFile())textFiles.push(path);
+    else if(entry.isFile() && entry.name.endsWith('.exe')) {
+      if(relativeUnixBinary(path)!=='runtime/node.exe')failures.push('Unexpected executable committed: '+relative(root,path));
+    } else if(entry.isFile())textFiles.push(path);
   }
 }
 await walk(root);
