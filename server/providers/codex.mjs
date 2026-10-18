@@ -81,7 +81,7 @@ export async function readCodexUsage({ bin = 'codex', timeoutMs = 12_000 } = {})
 
   try {
     await send('initialize', {
-      clientInfo: { name: 'quota-pilot', title: 'AI Usage', version: '0.4.0' },
+      clientInfo: { name: 'quota-pilot', title: 'AI Usage', version: '0.5.0-rc.1' },
       capabilities: { experimentalApi: true },
     });
     child.stdin.write(JSON.stringify({ method: 'initialized', params: {} }) + '\n');

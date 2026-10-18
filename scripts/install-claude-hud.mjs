@@ -11,12 +11,6 @@ const runtime = join(runtimeDir, 'claude-statusline.mjs');
 const settingsPath = join(homedir(), '.claude', 'settings.json');
 const command = 'node "' + runtime.replaceAll('"', '\\"') + '"';
 
-await ensurePrivateDir(runtimeDir);
-const runtimeSource = await readFile(join(root, 'scripts', 'claude-statusline.mjs'), 'utf8');
-await atomicWritePrivate(runtime, runtimeSource);
-const helperSource = await readFile(join(root, 'scripts', 'secure-fs.mjs'), 'utf8');
-await atomicWritePrivate(join(runtimeDir, 'secure-fs.mjs'), helperSource);
-
 let settings = {};
 const raw = await readSafeText(settingsPath, { maxBytes: 512 * 1024, allowMissing: true });
 if (raw) {
@@ -30,6 +24,12 @@ if (current?.command && current.command !== command) {
   process.stdout.write(JSON.stringify({ ok: true, changed: false, reason: 'custom-statusline-present' }));
   process.exit(0);
 }
+
+await ensurePrivateDir(runtimeDir);
+const runtimeSource = await readFile(join(root, 'scripts', 'claude-statusline.mjs'), 'utf8');
+const helperSource = await readFile(join(root, 'scripts', 'secure-fs.mjs'), 'utf8');
+await atomicWritePrivate(runtime, runtimeSource);
+await atomicWritePrivate(join(runtimeDir, 'secure-fs.mjs'), helperSource);
 
 settings.statusLine = { type: 'command', command, refreshInterval: 30, padding: 1 };
 await atomicWritePrivate(settingsPath, JSON.stringify(settings, null, 2) + '\n');

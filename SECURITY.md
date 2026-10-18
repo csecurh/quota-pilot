@@ -4,7 +4,7 @@ QuotaPilot is designed as a local-first, read-only usage HUD. The default build 
 
 ## Supported versions
 
-Security fixes are applied to the latest minor release on `main`. Version 0.4.x introduces the hardened runtime and should be preferred over earlier development builds.
+Security fixes are applied to the latest minor release on `main`. Version 0.4.x introduced the hardened runtime; the 0.5.0 release candidate adds broader CI, history scanning, local diagnostics and stricter missing-data handling. This is still a private preview, not an externally certified release.
 
 ## Data boundary
 
@@ -43,3 +43,4 @@ Changes must keep these properties unless a separately reviewed design explicitl
 7. UI never renders provider data through `innerHTML`.
 8. CI actions are pinned to full commit SHAs and checkout does not persist credentials.
 9. No credentials, private keys, `.env` files, prompts, responses, transcripts, or source code are committed or persisted by the plugin.
+10. CI audits reachable Git history for common sensitive-file and credential patterns using a non-shallow checkout; manual history review remains necessary.

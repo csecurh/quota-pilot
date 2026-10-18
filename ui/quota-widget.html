@@ -10,11 +10,12 @@
 body{margin:0;background:transparent;color:#f6f8fa;font:12px ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 .card{min-width:292px;max-width:360px;padding:14px;border:1px solid rgba(255,255,255,.11);border-radius:18px;background:rgba(14,17,21,.96);box-shadow:0 16px 48px rgba(0,0,0,.28)}
 .top,.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.brand{font-size:13px;font-weight:900;letter-spacing:.2px}.live{font-size:9px;font-weight:900;letter-spacing:1px;color:#7ce38b}
-.provider{margin-top:13px}.name{font-size:10px;color:#818b96;text-transform:uppercase;font-weight:800;letter-spacing:.8px}
-.main{display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:8px;margin-top:8px}.metric{background:#0a0d10;border-radius:11px;padding:9px}.label{font-size:8px;color:#66717c;font-weight:900;letter-spacing:.8px}
+.provider{margin-top:13px}.name{font-size:10px;color:#b2bdca;text-transform:uppercase;font-weight:800;letter-spacing:.8px}
+.main{display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:8px;margin-top:8px}.metric{background:#0a0d10;border-radius:11px;padding:9px}.label{font-size:8px;color:#adbac6;font-weight:900;letter-spacing:.8px}
 .value{display:block;margin-top:3px;font-size:17px;font-weight:900;white-space:nowrap}.reset{font-size:14px}.bar{height:6px;border-radius:99px;background:#252b32;overflow:hidden;margin-top:9px}
-.fill{height:100%;width:0;border-radius:99px;background:#dbe2e9;transition:width .25s ease}.footer{display:flex;justify-content:space-between;gap:10px;margin-top:11px;color:#64707b;font-size:9px}
-.insight{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:7px}.insight .metric{padding:7px}.insight .value{font-size:12px}.alert{padding:8px 10px;margin-top:8px;border:1px solid rgba(255,191,105,.35);border-radius:9px;color:#ffbf69;font-weight:700;font-size:10px}.alert.critical{border-color:rgba(255,140,140,.45);color:#ff8c8c}.note{margin-top:5px;color:#76818d;font-size:9px}.warn{color:#ffbf69}.critical{color:#ff8c8c}.empty{padding:18px 4px;color:#818b96;text-align:center}
+.fill{height:100%;width:0;border-radius:99px;background:#dbe2e9;transition:width .25s ease}.footer{display:flex;justify-content:space-between;gap:10px;margin-top:11px;color:#a6b5c2;font-size:9px}
+.insight{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:7px}.insight .metric{padding:7px}.insight .value{font-size:12px}.alert{padding:8px 10px;margin-top:8px;border:1px solid rgba(255,191,105,.35);border-radius:9px;color:#ffbf69;font-weight:700;font-size:10px}.alert.critical{border-color:rgba(255,140,140,.45);color:#ff8c8c}.note{margin-top:5px;color:#a6b5c2;font-size:9px}.warn{color:#ffbf69}.critical{color:#ff8c8c}.empty{padding:18px 4px;color:#818b96;text-align:center}
+@media (prefers-reduced-motion: reduce){.fill{transition:none}}
 </style>
 </head>
 <body>
@@ -73,6 +74,11 @@ function providerCard(p){
   const row=el('div','row');
   row.append(el('span','name',providerLabel(p)),el('span',severity(r),pct(r)+' restante'));
   const bar=el('div','bar');
+  bar.setAttribute('role','progressbar');
+  bar.setAttribute('aria-label','Cuota restante');
+  bar.setAttribute('aria-valuemin','0');
+  bar.setAttribute('aria-valuemax','100');
+  if(r!=null)bar.setAttribute('aria-valuenow',String(Math.round(clamp(r))));
   const fill=el('div','fill');
   fill.style.width=clamp(r)+'%';
   bar.append(fill);
@@ -84,7 +90,11 @@ function providerCard(p){
   insights.append(metric('CONSUMO/H',rate(intel?.burnRatePercentPerHour)),metric('AUTONOMÍA',duration(intel?.runwayHours)),metric('TIEMPO SIN CUOTA',duration(intel?.deadHours)));
   section.append(insights,el('div','note','Estimaciones locales · requieren al menos dos muestras'));
   const alert=advisory(intel);
-  if(alert)section.append(el('div','alert '+(alert[0]==='critical'?'critical':''),alert[1]));
+  if(alert){
+    const warning=el('div','alert '+(alert[0]==='critical'?'critical':''),alert[1]);
+    warning.setAttribute('role','note');
+    section.append(warning);
+  }
   return section;
 }
 function render(data){

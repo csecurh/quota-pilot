@@ -6,6 +6,7 @@
 git clone git@github.com:csecurh/quota-pilot.git
 cd quota-pilot
 npm run check
+npm run doctor
 ```
 
 ## Claude Code (supported local installer)
@@ -26,13 +27,17 @@ Do not claim the widget overlays other applications, persists beyond the active 
 
 ## Updating
 
-Within the authorized checkout: `git pull --ff-only`; `npm run check`; rerun the appropriate installer. Restart the host. Prefer an audited commit SHA when risk-sensitive. The Codex installer is idempotent for already-supported status line syntax.
+Within the authorized checkout: `git pull --ff-only`; `npm run check`; `npm run doctor`; rerun the appropriate installer. Restart the host. Prefer an audited commit SHA when risk-sensitive. The Codex installer is idempotent for already-supported status line syntax.
 
 ## Removing
 
 - **Codex:** edit `~/.codex/config.toml` and remove the added `five-hour-limit` / `weekly-limit` entries from `[tui].status_line` if no longer wanted. Keep other user entries.
 - **Claude Code:** remove the `statusLine` entry **only if it points to** `~/.quotapilot/claude-statusline.mjs`. Then remove `~/.quotapilot/` **only if you have checked that it contains no data you wish to keep**.
 - **ChatGPT or other MCP host:** remove the quota-pilot local MCP registration in the host settings. The plugin itself does not hold provider credentials.
+
+## Local diagnostics
+
+Run `node scripts/doctor.mjs` or `node scripts/doctor.mjs --json`. This checks local host configuration and minimal snapshot freshness without printing private paths, tokens or configuration values. It does **not** authenticate to providers, contact the network or prove that ChatGPT Desktop has a compatible local plugin bridge.
 
 ## Troubleshooting
 

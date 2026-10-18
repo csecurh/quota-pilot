@@ -18,6 +18,7 @@ A privacy-first, local usage HUD for **ChatGPT Desktop, Codex CLI and Claude Cod
 git clone git@github.com:csecurh/quota-pilot.git
 cd quota-pilot
 npm run check
+npm run doctor
 ```
 
 Choose the host below. These are **local installation paths**, not a claim of universal marketplace availability:
@@ -39,7 +40,7 @@ For host marketplace and lifecycle hook support, consult [installation and troub
 npm run check
 node server/index.mjs
 ```
-The last command starts the **stdio MCP server** and waits for a client; it is not a browser UI. See [docs/INSTALL.md](docs/INSTALL.md) for uninstall, upgrades and common failures.
+The last command starts the **stdio MCP server** and waits for a client; it is not a browser UI. See [docs/INSTALL.md](docs/INSTALL.md) for uninstall, upgrades and common failures. Run `node scripts/doctor.mjs --json` for a local diagnostic that redacts paths, settings and credentials.
 
 ## Key capabilities
 
@@ -65,6 +66,6 @@ The protocol is local stdio. Hardening: bounded inputs, generic public errors, s
 
 ## Project status and contributing
 
-This repository is **private preview**, under active compatibility testing. See [release readiness](docs/RELEASE-CHECKLIST.md). No public release, registration in ChatGPT's directory or guarantee of every host's plugin API is implied. Security disclosures: [SECURITY.md](SECURITY.md).
+This repository is a **private 0.5.0 release candidate**, under active compatibility testing. See [release readiness](docs/RELEASE-CHECKLIST.md), [validation evidence](docs/RELEASE-VALIDATION.md), [changelog](CHANGELOG.md) and [license decision](docs/LICENSE-DECISION.md). No public release, registration in ChatGPT's directory or guarantee of every host's plugin API is implied. Security disclosures: [SECURITY.md](SECURITY.md).
 
-For development, run `npm test`, `npm run check`, or `npm run security:audit`. No runtime npm packages are needed. Technical IDs such as `quota-pilot` and `ui://quotapilot/live.html` intentionally stay stable.
+For development, run `npm test`, `npm run check`, `npm run security:audit` or `npm run security:history` (requires the full Git history). CI checks Linux, macOS and Windows. No runtime npm packages are needed. Technical IDs such as `quota-pilot` and `ui://quotapilot/live.html` intentionally stay stable.

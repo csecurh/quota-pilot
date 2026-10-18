@@ -4,8 +4,9 @@ import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const repo = resolve(new URL('..', import.meta.url).pathname);
+const repo = resolve(fileURLToPath(new URL('..', import.meta.url)));
 
 function run(script, { input = '', home } = {}) {
   return new Promise((resolvePromise, reject) => {
@@ -93,4 +94,37 @@ test('installed Claude status line runs independently using the copied secure fi
   } finally {
     await rm(home, { recursive: true, force: true });
   }
+});
+
+test('Claude status line preserves unknown percentages and derives from remaining-only input', async () => {
+  const home = await mkdtemp(join(tmpdir(), 'quotapilot-claude-null-'));
+  try {
+    const result = await run('scripts/claude-statusline.mjs', {
+      home, input: JSON.stringify({
+        rate_limits: { five_hour: { used_percentage: null }, seven_day: { remaining_percentage: 55 } },
+        context_window: { used_percentage: null },
+      }),
+    });
+    assert.match(result.stdout, /5h usado:— rest:—/);
+    assert.match(result.stdout, /7d usado:45% rest:55%/);
+    const data = JSON.parse(await readFile(join(home, '.quotapilot', 'claude-latest.json'), 'utf8'));
+    assert.equal(data.payload.primary.usedPercent, null);
+    assert.equal(data.payload.primary.remainingPercent, null);
+    assert.equal(data.payload.secondary.usedPercent, 45);
+    assert.equal(data.payload.context.usedPercent, null);
+  } finally { await rm(home, { recursive: true, force: true }); }
+});
+
+test('Claude installer makes no runtime changes when a custom status line exists', async () => {
+  const home = await mkdtemp(join(tmpdir(), 'quotapilot-custom-claude-'));
+  try {
+    await mkdir(join(home, '.claude'), { recursive: true });
+    const path = join(home, '.claude', 'settings.json');
+    const config = { statusLine: { type: 'command', command: 'echo existing' }, customSetting: true };
+    await writeFile(path, JSON.stringify(config));
+    const result = await run('scripts/install-claude-hud.mjs', { home });
+    assert.equal(JSON.parse(result.stdout).changed, false);
+    assert.deepEqual(JSON.parse(await readFile(path, 'utf8')), config);
+    await assert.rejects(() => readFile(join(home, '.quotapilot', 'claude-statusline.mjs'), 'utf8'), { code: 'ENOENT' });
+  } finally { await rm(home, { recursive: true, force: true }); }
 });

@@ -239,7 +239,7 @@ async function handle(message) {
         tools: { listChanged: false },
         resources: { subscribe: false, listChanged: false },
       },
-      serverInfo: { name: 'quota-pilot', version: '0.4.0' },
+      serverInfo: { name: 'quota-pilot', version: '0.5.0-rc.1' },
       instructions: 'Local-only read-only usage HUD. Never request credentials, prompts, responses, transcripts, source code, or unrelated files. Never invent unavailable quota data.',
     });
     return;

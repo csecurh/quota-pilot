@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { homedir } from 'node:os';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { atomicWritePrivate, readSafeText } from './secure-fs.mjs';
 
 const REQUIRED = ['five-hour-limit', 'weekly-limit'];
@@ -64,7 +65,7 @@ export function updateCodexConfig(source) {
   return [...lines.slice(0, start + 1), ...section, ...lines.slice(end)].join(newline);
 }
 
-if (process.argv[1] && import.meta.url === new URL('file://' + process.argv[1]).href) {
+if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
   const source = await readSafeText(configPath, { maxBytes: 1024 * 1024, allowMissing: true });
   const updated = updateCodexConfig(source);
   if (updated !== source) await atomicWritePrivate(configPath, updated);

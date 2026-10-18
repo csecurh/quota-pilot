@@ -10,15 +10,17 @@ let oversized = false;
 process.stdin.setEncoding('utf8');
 process.stdin.on('data', (chunk) => {
   if (oversized) return;
-  raw += chunk;
-  if (Buffer.byteLength(raw, 'utf8') > MAX_INPUT_BYTES) {
+  if (Buffer.byteLength(raw, 'utf8') + Buffer.byteLength(chunk, 'utf8') > MAX_INPUT_BYTES) {
     oversized = true;
     raw = '';
+    return;
   }
+  raw += chunk;
 });
 
 function percent(value) {
-  const number = Number(value);
+  if (value === null || value === undefined || value === '' || typeof value === 'boolean') return null;
+  const number = typeof value === 'number' || (typeof value === 'string' && /^\d+(?:\.\d+)?$/.test(value)) ? Number(value) : NaN;
   return Number.isFinite(number) ? Math.max(0, Math.min(100, number)) : null;
 }
 
@@ -32,10 +34,12 @@ function resetIso(value) {
 
 function normalizeWindow(value, duration) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
-  const usedPercent = percent(value.used_percentage ?? value.usedPercent);
+  const suppliedUsed = percent(value.used_percentage ?? value.usedPercent);
+  const suppliedRemaining = percent(value.remaining_percentage ?? value.remainingPercent);
+  const usedPercent = suppliedUsed ?? (suppliedRemaining == null ? null : 100 - suppliedRemaining);
   return {
     usedPercent,
-    remainingPercent: usedPercent == null ? null : Math.max(0, 100 - usedPercent),
+    remainingPercent: suppliedRemaining ?? (usedPercent == null ? null : Math.max(0, 100 - usedPercent)),
     windowDurationMins: duration,
     resetsAt: resetIso(value.resets_at ?? value.resetsAt),
   };
