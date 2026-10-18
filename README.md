@@ -17,7 +17,13 @@ QuotaPilot is an **open-source, local-first AI usage HUD** for Codex, Claude Cod
 
 The HUD provides provider-reported **used**, **remaining** and **reset time**, plus **burn rate**, **estimated runway** and **visual quota alerts** when enough telemetry exists. Forecasts are estimates—not billing, guaranteed provider limits or desktop-wide notifications. Unknown data is shown as unavailable.
 
-## Install without Node.js, npm or Git (portable release)
+## Install by pasting the repository into your agent
+
+**Preferred:** share **https://github.com/csecurh/quota-pilot** with an agent that has access to a terminal **on your computer** and ask it to install QuotaPilot. No ZIPs, Node, npm or Git to install yourself. The agent verifies a pinned GitHub release and registers the local plugin, subject to host permissions. A cloud-only agent cannot install on your Windows PC.
+
+[Agent-led installation (EN)](docs/AGENT-INSTALL.md) · [Instalación desde agente (ES)](docs/es/AGENT-INSTALL.md).
+
+## Alternative: manual portable release
 
 **Recommended:** download the right archive from [QuotaPilot 0.6.0 portable releases](https://github.com/csecurh/quota-pilot/releases/tag/v0.6.0-rc.1). Windows x64, Linux x64 and both macOS architectures include their own Node.js runtime and license notices. Extract the archive, then add its folder as a **local marketplace/plugin** in a compatible host. **No separate Node/npm installation.** [Full guide](docs/PORTABLE.md) · [Guía en español](docs/es/PORTABLE.md).
 

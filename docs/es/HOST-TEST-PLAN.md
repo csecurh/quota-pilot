@@ -47,3 +47,7 @@ Solo se deben compartir estados anonimizados o capturas con información privada
 ## Prueba de paquete autónomo
 
 Descarga el paquete de [PORTABLE.md](PORTABLE.md). Verifica que el host usa el runtime incluido, no un Node/npm del sistema, y que la distribución del repositorio fuente no se confunde con el paquete extraído. Repite instalación, actualización y desinstalación con un perfil nuevo.
+
+## Prueba de instalación mediante agente
+
+Comparte solo la URL del repo con un **agente que tenga terminal local**. Comprueba que verifica el paquete, registra el marketplace local, respeta la confianza del host y no exige ZIP ni Node manuales. Un agente remoto sin acceso al escritorio debe reconocer la limitación y no afirmar que instaló el plugin.

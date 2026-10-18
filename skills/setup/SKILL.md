@@ -7,6 +7,8 @@ Configure the plugin as a local-first usage HUD whose visible name matches the c
 
 The MCP server has no runtime npm dependencies.
 
+For a user who pastes the GitHub URL and asks for installation, read [AGENTS.md](../../AGENTS.md). If you have a shell **on the user's machine**, review and execute `scripts/agent-bootstrap.ps1` (Windows) or `scripts/agent-bootstrap.sh` (macOS/Linux). The scripts download verified SHA-256 pinned releases under the user's profile with no separately installed Node/npm. Then register the **resulting local plugin folder** using supported host features and verify the native surface. Request normal host authorization; do not bypass hook trust. If you operate only in a cloud environment or the host lacks local stdio execution, report the limitation rather than claiming success.
+
 When QuotaPilot is installed:
 
 1. Let the bundled SessionStart hook configure the host-native persistent surface. Never present "QuotaPilot" as the default visible HUD name; use ChatGPT, Codex, or Claude Code according to the host.

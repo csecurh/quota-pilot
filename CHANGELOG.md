@@ -10,6 +10,12 @@ This project uses SemVer for plugin/runtime metadata. Release candidates are not
 - Add host-shaped protocol regression tests for `get_usage`, `open_hud`, metadata redaction and the UI resource; separate protocol errors from provider-unavailable messages.
 - Document upgrade/restart steps in English and Spanish for affected ChatGPT Desktop plugin installations.
 
+## Agent-assisted GitHub URL installation (2026-10-18)
+
+- Add local-agent onboarding: paste repository URL and the agent downloads and SHA-256 verifies the matching self-contained GitHub release without requiring manual ZIP/Node/npm installation.
+- Add reviewed Bash and PowerShell bootstraps, strict pinned hashes, private per-user install locations, idempotent behavior, security tests, and host-aware setup instructions.
+- Keep ChatGPT Desktop local bridge and provider telemetry limitations explicit; host trust consent remains mandatory.
+
 ## 0.6.0-rc.1 — Portable, dependency-free runtime
 
 - Bundle official Node.js 24 LTS, its license notices, MCP server and hooks into OS-specific release archives: Windows x64, Linux x64, macOS ARM64/Intel.

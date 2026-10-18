@@ -32,3 +32,7 @@ Para analizar el historial necesitas un clon no superficial (`git fetch --unshal
 ## Política de revisión
 
 CODEOWNERS identifica al mantenedor. Estas revisiones solo son obligatorias cuando GitHub tenga una regla activa de protección de `main` ([configuración](docs/es/GITHUB-SECURITY-SETUP.md)). Al contribuir, confirmas que tienes derecho a distribuir tus cambios bajo MIT y que revisaste las licencias de cualquier recurso de terceros.
+
+## Instalación desde agentes
+
+Mantén sincronizados [AGENTS.md](AGENTS.md), la [guía en inglés](docs/AGENT-INSTALL.md), la [guía en español](docs/es/AGENT-INSTALL.md), los scripts y sus pruebas. No omitas permisos del host ni ejecutes código remoto no verificado.

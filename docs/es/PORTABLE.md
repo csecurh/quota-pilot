@@ -2,6 +2,8 @@
 
 **Idioma: [Español](PORTABLE.md) · [English](../PORTABLE.md)**
 
+**Se recomienda la instalación desde el agente:** [pega el repositorio en tu agente local](AGENT-INSTALL.md). Las descargas manuales son opcionales.
+
 **Los paquetes incluyen Node.js**, el servidor MCP, hooks, scripts, manifiestos y HUD. Para *ejecutarlos* no necesitas instalar Node.js, npm ni Git por separado, pero sí necesitas un **host de IA compatible**. QuotaPilot no descarga software de terceros silenciosamente durante su ejecución.
 
 ## Descarga el paquete adecuado

@@ -31,3 +31,7 @@ Para documentar resultados utiliza [HOST-TEST-PLAN.md](HOST-TEST-PLAN.md) **sin 
 - Los tests simulados MCP no garantizan que ChatGPT Desktop ofrezca el puente local necesario.
 - El comportamiento de inode/stat y las ACL de Windows necesitan revisión en un equipo real.
 - MIT permite usar el código fuente; la aparición en el directorio universal requiere solicitud y evaluación independientes.
+
+## Instalación desde agente (18 de octubre de 2026)
+
+CI verifica el nuevo instalador mediante agente local: el SO descarga de GitHub un paquete con SHA-256 fijado sin requerir Node/npm. Esta prueba confirma la preparación técnica, **no** la activación automática en todas las versiones de ChatGPT Desktop/Claude/Codex. Siguen siendo necesarios los permisos del host y un agente que se ejecute en **el mismo equipo**.

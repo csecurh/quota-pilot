@@ -51,6 +51,23 @@ jobs:
       - name: Smoke test bundle with Node removed from child PATH
         run: npm run test:portable
 
+      - name: Agent-first GitHub install smoke (Linux/macOS)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          set -euo pipefail
+          sh scripts/agent-bootstrap.sh | grep '^INSTALLED '
+          sh scripts/agent-bootstrap.sh | grep '^ALREADY_INSTALLED '
+
+      - name: Agent-first GitHub install smoke (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $installed = & ./scripts/agent-bootstrap.ps1
+          if ($installed -notmatch '^INSTALLED ') { throw 'Agent install failed' }
+          $again = & ./scripts/agent-bootstrap.ps1
+          if ($again -notmatch '^ALREADY_INSTALLED ') { throw 'Agent install idempotence failed' }
+
       - name: Upload reviewed portable bundle
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:

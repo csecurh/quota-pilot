@@ -31,3 +31,7 @@ Use [HOST-TEST-PLAN.md](HOST-TEST-PLAN.md) to record a single completed host acc
 - A successful simulated MCP test cannot prove the ChatGPT desktop build exposes the required bridge.
 - Windows stat/inode semantics differ from POSIX; user files and ACLs need a separate real Windows review.
 - The GitHub repo can be used under MIT, but the universal plugin directory requires submission/review.
+
+## Agent-first bootstrap (2026-10-18)
+
+The new local-agent installer is separately verified in CI: the host OS downloads a digest-pinned GitHub release without installing Node/npm. This validates portable preparation, **not** automatic activation on every ChatGPT Desktop/Claude/Codex build. Users still must grant host trust permissions, and the agent must operate on the **same local machine**.

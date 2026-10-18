@@ -15,7 +15,13 @@ QuotaPilot es un **HUD de consumo de IA, local y de código abierto** para Codex
 
 Permite ver las métricas de **uso**, **cuota restante** y **reinicio**, cuando el proveedor las entrega, además de **velocidad de consumo**, **autonomía estimada** y **alertas visuales** cuando hay suficientes muestras. Las predicciones son orientativas: no sustituyen información de facturación ni garantizan límites. Los datos desconocidos se muestran como no disponibles.
 
-## Instalación sin Node.js, npm ni Git (paquete autónomo)
+## Instalación pegando el repositorio en tu agente
+
+**Recomendado:** comparte **https://github.com/csecurh/quota-pilot** con un agente que tenga acceso a una terminal **en tu mismo equipo** y pídele instalarlo. Sin ZIP, Node, npm ni Git que debas instalar tú. El agente comprueba el SHA-256 de la versión oficial y registra el plugin, respetando los permisos del host. Un agente solo en la nube no puede instalarlo en tu Windows.
+
+[Guía de instalación desde agente](docs/es/AGENT-INSTALL.md) · [English](docs/AGENT-INSTALL.md).
+
+## Alternativa: paquete portátil manual
 
 **Recomendado:** descarga el paquete adecuado desde [GitHub Releases de QuotaPilot 0.6.0](https://github.com/csecurh/quota-pilot/releases/tag/v0.6.0-rc.1). Hay versiones Windows x64, Linux x64 y macOS Intel/Apple Silicon, con Node.js y avisos de licencia incluidos. Extrae el archivo y registra la carpeta como **plugin o marketplace local** en un host compatible. **No necesitas instalar Node ni npm.** [Guía completa en español](docs/es/PORTABLE.md) · [English](docs/PORTABLE.md).
 

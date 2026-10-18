@@ -50,3 +50,7 @@ Only sanitized status labels and redacted screenshots should appear in any publi
 ## Self-contained release test
 
 Download the platform archive from [PORTABLE.md](PORTABLE.md). Confirm the host uses the bundled runtime, not a system Node/npm, and that the source-mirror marketplace is not confused with the extracted local release. Repeat install, upgrade and uninstall with a fresh user profile.
+
+## Agent-first test
+
+Paste only the repo URL into a **local shell-capable agent** and ask it to install. Check it verifies the pinned bundle, registers the local marketplace, respects plugin trust, and doesn't ask the user to download archives or install Node manually. A cloud agent without access to the desktop must report a limitation, not claim success.

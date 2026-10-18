@@ -34,3 +34,7 @@ The historical scan requires a complete non-shallow checkout. CI checks syntax, 
 CODEOWNERS identifies the maintainer for sensitive files. **Review requirements only become enforceable when the GitHub admin activates a main branch protection rule or ruleset**; see [GITHUB-SECURITY-SETUP](docs/GITHUB-SECURITY-SETUP.md).
 
 By contributing, you affirm you have the right to submit your changes under MIT; please review third-party licenses for any external assets or code.
+
+## Agent-first onboarding
+
+Keep [AGENTS.md](AGENTS.md), the [English agent guide](docs/AGENT-INSTALL.md), [Spanish agent guide](docs/es/AGENT-INSTALL.md), pinned bootstrap scripts and regression tests synchronized. Never bypass host approvals or execute unverified remote code.

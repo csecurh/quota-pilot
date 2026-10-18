@@ -10,6 +10,12 @@ QuotaPilot utiliza versionado semántico. Las versiones candidatas pueden cambia
 - Pruebas de regresión de `get_usage`, `open_hud`, acceso a recursos y redacción de metadatos, distinguiendo errores de protocolo de fallos del proveedor.
 - Guías de actualización y reinicio en inglés y español para instalaciones de ChatGPT Desktop afectadas.
 
+## Instalación asistida por URL GitHub (18 de octubre de 2026)
+
+- El usuario comparte la URL con su agente local: el agente descarga y comprueba el SHA-256 del paquete autónomo, sin pedir descarga manual de ZIP ni instalación de Node/npm.
+- Añadidos instaladores Bash/PowerShell, hashes fijados, destino privado e instalación idempotente, pruebas de seguridad y guía por host.
+- Se mantienen los avisos sobre el puente local de ChatGPT Desktop, métricas de proveedores y permisos de confianza obligatorios.
+
 ## 0.6.0-rc.1 — Paquetes autónomos sin dependencias
 
 - Distribuciones con Node.js 24 LTS y su licencia incluida para Windows x64, Linux x64 y macOS ARM64/Intel.

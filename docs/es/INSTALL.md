@@ -4,7 +4,11 @@
 
 QuotaPilot está disponible públicamente como código fuente [MIT](../../LICENSE). **No significa que esté publicado en el directorio universal de plugins de ChatGPT.** Las pruebas automáticas no sustituyen las pruebas en clientes reales.
 
-## Paquete autónomo: sin instalar Node ni npm
+## Recomendado: instalación asistida por tu agente
+
+Comparte **https://github.com/csecurh/quota-pilot** con un agente que se ejecute localmente y pídele seguir [AGENTS.md](../../AGENTS.md) y la [guía asistida](AGENT-INSTALL.md). El agente prepara y registra el plugin sin exigir descargar ZIP o instalar Node/npm manualmente. Los permisos y reinicios dependen del host.
+
+## Alternativa: paquete autónomo
 
 Descarga el paquete desde [GitHub Releases](https://github.com/csecurh/quota-pilot/releases/tag/v0.6.0-rc.1) y registra la carpeta extraída en el gestor de plugins de un host compatible. El runtime viene incluido. Consulta la [guía autónoma](PORTABLE.md) para elegir el sistema, comprobar su integridad y entender las limitaciones.
 

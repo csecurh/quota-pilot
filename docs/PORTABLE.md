@@ -2,6 +2,8 @@
 
 **Language / Idioma: English · [Español](es/PORTABLE.md)**
 
+**Agent-first installation is preferred:** [give the GitHub URL to your local agent](AGENT-INSTALL.md). Manual downloads are an optional fallback.
+
 The **portable release archive includes the Node.js runtime** and all QuotaPilot JavaScript, manifests, hooks, and UI files. It needs **no separately installed Node.js/npm/Git** to *run*. Your compatible AI host is still required. There is **no automatic third-party downloader** at runtime.
 
 ## Download and select the correct package

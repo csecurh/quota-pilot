@@ -4,7 +4,11 @@
 
 QuotaPilot is published as source under [MIT](../LICENSE). **The GitHub repository is public; the plugin has not been admitted to the universal ChatGPT/Codex directory.** Automated CI does not replace real host tests.
 
-## Portable package: no separate runtime needed
+## Preferred: agent-first installation
+
+Share **https://github.com/csecurh/quota-pilot** with a locally executing agent and ask it to follow [AGENTS.md](../AGENTS.md) and [agent installation](AGENT-INSTALL.md). The agent handles runtime preparation and registration without asking you to download ZIPs or install Node/npm. Permission and restart dialogs depend on the host.
+
+## Alternative: portable package
 
 Download the self-contained package from [GitHub Releases](https://github.com/csecurh/quota-pilot/releases/tag/v0.6.0-rc.1) and register the extracted folder with your compatible plugin host. The archive contains its own runtime. See [PORTABLE.md](PORTABLE.md) for platform selection, integrity checks and host limitations.
 

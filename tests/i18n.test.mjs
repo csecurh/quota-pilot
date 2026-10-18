@@ -7,7 +7,7 @@ const rootDocs = ['README', 'SECURITY', 'SUPPORT', 'CONTRIBUTING', 'CHANGELOG'];
 const docNames = [
   'INSTALL', 'PRIVACY', 'HOST-TEST-PLAN', 'THREAT-MODEL', 'GITHUB-SECURITY-SETUP',
   'RELEASE-CHECKLIST', 'RELEASE-VALIDATION', 'LICENSE-DECISION',
-  'HARDENING-2026-10-18', 'SECURITY-AUDIT-2026-10-17', 'PORTABLE',
+  'HARDENING-2026-10-18', 'SECURITY-AUDIT-2026-10-17', 'PORTABLE', 'AGENT-INSTALL',
 ];
 
 test('all user-facing English docs have full Spanish counterparts and bidirectional navigation', async () => {
