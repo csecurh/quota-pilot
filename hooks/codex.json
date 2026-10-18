@@ -6,7 +6,7 @@
           {
             "type": "command",
             "command": "node \"${PLUGIN_ROOT}/scripts/ensure-surfaces.mjs\"",
-            "statusMessage": "Activando QuotaPilot HUD"
+            "statusMessage": "Activando Codex HUD"
           }
         ]
       }
