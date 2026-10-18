@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>QuotaPilot</title>
+<title>AI Usage</title>
 <style>
 :root{color-scheme:dark}
 *{box-sizing:border-box}
@@ -16,7 +16,7 @@ body{margin:0;background:transparent;color:#f6f8fa;font:12px ui-sans-serif,syste
 </head>
 <body>
 <div class="card">
-  <div class="top"><span class="brand">QuotaPilot</span><span id="state" class="live">LOCAL</span></div>
+  <div class="top"><span id="brand" class="brand">AI Usage</span><span id="state" class="live">LOCAL</span></div>
   <div id="content"><div class="empty">Leyendo cuota local…</div></div>
   <div class="footer"><span id="updated">—</span><span>auto · 30s</span></div>
 </div>
@@ -39,7 +39,10 @@ function countdown(iso){
 function providerLabel(p){return p?.provider==='claude_code'?'Claude Code':'Codex'}
 function severity(rem){if(rem==null)return '';if(rem<=15)return 'critical';if(rem<=30)return 'warn';return ''}
 function render(data){
-  const providers=data?.overview?.providers||data?.providers||[];
+  const overview=data?.overview||data||{};
+  const host=overview?.host||data?.host||null;
+  if(host?.displayName){$('brand').textContent=host.displayName;document.title=host.displayName;}
+  const providers=overview?.providers||data?.providers||[];
   if(!providers.length){$('content').innerHTML='<div class="empty">Sin cuota disponible todavía.</div>';return}
   $('content').innerHTML=providers.map(p=>{
     const r=remain(p.primary),u=used(p.primary),reset=countdown(p.primary?.resetsAt);
@@ -52,7 +55,7 @@ function render(data){
         '<div class="metric"><span class="label">RESET</span><b class="value reset">'+reset+'</b></div>'+
       '</div></section>'
   }).join('');
-  $('updated').textContent='actualizado '+new Date(data?.overview?.generatedAt||data?.generatedAt||Date.now()).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  $('updated').textContent='actualizado '+new Date(overview?.generatedAt||data?.generatedAt||Date.now()).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
 }
 async function refresh(){
   try{
