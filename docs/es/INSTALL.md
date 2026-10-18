@@ -10,7 +10,7 @@ Comparte **https://github.com/csecurh/quota-pilot** con un agente que se ejecute
 
 ## Alternativa: paquete autónomo
 
-Descarga el paquete desde [GitHub Releases](https://github.com/csecurh/quota-pilot/releases/tag/v0.6.0-rc.1) y registra la carpeta extraída en el gestor de plugins de un host compatible. El runtime viene incluido. Consulta la [guía autónoma](PORTABLE.md) para elegir el sistema, comprobar su integridad y entender las limitaciones.
+Descarga el paquete desde [GitHub Releases](https://github.com/csecurh/quota-pilot/releases/tag/v0.6.0-rc.2) y registra la carpeta extraída en el gestor de plugins de un host compatible. El runtime viene incluido. Consulta la [guía autónoma](PORTABLE.md) para elegir el sistema, comprobar su integridad y entender las limitaciones.
 
 ## Requisitos (solo código fuente)
 

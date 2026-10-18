@@ -11,11 +11,11 @@ test('agent bootstrap pins immutable package SHA-256 digests instead of trusting
   const sh=await read('scripts/agent-bootstrap.sh');
   const ps=await read('scripts/agent-bootstrap.ps1');
   for(const digest of [
-    '4282a51a1322157606b19dbd16ed59327eef7fcbc2045c675c1a41243658b500',
-    'fec19213de09c3e90b8d8c5884535f8eafaae42703c0cac34b12bd3886238063',
-    'f40a9cacf408fc2c954bfeec25620a24e5d83d27f2523dc30fd46490e0f24f7f'
+    'f89bbd4dfa90727105081fa72b9c1a610957e3ddb480190bd5e2f6a1ccbfc6b0',
+    '7b89486fd2e11d627a106db9dd0139442aa7013b78bb512ebac9063e72394bc9',
+    '18869fff83f173e49d8e32a7ff5b3a19ac6f255bebd2d6e8d5c2e2f258765019'
   ])assert.ok(sh.includes(digest));
-  assert.ok(ps.includes('47dcd61f75c56cbc92585f5dc41e1a27cd4fe11d8ebd8e456fcac949653ee9d3'));
+  assert.ok(ps.includes('d83de9b67f87597c654e3bfd1a0f4824dec6253d56875fab83eefd8adb69bca9'));
   for(const s of [sh,ps]){
     assert.match(s,/v0\.6\.0-rc\.1/);
     assert.match(s,/github\.com\/csecurh\/quota-pilot\/releases\/download/);

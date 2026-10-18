@@ -30,6 +30,11 @@ function run(bin,args,input='') {
 }
 try {
   const manifest=JSON.parse(await readFile(join(stage,'mcp.json'),'utf8'));
+  const plugin = JSON.parse(await readFile(join(stage,'plugin.json'),'utf8'));
+  const openaiHooks = JSON.parse(await readFile(join(stage,'hooks','openai-safe.json'),'utf8'));
+  assert.equal(plugin.extensions['com.openai'].hooks,'./hooks/openai-safe.json');
+  assert.deepEqual(openaiHooks,{hooks:{}},'ChatGPT must not invoke Codex filesystem configuration');
+
   const claude=JSON.parse(await readFile(join(stage,'.mcp.json'),'utf8'));
   const hooks=JSON.parse(await readFile(join(stage,'hooks','codex.json'),'utf8'));
   const market=JSON.parse(await readFile(join(stage,'.claude-plugin','marketplace.json'),'utf8'));

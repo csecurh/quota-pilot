@@ -57,6 +57,6 @@ test('EN/ES Windows onboarding distinguishes a missing Codex CLI from ChatGPT De
 test('portable release documentation is discoverable in both languages', async () => {
   for(const path of ['README.md','README.es.md','docs/PORTABLE.md','docs/es/PORTABLE.md']){
     const body=await read(path);
-    assert.match(body,/v0\.6\.0-rc\.1/);
+    assert.match(body,/v0\.6\.0-rc\.2/);
   }
 });

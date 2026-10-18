@@ -4,6 +4,13 @@
 
 QuotaPilot utiliza versionado semántico. Las versiones candidatas pueden cambiar antes de una versión estable.
 
+## 0.6.0-rc.2 — Permisos limitados por host y hooks seguros
+
+- El manifiesto compartido de OpenAI ahora carga un hook vacío que evita modificar automáticamente `config.toml` de Codex al instalar en ChatGPT Desktop/Work.
+- El footer de Codex CLI requiere una solicitud y autorización específicas; Claude Code conserva su propio hook.
+- El agente comprueba si trabaja en tu equipo o en un ordenador de la nube antes de pedir acceso a Internet y permisos de escritura.
+- Se actualizan los hashes SHA-256 fijados de Windows/Linux/macOS y las instrucciones de instalación en inglés/español.
+
 ## Corrección de compatibilidad MCP Desktop (18 de octubre de 2026)
 
 - Se admite el campo estándar `params._meta` en las llamadas a herramientas MCP y recursos UI sin relajar los esquemas de argumentos ni devolver metadatos del host.

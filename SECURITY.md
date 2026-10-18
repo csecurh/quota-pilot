@@ -8,7 +8,7 @@ QuotaPilot is a **local-first, read-only** usage HUD. This public MIT-licensed p
 
 | Version | Security fixes |
 | --- | --- |
-| 0.5.0-rc.1 (current public source) | Maintained until subsequent pre-release or stable release |
+| 0.6.0-rc.2 (current public source) | Maintained until subsequent pre-release or stable release |
 | 0.4.x and earlier | No further security fixes guaranteed |
 
 ## Confidential reporting

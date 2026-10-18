@@ -4,6 +4,13 @@
 
 This project uses SemVer for plugin/runtime metadata. Release candidates are not public releases and may change before general availability.
 
+## 0.6.0-rc.2 — Host-scoped permissions and safe OpenAI hooks
+
+- OpenAI's shared ChatGPT/Codex manifest now loads an explicitly empty hook, preventing plugin installation from automatically editing Codex `config.toml` in ChatGPT Desktop/Work.
+- Codex CLI native footer changes require a separate explicit request/approval; Claude Code retains its own scoped hook.
+- Agent setup now verifies local-versus-cloud execution before requesting write/network permissions and refuses broad ChatGPT permission prompts.
+- Refresh pinned Windows/Linux/macOS agent bootstrap checksums for the new verified release; preserve English/Spanish setup guidance and tests.
+
 ## Desktop MCP compatibility patch (2026-10-18)
 
 - Accept standard MCP request `params._meta` on tool and UI resource calls. Keep strict tool argument schemas and reject unexpected parameters or invalid metadata types.

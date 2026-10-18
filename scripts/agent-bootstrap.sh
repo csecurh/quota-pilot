@@ -2,11 +2,11 @@
 # Local agent installer. No system Node/npm/Git. User/host must approve shell execution.
 set -eu
 case "${1:-}" in --dry-run) dry_run=1;; '') dry_run=0;; *) echo 'Unsupported option' >&2; exit 2;; esac
-tag=v0.6.0-rc.1
+tag=v0.6.0-rc.2
 case "$(uname -s):$(uname -m)" in
-  Linux:x86_64) bundle=quota-pilot-linux-x64; digest=4282a51a1322157606b19dbd16ed59327eef7fcbc2045c675c1a41243658b500;;
-  Darwin:x86_64) bundle=quota-pilot-darwin-x64; digest=fec19213de09c3e90b8d8c5884535f8eafaae42703c0cac34b12bd3886238063;;
-  Darwin:arm64) bundle=quota-pilot-darwin-arm64; digest=f40a9cacf408fc2c954bfeec25620a24e5d83d27f2523dc30fd46490e0f24f7f;;
+  Linux:x86_64) bundle=quota-pilot-linux-x64; digest=f89bbd4dfa90727105081fa72b9c1a610957e3ddb480190bd5e2f6a1ccbfc6b0;;
+  Darwin:x86_64) bundle=quota-pilot-darwin-x64; digest=7b89486fd2e11d627a106db9dd0139442aa7013b78bb512ebac9063e72394bc9;;
+  Darwin:arm64) bundle=quota-pilot-darwin-arm64; digest=18869fff83f173e49d8e32a7ff5b3a19ac6f255bebd2d6e8d5c2e2f258765019;;
   *) echo 'Unsupported OS or architecture' >&2; exit 2;;
 esac
 if [ "$dry_run" -eq 1 ]; then printf 'PLAN %s %s %s\n' "$tag" "$bundle" "$digest"; exit 0; fi

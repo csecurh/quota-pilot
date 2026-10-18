@@ -11,11 +11,13 @@
 
 QuotaPilot is an **open-source, local-first AI usage HUD** for Codex, Claude Code and compatible ChatGPT Desktop plugin hosts. Its visible name matches your host (**Codex**, **Claude Code**, **ChatGPT**; fallback **AI Usage**). The technical package ID remains `quota-pilot`.
 
-> **Public source · 0.5.0 release candidate.** Automated checks are green; **real-host installation and PiP compatibility are awaiting user testing**. This repo is not yet listed in the universal ChatGPT/Codex Plugins Directory.
+> **Public source · 0.6.0-rc.2 release candidate.** Automated checks are green; **real-host installation and PiP compatibility are awaiting user testing**. This repo is not yet listed in the universal ChatGPT/Codex Plugins Directory.
 
 ![Illustration of the local usage HUD, with synthetic metrics](docs/assets/hud-preview.svg)
 
 The HUD provides provider-reported **used**, **remaining** and **reset time**, plus **burn rate**, **estimated runway** and **visual quota alerts** when enough telemetry exists. Forecasts are estimates—not billing, guaranteed provider limits or desktop-wide notifications. Unknown data is shown as unavailable.
+
+**ChatGPT Desktop permissions:** if setup asks to modify `config.toml` or `plugins/` alongside Internet access, **deny that request**. The ChatGPT HUD does not require changing Codex settings. Confirm the agent can install into your actual local Desktop rather than a cloud computer. See [safe setup guidance](docs/AGENT-INSTALL.md).
 
 ## Install by pasting the repository into your agent
 
@@ -25,7 +27,7 @@ The HUD provides provider-reported **used**, **remaining** and **reset time**, p
 
 ## Alternative: manual portable release
 
-**Recommended:** download the right archive from [QuotaPilot 0.6.0 portable releases](https://github.com/csecurh/quota-pilot/releases/tag/v0.6.0-rc.1). Windows x64, Linux x64 and both macOS architectures include their own Node.js runtime and license notices. Extract the archive, then add its folder as a **local marketplace/plugin** in a compatible host. **No separate Node/npm installation.** [Full guide](docs/PORTABLE.md) · [Guía en español](docs/es/PORTABLE.md).
+**Recommended:** download the right archive from [QuotaPilot 0.6.0 portable releases](https://github.com/csecurh/quota-pilot/releases/tag/v0.6.0-rc.2). Windows x64, Linux x64 and both macOS architectures include their own Node.js runtime and license notices. Extract the archive, then add its folder as a **local marketplace/plugin** in a compatible host. **No separate Node/npm installation.** [Full guide](docs/PORTABLE.md) · [Guía en español](docs/es/PORTABLE.md).
 
 The bundled runtime **does not** provide a Codex account or authenticated Codex executable: Codex quota data still requires the original Codex application. ChatGPT Desktop requires local MCP Apps support. Installing this ZIP does not put the plugin in the universal directory or guarantee global PiP.
 

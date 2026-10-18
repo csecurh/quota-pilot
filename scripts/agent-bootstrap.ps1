@@ -2,9 +2,9 @@
 param([switch]$DryRun)
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
-$tag = 'v0.6.0-rc.1'
+$tag = 'v0.6.0-rc.2'
 $bundle = 'quota-pilot-win32-x64'
-$digest = '47dcd61f75c56cbc92585f5dc41e1a27cd4fe11d8ebd8e456fcac949653ee9d3'
+$digest = 'd83de9b67f87597c654e3bfd1a0f4824dec6253d56875fab83eefd8adb69bca9'
 if (-not [Environment]::Is64BitOperatingSystem -or [Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString() -ne 'X64') { throw 'Windows x64 required' }
 if ($DryRun) { Write-Output "PLAN $tag $bundle $digest"; exit 0 }
 $homeDir = [Environment]::GetFolderPath('UserProfile')
