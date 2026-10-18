@@ -105,7 +105,7 @@ const tools = [
       additionalProperties: false,
     },
     annotations: { readOnlyHint: true, openWorldHint: false },
-    _meta: hudMeta,
+    _meta: { ...hudMeta, 'openai/widgetAccessible': true },
   },
 ];
 
