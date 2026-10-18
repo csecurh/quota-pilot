@@ -12,6 +12,12 @@ The agent should obtain or inspect the repo, run `scripts/agent-bootstrap.ps1` o
 
 **Important technical distinction:** cloning/adding the *source* marketplace by URL is not enough to execute its Node-based MCP server on machines without Node. The agent bootstrap prepares the already-tested self-contained local marketplace and the agent registers **that** package. The release archive is downloaded **by the agent behind the scenes**, not by the user.
 
+### ChatGPT Desktop: permissions are not installation proof
+
+If ChatGPT asks for Internet **and** permission to edit `.quotapilot`, `plugins`, `config.toml`, and `tmp` during a ChatGPT Desktop setup, **decline**. QuotaPilot does not need to change Codex `config.toml` for a ChatGPT HUD. The shared OpenAI hook now performs no filesystem writes. A ChatGPT Work cloud computer may be isolated from your local Windows PC, even when the ChatGPT Desktop application displays that conversation.
+
+Check that the agent can register plugins via a documented ChatGPT **local** plugin manager on the **user's actual machine** before authorizing a download to `.quotapilot`. If it cannot, do not grant extra write permissions or claim that the desktop plugin is active. Codex footer setup and Claude status-line setup are separate, explicitly authorized actions.
+
 ### What depends on the host
 
 - **Codex CLI and Claude Code** agents commonly provide a local shell and local plugin management. The agent can complete the bootstrap and use the host-native plugin commands, subject to user trust prompts.

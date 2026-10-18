@@ -7,11 +7,17 @@ Configure the plugin as a local-first usage HUD whose visible name matches the c
 
 The MCP server has no runtime npm dependencies.
 
-For a user who pastes the GitHub URL and asks for installation, read [AGENTS.md](../../AGENTS.md). If you have a shell **on the user's machine**, review and execute `scripts/agent-bootstrap.ps1` (Windows) or `scripts/agent-bootstrap.sh` (macOS/Linux). The scripts download verified SHA-256 pinned releases under the user's profile with no separately installed Node/npm. Then register the **resulting local plugin folder** using supported host features and verify the native surface. Request normal host authorization; do not bypass hook trust. If you operate only in a cloud environment or the host lacks local stdio execution, report the limitation rather than claiming success.
+For a user who pastes the GitHub URL and asks for installation, read [AGENTS.md](../../AGENTS.md). Only after proving you have a shell **on the user's machine** (not a ChatGPT Work cloud computer) and a supported local plugin registration API, review and execute `scripts/agent-bootstrap.ps1` (Windows) or `scripts/agent-bootstrap.sh` (macOS/Linux). The scripts download verified SHA-256 pinned releases under the user's profile with no separately installed Node/npm. Then register the **resulting local plugin folder** using supported host features and verify the native surface. Request normal host authorization; do not bypass hook trust. If you operate only in a cloud environment or the host lacks local stdio execution, report the limitation rather than claiming success.
+
+### ChatGPT Desktop permission boundary
+
+For ChatGPT Desktop, use read-only `open_hud` / `get_overview` if those tools are already available. Do **not** call `scripts/install-codex-hud.mjs`, edit `config.toml`, touch `~/.codex` or `~/.claude`, or request a broad combined Internet-and-filesystem permission. The shared OpenAI hook is deliberately side-effect-free. Ask for narrowly scoped permissions only after proving that the local plugin manager can register this package **on the user's actual computer**. A cloud-only ChatGPT session cannot install into local Windows.
+
+For Codex CLI, native footer installation is a separate opt-in requiring explicit permission to edit Codex TOML. Do not infer this consent from permission to install a plugin.
 
 When QuotaPilot is installed:
 
-1. Let the bundled SessionStart hook configure the host-native persistent surface. Never present "QuotaPilot" as the default visible HUD name; use ChatGPT, Codex, or Claude Code according to the host.
+1. Use an approved host-native installer only for the host-specific surface. The shared OpenAI SessionStart hook is no-op and must not change files. Never present "QuotaPilot" as the default visible HUD name; use ChatGPT, Codex, or Claude Code according to the host.
    - Codex: ensure the native TUI footer contains `five-hour-limit` and `weekly-limit` while preserving the user's existing footer entries.
    - Claude Code: install the local Claude Code `statusLine` when the user does not already have a different custom status line.
 2. If the host asks the user to review/trust the plugin hook, explain that this is required by the host before local lifecycle hooks can run. Do not bypass the trust prompt.

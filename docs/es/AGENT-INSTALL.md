@@ -12,6 +12,12 @@ El agente obtiene/revisa el repositorio, ejecuta `scripts/agent-bootstrap.ps1` e
 
 **Diferencia técnica:** agregar el repositorio *fuente* de GitHub al marketplace no basta para iniciar su MCP basado en Node cuando Node no está presente. El agente prepara el paquete local autónomo y registra **esa** carpeta. El usuario no descarga el archivo manualmente: lo hace el agente con verificación y autorización.
 
+### ChatGPT Desktop: una solicitud de permisos no demuestra instalación
+
+Si ChatGPT solicita Internet **y** editar `.quotapilot`, `plugins`, `config.toml` y `tmp` para configurar QuotaPilot en ChatGPT Desktop, **rechaza esa solicitud**. El HUD de ChatGPT no necesita modificar el `config.toml` de Codex. El hook compartido de OpenAI ahora no escribe archivos. ChatGPT Work puede ejecutar herramientas en un ordenador aislado en la nube, aunque la conversación se muestre desde ChatGPT Desktop.
+
+Antes de autorizar descargas o permisos para `.quotapilot`, el agente debe confirmar que puede registrar plugins mediante un mecanismo **local y documentado** sobre **tu equipo real**. Si no puede, debe detenerse y explicar la limitación. Configurar el footer de Codex o la barra de Claude requiere permisos diferentes y específicos.
+
 ### Depende del host
 
 - **Codex CLI y Claude Code:** normalmente tienen terminal y gestión de plugins local; el agente puede ejecutar el instalador y utilizar los comandos oficiales del host, respetando las solicitudes de confianza.

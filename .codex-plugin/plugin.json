@@ -1,6 +1,6 @@
 {
   "name": "quota-pilot",
-  "version": "0.6.0-rc.1",
+  "version": "0.6.0-rc.2",
   "description": "Local Codex quota HUD / HUD local de cuota para Codex.",
   "skills": "./skills/",
   "mcpServers": "./mcp.json",
@@ -9,6 +9,5 @@
       "requires_local_executor": true,
       "onboardingSkill": "./skills/setup/SKILL.md"
     }
-  },
-  "hooks": "./hooks/codex.json"
+  }
 }

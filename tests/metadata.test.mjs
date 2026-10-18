@@ -8,10 +8,10 @@ test('all distribution manifest versions align with the release candidate', asyn
   const plugin = JSON.parse(await text('plugin.json'));
   const codex = JSON.parse(await text('.codex-plugin/plugin.json'));
   const claude = JSON.parse(await text('.claude-plugin/plugin.json'));
-  assert.equal(pkg.version, '0.6.0-rc.1');
+  assert.equal(pkg.version, '0.6.0-rc.2');
   for (const manifest of [plugin, codex, claude]) assert.equal(manifest.version, pkg.version);
-  assert.match(await text('server/index.mjs'), /version: '0\.6\.0-rc\.1'/);
-  assert.match(await text('server/providers/codex.mjs'), /version: '0\.6\.0-rc\.1'/);
+  assert.match(await text('server/index.mjs'), /version: '0\.6\.0-rc\.2'/);
+  assert.match(await text('server/providers/codex.mjs'), /version: '0\.6\.0-rc\.2'/);
 });
 
 test('public launch claims and platform access remain honest', async () => {
