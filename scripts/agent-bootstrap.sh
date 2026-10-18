@@ -23,11 +23,11 @@ case "$host" in
   codex|claude) ;;
   *) echo 'Explicit --host codex or --host claude is required; ChatGPT onboarding is read-only' >&2; exit 2 ;;
 esac
-tag=v0.6.0-rc.2
+tag=v0.6.0-rc.3
 case "$(uname -s):$(uname -m)" in
-  Linux:x86_64) bundle=quota-pilot-linux-x64; digest=f89bbd4dfa90727105081fa72b9c1a610957e3ddb480190bd5e2f6a1ccbfc6b0;;
-  Darwin:x86_64) bundle=quota-pilot-darwin-x64; digest=7b89486fd2e11d627a106db9dd0139442aa7013b78bb512ebac9063e72394bc9;;
-  Darwin:arm64) bundle=quota-pilot-darwin-arm64; digest=18869fff83f173e49d8e32a7ff5b3a19ac6f255bebd2d6e8d5c2e2f258765019;;
+  Linux:x86_64) bundle=quota-pilot-linux-x64; digest=b37098def34887c179b27d28cc6dafc2b02c34a96c167ca81710253534ccab85;;
+  Darwin:x86_64) bundle=quota-pilot-darwin-x64; digest=a5305a83d8f57e191d80d0fbbf8c314c96679aea9c477dcaf2e34e7a1e0dd4ad;;
+  Darwin:arm64) bundle=quota-pilot-darwin-arm64; digest=b03785aec51e4a507a140657415c08861e9677a3f86e7f99ffc9079023ec2734;;
   *) echo 'Unsupported OS or architecture' >&2; exit 2;;
 esac
 if [ "$dry_run" -eq 1 ]; then printf 'PLAN %s %s %s host=%s\n' "$tag" "$bundle" "$digest" "$host"; exit 0; fi
