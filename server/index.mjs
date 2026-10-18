@@ -177,7 +177,7 @@ async function handle(message) {
         tools: { listChanged: false },
         resources: { subscribe: false, listChanged: false },
       },
-      serverInfo: { name: 'quota-pilot', version: '0.2.0' },
+      serverInfo: { name: 'quota-pilot', version: '0.3.0' },
       instructions: 'This is a local host-aware usage HUD. Prefer open_hud for users who want persistent visual status. Never invent unavailable quota data.',
     });
     return;
