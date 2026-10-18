@@ -10,6 +10,13 @@ QuotaPilot utiliza versionado semántico. Las versiones candidatas pueden cambia
 - Pruebas de regresión de `get_usage`, `open_hud`, acceso a recursos y redacción de metadatos, distinguiendo errores de protocolo de fallos del proveedor.
 - Guías de actualización y reinicio en inglés y español para instalaciones de ChatGPT Desktop afectadas.
 
+## 0.6.0-rc.1 — Paquetes autónomos sin dependencias
+
+- Distribuciones con Node.js 24 LTS y su licencia incluida para Windows x64, Linux x64 y macOS ARM64/Intel.
+- Compilación y prueba en cuatro entornos GitHub Actions con PATH del proceso vacío para garantizar que no usa Node del sistema.
+- Hooks por host explícito y persistencia segura del runtime de la barra de Claude en su directorio privado.
+- Guías bilingües con limitaciones reales de cuotas y del host, sin credenciales, backend remoto ni descargas automáticas.
+
 ## 0.5.0-rc.1 — Código público, versión candidata en validación
 
 - HUD con consumo por hora, autonomía estimada y posible intervalo sin cuota.

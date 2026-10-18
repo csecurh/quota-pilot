@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/ensure-surfaces.mjs\"",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/ensure-surfaces.mjs\" claude",
             "statusMessage": "Starting Claude Code HUD / Activando HUD de Claude Code"
           }
         ]

@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${PLUGIN_ROOT}/scripts/ensure-surfaces.mjs\"",
+            "command": "node \"${PLUGIN_ROOT}/scripts/ensure-surfaces.mjs\" codex",
             "statusMessage": "Starting Codex HUD / Activando HUD de Codex"
           }
         ]

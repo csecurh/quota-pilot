@@ -17,9 +17,15 @@ QuotaPilot is an **open-source, local-first AI usage HUD** for Codex, Claude Cod
 
 The HUD provides provider-reported **used**, **remaining** and **reset time**, plus **burn rate**, **estimated runway** and **visual quota alerts** when enough telemetry exists. Forecasts are estimates—not billing, guaranteed provider limits or desktop-wide notifications. Unknown data is shown as unavailable.
 
-## Install
+## Install without Node.js, npm or Git (portable release)
 
-**Requirements:** Node.js **22.13+**, Git, and the relevant host installed. Codex/Claude quota data requires a provider already authenticated through its own application. **No npm install, QuotaPilot account or API key is required.** Review any host's local hook/trust prompt before authorizing changes.
+**Recommended:** download the right archive from [QuotaPilot 0.6.0 portable releases](https://github.com/csecurh/quota-pilot/releases/tag/v0.6.0-rc.1). Windows x64, Linux x64 and both macOS architectures include their own Node.js runtime and license notices. Extract the archive, then add its folder as a **local marketplace/plugin** in a compatible host. **No separate Node/npm installation.** [Full guide](docs/PORTABLE.md) · [Guía en español](docs/es/PORTABLE.md).
+
+The bundled runtime **does not** provide a Codex account or authenticated Codex executable: Codex quota data still requires the original Codex application. ChatGPT Desktop requires local MCP Apps support. Installing this ZIP does not put the plugin in the universal directory or guarantee global PiP.
+
+## Install from source (Node.js required)
+
+**Source installation requirements only:** Node.js **22.13+**, Git, and the relevant host installed. Codex/Claude quota data requires a provider already authenticated through its own application. **No npm install, QuotaPilot account or API key is required.** Review any host's local hook/trust prompt before authorizing changes.
 
 | Host | Start here | Persistent surface |
 |---|---|---|

@@ -18,24 +18,80 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest, macos-15-intel]
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 12
+    timeout-minutes: 20
     steps:
-      - name: Checkout (full history for security review)
+      - name: Checkout (complete history)
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
           fetch-depth: 0
 
-      - name: Setup Node
+      - name: Setup pinned Node for the build runner only
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: 22.13.0
 
-      - name: Syntax, tests and runtime security
+      - name: Syntax, tests, security audit
         run: npm run check
 
-      - name: Full reachable history audit
+      - name: Audit entire reachable history
         if: runner.os == 'Linux'
         run: npm run security:history
+
+      - name: Setup current Node 24 LTS for distributed runtime
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24
+
+      - name: Build self-contained plugin (runtime included)
+        run: npm run build:portable
+
+      - name: Smoke test bundle with Node removed from child PATH
+        run: npm run test:portable
+
+      - name: Upload reviewed portable bundle
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: portable-${{ matrix.os }}
+          path: |
+            dist/*.tar.gz
+            dist/*.zip
+          if-no-files-found: error
+          retention-days: 30
+
+  release:
+    name: Publish immutable portable prerelease
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [validate]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    timeout-minutes: 10
+    steps:
+      - name: Download tested platform bundles
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: portable-*
+          merge-multiple: true
+          path: dist
+
+      - name: Create checksums and publish tag once
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          RELEASE_SHA: ${{ github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(find dist -maxdepth 1 -type f \( -name '*.zip' -o -name '*.tar.gz' \) | wc -l)" -eq 4
+          (cd dist && sha256sum *.zip *.tar.gz > SHA256SUMS.txt)
+          TAG="v0.6.0-rc.1"
+          if gh release view "$TAG" -R "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release $TAG already exists; do not replace immutable assets."
+            exit 0
+          fi
+          gh release create "$TAG" dist/* -R "$GITHUB_REPOSITORY" --target "$RELEASE_SHA" \
+            --prerelease --title "QuotaPilot 0.6.0-rc.1 - Portable" \
+            --notes "Portable, Node-bundled Windows x64, Linux x64, macOS x64/arm64 plugins. Use the archive matching your platform. No separate Node/npm installation. ChatGPT host compatibility and provider quota access remain host-dependent. See README and docs/PORTABLE.md for installation and security limitations."

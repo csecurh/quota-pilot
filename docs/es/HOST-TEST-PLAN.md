@@ -40,6 +40,10 @@ El repositorio es público, pero la instalación y ejecución deben comprobarse 
 
 | SO | Host y versión | Versión del plugin | Instalación | Interfaz correcta | Métricas | Actualización/desinstalación | Resultado |
 |---|---|---|---|---|---|---|---|
-| Solo ejemplo | Claude Code (versión anonimizada) | 0.5.0-rc.1 | Sí | Sí | Sintéticas | Sí | OK |
+| Solo ejemplo | Claude Code (versión anonimizada) | 0.6.0-rc.1 | Sí | Sí | Sintéticas | Sí | OK |
 
 Solo se deben compartir estados anonimizados o capturas con información privada censurada.
+
+## Prueba de paquete autónomo
+
+Descarga el paquete de [PORTABLE.md](PORTABLE.md). Verifica que el host usa el runtime incluido, no un Node/npm del sistema, y que la distribución del repositorio fuente no se confunde con el paquete extraído. Repite instalación, actualización y desinstalación con un perfil nuevo.

@@ -35,7 +35,8 @@ function run(name) {
 }
 
 let result = '';
-if (process.env.CLAUDE_PLUGIN_ROOT) result = await run('install-claude-hud.mjs');
-else if (process.env.PLUGIN_ROOT) result = await run('install-codex-hud.mjs');
+// Host variables may overlap; the hook must name its intended host explicitly.
+if (process.argv[2] === 'claude') result = await run('install-claude-hud.mjs');
+else if (process.argv[2] === 'codex') result = await run('install-codex-hud.mjs');
 
 if (result) process.stdout.write(result);

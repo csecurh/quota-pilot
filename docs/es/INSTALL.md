@@ -4,7 +4,11 @@
 
 QuotaPilot está disponible públicamente como código fuente [MIT](../../LICENSE). **No significa que esté publicado en el directorio universal de plugins de ChatGPT.** Las pruebas automáticas no sustituyen las pruebas en clientes reales.
 
-## Requisitos
+## Paquete autónomo: sin instalar Node ni npm
+
+Descarga el paquete desde [GitHub Releases](https://github.com/csecurh/quota-pilot/releases/tag/v0.6.0-rc.1) y registra la carpeta extraída en el gestor de plugins de un host compatible. El runtime viene incluido. Consulta la [guía autónoma](PORTABLE.md) para elegir el sistema, comprobar su integridad y entender las limitaciones.
+
+## Requisitos (solo código fuente)
 
 Node.js 22.13+, Git, un host compatible y sesión iniciada en el proveedor original Codex o Claude Code para obtener métricas reales. No se necesita `npm install`, Supabase ni introducir nuevas credenciales. Los hooks locales pueden modificar la configuración del host cuando lo autorizas; revisa los scripts antes de ejecutarlos.
 

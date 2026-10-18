@@ -5,7 +5,7 @@ import { join, relative, resolve } from 'node:path';
 
 const root=resolve(fileURLToPath(new URL('..',import.meta.url)));
 const failures=[];
-const skip=new Set(['.git','node_modules']);
+const skip=new Set(['.git','node_modules','dist']);
 const textFiles=[];
 
 async function walk(dir){
@@ -82,7 +82,7 @@ if(!/ubuntu-latest.*macos-latest.*windows-latest/.test(workflow))failures.push('
 const actionCalls=[...workflow.matchAll(/^\s*uses:\s*([^\s#]+)/gm)].map(match=>match[1]);
 if(actionCalls.length<2)failures.push('CI must run expected GitHub-owned actions');
 for(const action of actionCalls){
-  if(!/^actions\/(?:checkout|setup-node)@[a-f0-9]{40}$/.test(action))
+  if(!/^actions\/(?:checkout|setup-node|upload-artifact|download-artifact)@[a-f0-9]{40}$/.test(action))
     failures.push('CI contains unexpected or unpinned action');
 }
 

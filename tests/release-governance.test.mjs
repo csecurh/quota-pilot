@@ -29,7 +29,7 @@ test('github local repo security files cover owners, workflow pins and action up
   assert.match(dependabot, /package-ecosystem: github-actions/);
   assert.match(dependabot, /interval: weekly/);
   const actions = [...workflow.matchAll(/^\s*uses:\s*(\S+)/gm)].map((match) => match[1]);
-  assert.deepEqual(actions.map((action) => action.split('@')[0]), ['actions/checkout', 'actions/setup-node']);
+  assert.deepEqual(actions.map((action) => action.split('@')[0]), ['actions/checkout', 'actions/setup-node', 'actions/upload-artifact', 'actions/download-artifact']);
   assert.ok(actions.every((action) => /@[a-f0-9]{40}$/.test(action)));
   assert.match(workflow, /permissions:\s*\n\s*contents: read/);
   assert.match(workflow, /persist-credentials: false/);

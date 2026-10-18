@@ -4,7 +4,11 @@
 
 QuotaPilot is published as source under [MIT](../LICENSE). **The GitHub repository is public; the plugin has not been admitted to the universal ChatGPT/Codex directory.** Automated CI does not replace real host tests.
 
-## Prerequisites
+## Portable package: no separate runtime needed
+
+Download the self-contained package from [GitHub Releases](https://github.com/csecurh/quota-pilot/releases/tag/v0.6.0-rc.1) and register the extracted folder with your compatible plugin host. The archive contains its own runtime. See [PORTABLE.md](PORTABLE.md) for platform selection, integrity checks and host limitations.
+
+## Prerequisites (source installation only)
 
 - Node.js **22.13+**, Git, a compatible host and (for live quotas) a locally authenticated Codex and/or Claude Code provider.
 - No `npm install`, Supabase project, cloud account or new provider token.

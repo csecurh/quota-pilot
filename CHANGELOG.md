@@ -10,6 +10,13 @@ This project uses SemVer for plugin/runtime metadata. Release candidates are not
 - Add host-shaped protocol regression tests for `get_usage`, `open_hud`, metadata redaction and the UI resource; separate protocol errors from provider-unavailable messages.
 - Document upgrade/restart steps in English and Spanish for affected ChatGPT Desktop plugin installations.
 
+## 0.6.0-rc.1 — Portable, dependency-free runtime
+
+- Bundle official Node.js 24 LTS, its license notices, MCP server and hooks into OS-specific release archives: Windows x64, Linux x64, macOS ARM64/Intel.
+- Build native release bundles in four pinned GitHub Actions environments and test with a completely empty child PATH.
+- Fix Codex-vs-Claude lifecycle hook ambiguity with an explicit host argument and preserve Claude's bundled runtime in its private status-line directory.
+- Document honest host/provider limitations and release verification in English and Spanish. No credentials, cloud service or automatic network downloader is introduced.
+
 ## 0.5.0-rc.1 — Public source, host-validation release candidate
 
 - Show advisory consumption rate, estimated runway and possible quota gap within the local HUD.

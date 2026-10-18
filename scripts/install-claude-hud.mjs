@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-import { readFile } from 'node:fs/promises';
+import { chmod, copyFile, lstat, open, readFile, rename, unlink } from 'node:fs/promises';
+import { randomUUID } from 'node:crypto';
 import { homedir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -9,7 +10,12 @@ const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const runtimeDir = join(homedir(), '.quotapilot');
 const runtime = join(runtimeDir, 'claude-statusline.mjs');
 const settingsPath = join(homedir(), '.claude', 'settings.json');
-const command = 'node "' + runtime.replaceAll('"', '\\"') + '"';
+const executableName = process.platform === 'win32' ? 'node.exe' : 'node';
+const bundledRuntime = join(root, 'runtime', executableName);
+const isBundled = resolve(process.execPath).toLowerCase() === resolve(bundledRuntime).toLowerCase();
+const installedRuntime = join(runtimeDir, executableName);
+const executable = isBundled ? installedRuntime : 'node';
+const command = (isBundled ? '"' + executable + '"' : 'node') + ' "' + runtime + '"';
 
 let settings = {};
 const raw = await readSafeText(settingsPath, { maxBytes: 512 * 1024, allowMissing: true });
@@ -26,6 +32,34 @@ if (current?.command && current.command !== command) {
 }
 
 await ensurePrivateDir(runtimeDir);
+if (isBundled) {
+  // Only copy the Node executable shipped in this platform's verified bundle.
+  // Keep it in our private data directory so statusLine survives plugin upgrades.
+  const temp = join(runtimeDir, '.runtime-' + randomUUID() + '.tmp');
+  try {
+    const existing = await lstat(installedRuntime).catch((e) => {
+      if (e?.code === 'ENOENT') return null;
+      throw e;
+    });
+    if (existing && (!existing.isFile() || existing.isSymbolicLink()
+      || (typeof process.getuid === 'function' && existing.uid !== process.getuid()))) {
+      throw new Error('Unsafe local runtime');
+    }
+    const sourceStat = await lstat(bundledRuntime);
+    if (!sourceStat.isFile() || sourceStat.isSymbolicLink() || sourceStat.size > 160 * 1024 * 1024) {
+      throw new Error('Unsafe bundled runtime');
+    }
+    if (!existing || existing.size !== sourceStat.size) {
+      await copyFile(bundledRuntime, temp, 1 /* COPYFILE_EXCL */);
+      if (process.platform !== 'win32') await chmod(temp, 0o700);
+      const handle = await open(temp, 'r');
+      try { await handle.sync(); } finally { await handle.close(); }
+      await rename(temp, installedRuntime);
+    }
+  } finally {
+    try { await unlink(temp); } catch {}
+  }
+}
 const runtimeSource = await readFile(join(root, 'scripts', 'claude-statusline.mjs'), 'utf8');
 const helperSource = await readFile(join(root, 'scripts', 'secure-fs.mjs'), 'utf8');
 await atomicWritePrivate(runtime, runtimeSource);
