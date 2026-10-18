@@ -17,7 +17,7 @@ test('agent bootstrap pins immutable package SHA-256 digests instead of trusting
   ])assert.ok(sh.includes(digest));
   assert.ok(ps.includes('d83de9b67f87597c654e3bfd1a0f4824dec6253d56875fab83eefd8adb69bca9'));
   for(const s of [sh,ps]){
-    assert.match(s,/v0\.6\.0-rc\.1/);
+    assert.match(s,/v0\.6\.0-rc\.2/);
     assert.match(s,/github\.com\/csecurh\/quota-pilot\/releases\/download/);
     assert.doesNotMatch(s,/Invoke-Expression|curl[^ \n]*\s*\| *sh|Set-ExecutionPolicy|sudo |--insecure|--no-check-certificate/i);
     assert.match(s,/SHA-256|sha256|SHA256/i);
@@ -36,7 +36,7 @@ test('bootstrap is syntax-valid and can select a target using OS utilities',asyn
     env:{...process.env,PATH:isWindows?process.env.PATH:'/usr/bin:/bin'}
   });
   assert.equal(run.status,0,run.stderr);
-  assert.match(run.stdout,/PLAN v0\.6\.0-rc\.1 quota-pilot-/);
+  assert.match(run.stdout,/PLAN v0\.6\.0-rc\.2 quota-pilot-/);
   assert.match(run.stdout,/[a-f0-9]{64}/);
 });
 test('agent-first documentation stays bilingual and never guarantees unsupported local Desktop installs',async()=>{
