@@ -30,6 +30,34 @@ node scripts/doctor.mjs
 
 El instalador copia el helper a `~/.quotapilot/` y modifica `~/.claude/settings.json` **solo si no hay una barra personalizada incompatible**. Reinicia el host.
 
+## Windows: cuando PowerShell no reconoce `codex`
+
+**ChatGPT Desktop no instala automáticamente el comando Codex CLI.** Si PowerShell indica `CommandNotFoundException` al usar `codex plugin marketplace ...`, ese comando no llegó a ejecutarse. Abre **PowerShell normal, sin privilegios de administrador**, y comprueba:
+
+```powershell
+node --version
+npm --version
+Get-Command codex -ErrorAction SilentlyContinue
+```
+
+Si `codex` no existe pero Node/npm están instalados, instala **Codex CLI (producto independiente de QuotaPilot)** desde su distribución oficial:
+
+```powershell
+npm install -g @openai/codex
+```
+
+Cierra y vuelve a abrir PowerShell y ejecuta `codex --version`. Si la instalación de npm falla en Windows, consulta el [instalador nativo oficial de OpenAI](https://github.com/openai/codex#installing-and-running-codex-cli) en lugar de descargar ejecutables de terceros. Antes de ejecutar cualquier script remoto, revisa su origen y contenido.
+
+Solo **después** de que funcione `codex --version`:
+
+```powershell
+codex plugin marketplace list
+codex plugin marketplace add csecurh/quota-pilot
+codex plugin marketplace upgrade ai-usage
+```
+
+El marketplace se instala desde la interfaz **Plugins** de una versión compatible de ChatGPT Desktop, incluso si no tienes Codex CLI configurado. Prueba primero actualizar/reinstalar desde **Plugins → Installed / AI Usage** y reiniciar Desktop. El plugin utiliza una copia en caché y no se actualiza por el solo hecho de modificar GitHub. Instalar Codex CLI sirve para usar comandos de terminal y proporciona un ejecutable local desde el que QuotaPilot puede consultar límites; **no garantiza** por sí solo que el host ejecute el widget MCP.
+
 ## Codex CLI mediante marketplace
 
 ```bash

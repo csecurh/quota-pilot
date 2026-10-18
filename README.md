@@ -27,6 +27,8 @@ The HUD provides provider-reported **used**, **remaining** and **reset time**, p
 | **Codex CLI** | In your terminal: `codex plugin marketplace add csecurh/quota-pilot`; open `codex` → `/plugins` → marketplace **AI Usage** → install **quota-pilot** | Codex's native 5-hour / weekly footer |
 | **ChatGPT Desktop** | In a compatible local plugin host, add `csecurh/quota-pilot` as a Codex marketplace, restart Desktop, then find **AI Usage** in Plugins and install **quota-pilot** | Conversation-scoped HUD; it **requests** PiP where supported |
 
+**On Windows:** if PowerShell shows `CommandNotFoundException` for `codex`, the CLI is missing or not on `PATH`. [Install the official Codex CLI and diagnose Windows](docs/INSTALL.md#windows-when-powershell-cannot-find-codex). The ChatGPT Desktop Plugins browser does not itself require that terminal command.
+
 **ChatGPT compatibility is experimental:** the desktop host must support local plugin execution, stdio MCP Apps and the MCP App UI bridge. A GitHub repository is not the same as a published universal ChatGPT app. There is no guaranteed global floating overlay, automatic availability in web/mobile ChatGPT, or universal directory listing. [OpenAI's marketplace/plugin guidance](https://developers.openai.com/plugins/build/plugins) explains the local installation model.
 
 **Alternative direct installers** (useful when a marketplace is not supported):

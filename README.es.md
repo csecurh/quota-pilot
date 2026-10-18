@@ -25,6 +25,8 @@ Permite ver las métricas de **uso**, **cuota restante** y **reinicio**, cuando 
 | **Codex CLI** | Terminal: `codex plugin marketplace add csecurh/quota-pilot`; abre `codex` → `/plugins` → **AI Usage** → instala **quota-pilot** | Footer nativo con ventanas de 5 horas y semanal |
 | **ChatGPT Desktop** | Si tu versión admite plugins locales, añade `csecurh/quota-pilot` como marketplace, reinicia Desktop e instala **quota-pilot** desde **AI Usage** | HUD de la conversación, que solicita PiP donde esté disponible |
 
+**En Windows:** si PowerShell muestra `CommandNotFoundException` al ejecutar `codex`, el CLI no está instalado o no aparece en `PATH`. [Solución e instalación oficial de Codex CLI](docs/es/INSTALL.md#windows-cuando-powershell-no-reconoce-codex). No hace falta el CLI para abrir el catálogo de plugins dentro de ChatGPT Desktop.
+
 **ChatGPT Desktop sigue siendo experimental.** El host necesita permitir ejecución de plugins locales, MCP por stdio y el puente UI del host. Un repositorio GitHub público no implica estar disponible en el directorio universal ni garantiza un flotante global en web, móvil u otras aplicaciones. Consulta la [documentación de plugins de OpenAI](https://developers.openai.com/plugins/build/plugins).
 
 **Instalación directa alternativa** (si no puedes usar el marketplace):

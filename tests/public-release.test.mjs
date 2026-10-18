@@ -41,3 +41,15 @@ test('public docs and issue templates are consistent, sanitized, and clearly ide
     assert.match(source, /(?:credentials|security|private|vulnerabilit)/i);
   }
 });
+
+
+test('EN/ES Windows onboarding distinguishes a missing Codex CLI from ChatGPT Desktop plugin availability', async () => {
+  for (const path of ['docs/INSTALL.md', 'docs/es/INSTALL.md']) {
+    const source = await read(path);
+    assert.match(source, /CommandNotFoundException/);
+    assert.match(source, /npm install -g @openai\/codex/);
+    assert.match(source, /Get-Command codex/);
+    assert.match(source, /codex plugin marketplace upgrade ai-usage/);
+    assert.match(source, /ChatGPT Desktop/);
+  }
+});
