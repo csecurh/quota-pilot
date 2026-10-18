@@ -1,7 +1,7 @@
 {
   "name": "quota-pilot",
-  "version": "0.2.0",
-  "description": "Local-first usage intelligence for Codex and Claude Code.",
+  "version": "0.3.0",
+  "description": "Host-aware local usage HUD for Codex.",
   "skills": "./skills/",
   "mcpServers": "./mcp.json",
   "extensions": {
