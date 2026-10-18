@@ -4,6 +4,12 @@
 
 QuotaPilot utiliza versionado semántico. Las versiones candidatas pueden cambiar antes de una versión estable.
 
+## Corrección de compatibilidad MCP Desktop (18 de octubre de 2026)
+
+- Se admite el campo estándar `params._meta` en las llamadas a herramientas MCP y recursos UI sin relajar los esquemas de argumentos ni devolver metadatos del host.
+- Pruebas de regresión de `get_usage`, `open_hud`, acceso a recursos y redacción de metadatos, distinguiendo errores de protocolo de fallos del proveedor.
+- Guías de actualización y reinicio en inglés y español para instalaciones de ChatGPT Desktop afectadas.
+
 ## 0.5.0-rc.1 — Código público, versión candidata en validación
 
 - HUD con consumo por hora, autonomía estimada y posible intervalo sin cuota.

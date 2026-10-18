@@ -51,6 +51,18 @@ export function safeWindow(value, defaultDuration = null) {
   };
 }
 
+/**
+ * MCP reserves params._meta for protocol and host metadata. It is transport
+ * metadata, never tool input; discard it rather than echoing or persisting it.
+ * Permit only explicitly named method parameters plus an object-shaped _meta.
+ * Frame-size limits in the stdio reader also bound the untrusted metadata.
+ */
+export function validateMcpRequestParams(params, allowed = []) {
+  if (!isPlainObject(params)) return false;
+  if (Object.hasOwn(params, '_meta') && !isPlainObject(params._meta)) return false;
+  return Object.keys(params).every((key) => key === '_meta' || allowed.includes(key));
+}
+
 export function validateToolArguments(name, args) {
   if (!isPlainObject(args)) return false;
   const keys = Object.keys(args);

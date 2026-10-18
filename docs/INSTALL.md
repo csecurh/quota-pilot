@@ -74,6 +74,14 @@ Update a cloned checkout with `git pull --ff-only`, run `npm run check` and reru
 
 The HUD chooses English or Spanish using the host language; use **EN / ES** to change it during the conversation. The Claude Code status line and `npm run doctor` follow your operating-system locale. For explicit control, set `QUOTAPILOT_LANG=en` or `QUOTAPILOT_LANG=es` **in the process environment**. This preference does not enter snapshots or affect provider authorization.
 
+## ChatGPT Desktop: `-32602 Invalid params`
+
+If both `get_usage` and `open_hud` return JSON-RPC `-32602 Invalid params`, **update or reinstall the marketplace plugin to the latest commit**, then restart ChatGPT Desktop and start a **new conversation**. MCP hosts may attach reserved `params._meta` request metadata; older QuotaPilot servers incorrectly rejected that valid field. The updated runtime accepts metadata separately from tool arguments, without returning or persisting it.
+
+If `get_usage` instead returns `codex usage is temporarily unavailable.` (as a tool result, not protocol `-32602`), MCP transport validation is working and the remaining problem concerns the locally accessible Codex provider. Run `npm run doctor` and `codex --version` locally; do **not** share credentials or private paths.
+
+If `open_hud` succeeds but no widget appears, the host's MCP App/PiP support is a separate compatibility limitation.
+
 ## Diagnostics
 
 ~~~sh

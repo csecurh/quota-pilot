@@ -10,6 +10,7 @@ import {
   boundedText,
   createWindowLimiter,
   isPlainObject,
+  validateMcpRequestParams,
   publicToolError,
   validateToolArguments,
 } from './security.mjs';
@@ -262,17 +263,19 @@ async function handle(message) {
   }
 
   if (method === 'resources/read') {
-    if (!isPlainObject(message.params) || Object.keys(message.params).length !== 1 || message.params?.uri !== HUD_URI) return fail(message.id, -32002, 'Resource not found');
+    if (!validateMcpRequestParams(message.params, ['uri']) || message.params.uri !== HUD_URI) return fail(message.id, -32002, 'Resource not found');
     return ok(message.id, { contents: [await hudResource()] });
   }
 
   if (method === 'tools/call') {
-    if (!isPlainObject(message.params) || Object.keys(message.params).some((key) => key !== 'name' && key !== 'arguments')) {
+    if (!validateMcpRequestParams(message.params, ['name', 'arguments'])) {
       return fail(message.id, -32602, 'Invalid params');
     }
     const name = boundedText(message.params?.name, 64);
     if (!tools.some((tool) => tool.name === name)) return fail(message.id, -32601, 'Unknown tool');
-    const args = Object.hasOwn(message.params, 'arguments') ? message.params.arguments : {};
+    // Tool arguments remain strictly validated by their own schemas.
+    // MCP request _meta is transport metadata and must not be passed to tools.
+    const args = message.params.arguments ?? {};
     return ok(message.id, await toolResult(name, args));
   }
 

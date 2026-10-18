@@ -4,6 +4,12 @@
 
 This project uses SemVer for plugin/runtime metadata. Release candidates are not public releases and may change before general availability.
 
+## Desktop MCP compatibility patch (2026-10-18)
+
+- Accept standard MCP request `params._meta` on tool and UI resource calls. Keep strict tool argument schemas and reject unexpected parameters or invalid metadata types.
+- Add host-shaped protocol regression tests for `get_usage`, `open_hud`, metadata redaction and the UI resource; separate protocol errors from provider-unavailable messages.
+- Document upgrade/restart steps in English and Spanish for affected ChatGPT Desktop plugin installations.
+
 ## 0.5.0-rc.1 — Public source, host-validation release candidate
 
 - Show advisory consumption rate, estimated runway and possible quota gap within the local HUD.
