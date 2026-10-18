@@ -82,11 +82,13 @@ No evidence of an existing data exfiltration channel or committed secret was fou
 4. **Claude status-line input:** Claude supplies the status-line JSON. The plugin minimizes what it persists, but the process necessarily receives that host-provided input transiently.
 5. **Repository administration:** this connector could not read branch-protection/ruleset/Actions administration endpoints, so enforcement of protected branches, private vulnerability reporting, secret scanning and organization-level GitHub policies was not independently verified in this audit.
 6. **No formal external penetration test:** this is a source/configuration audit plus automated adversarial tests, not a third-party certification or OS-level penetration test.
+7. **Private-repository forking is enabled:** GitHub currently reports `allow_forking: true`. This does not make the repository public, but an already-authorized user may be able to create a private fork depending on GitHub/account policy. The available connector does not expose the repository-setting mutation needed to disable it.
 
 ## Recommended repository controls
 
 Enable or verify in GitHub UI when available:
 
+- Disable **Allow forking** for this private repository if private forks are not required.
 - Branch protection/ruleset for `main` requiring CI and blocking force pushes/deletions.
 - Private vulnerability reporting.
 - Secret scanning and push protection where the plan supports them.
