@@ -1,0 +1,8 @@
+{
+  "origin": "https://github.com/csecurh/quota-pilot/releases/download/v0.6.0-rc.3/quota-pilot-win32-x64.zip",
+  "archiveSha256": "710cbf8211bb094e49be635c8d2774f231f79a141b4ae36ea1dc5ebb5924ec1e",
+  "binarySha256": "ba4e6d110e8c1592a1ecd390f6b05f3da124b13871a5be62b341a07a853c6c32",
+  "nodeVersion": "v24.21.0",
+  "sizeBytes": 93580104,
+  "license": "runtime/NODE-LICENSE"
+}\n
