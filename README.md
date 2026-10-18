@@ -1,91 +1,70 @@
 # QuotaPilot
 
-Persistent, local-first usage HUD for Codex, ChatGPT Desktop and Claude Code.
+**Know your AI limits before they interrupt your work.**
 
-`quota-pilot` is the stable technical package/repository ID. The **visible HUD name is host-aware by default**: it renders as **ChatGPT**, **Codex**, or **Claude Code** according to where the plugin is running, with **AI Usage** only as a fallback when the host cannot be identified.
+A privacy-first, local usage HUD for **ChatGPT Desktop, Codex CLI and Claude Code**. See quota **used · remaining · reset**, plus advisory **burn rate, runway and predicted time without quota** when enough data is available.
 
-The plugin reads usage from the user's locally authenticated coding agents and keeps **used quota, remaining quota and reset timing** visible in the best native surface each host supports.
+> **Private preview:** this repository currently requires authorized GitHub access. This is NOT a publicly listed ChatGPT app. No public launch is claimed.
 
-## Surfaces
+![Illustrative HUD preview](docs/assets/hud-preview.svg)
 
-- **ChatGPT Desktop:** the HUD is visibly branded **ChatGPT**, requests **picture-in-picture (PiP)** automatically when opened, and refreshes every 30 seconds while mounted.
-- **Claude Code:** persistent custom `statusLine` visibly branded **Claude Code**, showing 5h/7d used, remaining and reset countdowns.
-- **Codex CLI:** the host is identified as **Codex** and its native TUI footer automatically includes the built-in `five-hour-limit` and `weekly-limit` items while preserving existing footer items. Exact reset timestamps remain available through the plugin/`/status` because Codex does not currently expose reset time as a persistent custom footer token.
+**Why it helps:** stop guessing when your coding agent's rate limit resets, estimate whether current consumption can last until the reset, and keep that information near your work. No separate product account, no Supabase setup, no QuotaPilot telemetry server, no runtime npm dependencies.
 
-## What the HUD shows
+## Get started
 
-- **USED** — provider-reported percentage consumed.
-- **REMAINING** — provider-reported or directly derived percentage left.
-- **RESET** — countdown when the provider/host exposes `resetsAt`.
-- Optional intelligence: burn rate, runway, predicted dead/idle time and risk.
-
-## Privacy
-
-The plugin is local-first.
-
-- No separate product account.
-- No Supabase or usage database required.
-- Provider credentials remain owned by Codex/Claude Code.
-- Claude snapshots contain only minimized usage telemetry; session IDs, cwd, transcript paths, prompts, responses and source code are excluded.
-- Tools are read-only.
-
-## Installation behavior
-
-The repository packages lifecycle hooks for the desktop/local environments.
-
-On first trusted session:
-
-1. Codex configures its native footer automatically.
-2. Claude Code installs the local status-line runtime into `~/.quotapilot/` if there is no conflicting custom status line.
-3. ChatGPT can open `open_hud`; the widget requests PiP immediately.
-
-Hosts intentionally require users to review/trust local lifecycle hooks. The plugin does not bypass that security control.
-
-## MCP tools
-
-- `open_hud()` — open the live usage HUD.
-- `get_usage(provider)` — read one provider.
-- `get_overview()` — compare available providers.
-
-## Development
-
-No runtime npm packages are required.
+**Requirements:** Node.js 22.13+; a compatible local host and an authenticated, locally installed Codex and/or Claude Code provider. Clone access is required during the private preview.
 
 ```bash
-npm test
+git clone git@github.com:csecurh/quota-pilot.git
+cd quota-pilot
+npm run check
+```
+
+Choose the host below. These are **local installation paths**, not a claim of universal marketplace availability:
+
+| Host | Setup | Where the information appears |
+| --- | --- | --- |
+| Claude Code | `node scripts/install-claude-hud.mjs` | Native persistent Claude Code status line |
+| Codex CLI | `node scripts/install-codex-hud.mjs` | Native persistent Codex footer |
+| ChatGPT Desktop | Requires a host build supporting local stdio MCP Apps; configure `node /absolute/path/to/quota-pilot/server/index.mjs` as a local MCP server and invoke `open_hud` | Conversation-scoped ChatGPT HUD requesting PiP |
+
+For host marketplace and lifecycle hook support, consult [installation and troubleshooting](docs/INSTALL.md). **Do not assume ChatGPT Desktop exposes arbitrary local plugins or a global HUD**. If your host does not support a local MCP Apps bridge, that integration cannot be installed via ChatGPT's public app directory.
+
+**Claude Code:** the installer safely leaves a pre-existing different status line untouched. When run from this checkout, it installs a standalone helper and an opt-in command in `~/.claude/settings.json`. Restart the host.
+
+**Codex:** the installer preserves existing TOML and adds `five-hour-limit` and `weekly-limit` to `[tui].status_line`. Restart Codex. Codex's native footer does not expose a custom persistent exact-reset token; use `/status` or MCP tools when available.
+
+**To validate:**
+```bash
 npm run check
 node server/index.mjs
 ```
+The last command starts the **stdio MCP server** and waits for a client; it is not a browser UI. See [docs/INSTALL.md](docs/INSTALL.md) for uninstall, upgrades and common failures.
 
-The local MCP server is configured by `mcp.json` and runs over stdio.
+## Key capabilities
 
-## Current limitation
+- **Native surfaces:** ChatGPT conversation PiP request, Claude Code status line and Codex footer. Each visible HUD uses **ChatGPT / Claude Code / Codex**, with **AI Usage** as fallback.
+- **Quota windows:** used, remaining and reset (if supplied by the provider), including Claude five-hour/seven-day windows.
+- **Pacing estimates:** in-memory burn rate (%/hour), projected runway, and potential gap before reset when there are sufficient observations; values otherwise display **—**.
+- **Local visual alerts:** 20% low, 10% critical, or estimated depletion ahead of reset. These are **in-widget indicators**, not operating-system push notifications.
+- **Privacy by design:** read-only MCP tools; no external widget connections; minimized private Claude snapshot; provider credentials remain with provider applications.
 
-ChatGPT PiP is persistent **within the active ChatGPT conversation/session** after the HUD is opened. ChatGPT does not currently allow a third-party plugin to install a global overlay that floats over every screen before any plugin UI has been invoked.
+## What it looks like
 
-Codex similarly does not expose arbitrary third-party floating UI inside its TUI; the plugin uses the persistent native footer instead.
+The SVG above is an **illustration with synthetic sample data**, not a screenshot or proof of live provider availability. Actual metrics depend on local provider support. Predictive numbers are estimates, not promises.
 
+## Data and security
 
-## Branding behavior
+QuotaPilot accesses the local Codex rate-limit interface and selected usage fields from Claude Code's status-line input. A minimized Claude snapshot lives at `~/.quotapilot/claude-latest.json` with private permissions. **No credentials, prompts, responses, transcripts, source code, session IDs, cwd paths or provider cost details are stored by this plugin.** The externally installed provider/host maintains its own data and network policies. See [SECURITY.md](SECURITY.md), [threat model](docs/THREAT-MODEL.md) and [privacy FAQ](docs/PRIVACY.md).
 
-No branding setup is required after installing from GitHub.
+## MCP interface
 
-- ChatGPT MCP App bridge present → visible name: `ChatGPT`
-- MCP client identifies Codex or Codex plugin environment is present → visible name: `Codex`
-- MCP client identifies Claude or `CLAUDE_PLUGIN_ROOT` is present → visible name: `Claude Code`
-- Unknown host → visible fallback: `AI Usage`
+`open_hud()` · `get_usage({provider:"codex"|"claude_code"})` · `get_overview()`
 
-The technical IDs `quota-pilot`, `ui://quotapilot/live.html`, and `~/.quotapilot/` remain stable on purpose so upgrades do not break installed configurations.
+The protocol is local stdio. Hardening: bounded inputs, generic public errors, strict arguments, no widget `innerHTML`, restrictive CSP, private filesystem operations, CI SHA pinning.
 
+## Project status and contributing
 
-## Security posture (v0.4.0)
+This repository is **private preview**, under active compatibility testing. See [release readiness](docs/RELEASE-CHECKLIST.md). No public release, registration in ChatGPT's directory or guarantee of every host's plugin API is implied. Security disclosures: [SECURITY.md](SECURITY.md).
 
-The default runtime is dependency-free and local-only. It has no HTTP client or telemetry path, the widget CSP allows no external connections/resources, MCP tools are read-only, provider errors are redacted, inputs are bounded/validated, and local snapshots/config writes use private atomic filesystem operations.
-
-Run the complete local gate with:
-
-```bash
-npm run check
-```
-
-See `SECURITY.md` and `docs/SECURITY-AUDIT-2026-10-17.md` for threat model, findings, controls and residual risks.
+For development, run `npm test`, `npm run check`, or `npm run security:audit`. No runtime npm packages are needed. Technical IDs such as `quota-pilot` and `ui://quotapilot/live.html` intentionally stay stable.

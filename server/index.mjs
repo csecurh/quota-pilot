@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { burnRate, deadHours, risk, runwayHours } from './domain/analytics.mjs';
+import { burnRate, deadHours, risk, runwayHours, usageAlert } from './domain/analytics.mjs';
 import { detectHostBrand, FALLBACK_BRAND } from './host.mjs';
 import { readClaudeUsage } from './providers/claude.mjs';
 import { readCodexUsage } from './providers/codex.mjs';
@@ -37,12 +37,14 @@ function intelligence(usage) {
   const burn = burnRate(history.get(usage.provider) ?? []);
   const remaining = usage.primary?.remainingPercent ?? null;
   const runway = runwayHours(remaining, burn);
+  const dead = deadHours({ resetsAt: usage.primary?.resetsAt, runway });
   return {
     ...usage,
     intelligence: {
       burnRatePercentPerHour: burn,
       runwayHours: runway,
-      deadHours: deadHours({ resetsAt: usage.primary?.resetsAt, runway }),
+      deadHours: dead,
+      alert: usageAlert({ remainingPercent: remaining, runway, dead, resetsAt: usage.primary?.resetsAt }),
       risk: risk(remaining, burn),
     },
   };

@@ -19,7 +19,8 @@ export function burnRate(history) {
   const first = points[0];
   const last = points.at(-1);
   const hours = (last.t - first.t) / 3_600_000;
-  if (hours <= 0.03) return null;
+  // Avoid noisy forecasts until samples span at least five minutes.
+  if (hours < 5 / 60) return null;
   const consumed = first.remaining - last.remaining;
   if (consumed < 0) return null;
   return Number((consumed / hours).toFixed(2));
@@ -42,4 +43,22 @@ export function risk(remainingPercent, burnPerHour) {
   if (remainingPercent <= 15) return 'critical';
   if (remainingPercent <= 30 || (burnPerHour ?? 0) >= 20) return 'watch';
   return 'healthy';
+}
+
+/**
+ * Advisory-only warning. Never infer a reset timestamp or a burn rate when
+ * provider data is missing. These alerts are local HUD indicators, not pushes.
+ */
+export function usageAlert({ remainingPercent, runway, dead, resetsAt, now = Date.now() } = {}) {
+  const remaining = clamp(remainingPercent);
+  if (remaining == null) return null;
+  if (remaining <= 10) return { level: 'critical', code: 'quota_critical' };
+  if (remaining <= 20) return { level: 'warning', code: 'quota_low' };
+
+  const resetMs = typeof resetsAt === 'string' ? Date.parse(resetsAt) : NaN;
+  if (!Number.isFinite(resetMs) || resetMs <= now) return null;
+  if (!Number.isFinite(runway) || runway <= 0 || !Number.isFinite(dead) || dead < 0.25) return null;
+  const hoursToReset = (resetMs - now) / 3_600_000;
+  if (runway >= hoursToReset) return null;
+  return { level: 'warning', code: 'pace_risk' };
 }

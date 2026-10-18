@@ -14,7 +14,7 @@ body{margin:0;background:transparent;color:#f6f8fa;font:12px ui-sans-serif,syste
 .main{display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:8px;margin-top:8px}.metric{background:#0a0d10;border-radius:11px;padding:9px}.label{font-size:8px;color:#66717c;font-weight:900;letter-spacing:.8px}
 .value{display:block;margin-top:3px;font-size:17px;font-weight:900;white-space:nowrap}.reset{font-size:14px}.bar{height:6px;border-radius:99px;background:#252b32;overflow:hidden;margin-top:9px}
 .fill{height:100%;width:0;border-radius:99px;background:#dbe2e9;transition:width .25s ease}.footer{display:flex;justify-content:space-between;gap:10px;margin-top:11px;color:#64707b;font-size:9px}
-.warn{color:#ffbf69}.critical{color:#ff8c8c}.empty{padding:18px 4px;color:#818b96;text-align:center}
+.insight{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:7px}.insight .metric{padding:7px}.insight .value{font-size:12px}.alert{padding:8px 10px;margin-top:8px;border:1px solid rgba(255,191,105,.35);border-radius:9px;color:#ffbf69;font-weight:700;font-size:10px}.alert.critical{border-color:rgba(255,140,140,.45);color:#ff8c8c}.note{margin-top:5px;color:#76818d;font-size:9px}.warn{color:#ffbf69}.critical{color:#ff8c8c}.empty{padding:18px 4px;color:#818b96;text-align:center}
 </style>
 </head>
 <body>
@@ -51,6 +51,22 @@ function metric(label,value,className=''){
   box.append(el('span','label',label),el('b','value '+className,value));
   return box;
 }
+function duration(hours){
+  if(typeof hours!=='number'||!Number.isFinite(hours)||hours<0)return '—';
+  if(hours<1)return Math.round(hours*60)+'m';
+  return hours<48?hours.toFixed(1)+'h':(hours/24).toFixed(1)+'d';
+}
+function rate(ratePerHour){
+  return typeof ratePerHour==='number'&&Number.isFinite(ratePerHour)&&ratePerHour>=0
+    ?ratePerHour.toFixed(1)+'%/h':'—';
+}
+function advisory(intelligence){
+  const code=intelligence?.alert?.code;
+  if(code==='quota_critical')return ['critical','Cuota casi agotada · queda 10% o menos'];
+  if(code==='quota_low')return ['warn','Cuota baja · queda 20% o menos'];
+  if(code==='pace_risk')return ['warn','Al ritmo observado, la cuota podría agotarse antes del reset'];
+  return null;
+}
 function providerCard(p){
   const r=remain(p?.primary),u=used(p?.primary),reset=countdown(p?.primary?.resetsAt);
   const section=el('section','provider');
@@ -63,6 +79,12 @@ function providerCard(p){
   const main=el('div','main');
   main.append(metric('USADO',pct(u)),metric('RESTANTE',pct(r),severity(r)),metric('RESET',reset,'reset'));
   section.append(row,bar,main);
+  const intel=p?.intelligence;
+  const insights=el('div','insight');
+  insights.append(metric('CONSUMO/H',rate(intel?.burnRatePercentPerHour)),metric('AUTONOMÍA',duration(intel?.runwayHours)),metric('TIEMPO SIN CUOTA',duration(intel?.deadHours)));
+  section.append(insights,el('div','note','Estimaciones locales · requieren al menos dos muestras'));
+  const alert=advisory(intel);
+  if(alert)section.append(el('div','alert '+(alert[0]==='critical'?'critical':''),alert[1]));
   return section;
 }
 function render(data){
