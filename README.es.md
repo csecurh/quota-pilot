@@ -17,6 +17,8 @@ Permite ver las métricas de **uso**, **cuota restante** y **reinicio**, cuando 
 
 **Permisos en ChatGPT Desktop:** rechaza una solicitud del agente para instalar el footer de Codex o crear `.quotapilot` desde ChatGPT Work. El gestor oficial sí puede guardar preferencias de plugins en `~/.codex/config.toml`, que es distinto de editar la barra de Codex mediante scripts. [Guía por host](docs/es/AGENT-INSTALL.md).
 
+**Corrección del HUD MCP Apps (posterior a rc.4 en `main`):** el widget ahora admite el puente estándar `ui/initialize` / `ui/notifications/tool-result` mediante postMessage y consultas `tools/call` mediadas por el host, conservando la compatibilidad anterior de ChatGPT. Que `open_hud` funcione y se pueda leer el recurso `ui://` no prueba que Desktop haya renderizado el iframe. Sincroniza el marketplace GitHub y vuelve a probar en una conversación local nueva; no instales Codex ni concedas permisos adicionales. Comprueba el resultado de CI del commit antes de considerar validada la corrección.
+
 ## Instalación directa desde GitHub en Windows, sin Node.js
 
 **Si instalaste 0.6.0-rc.3:** actualiza el marketplace y el complemento **AI Usage** en Plugins y cierra completamente ChatGPT Desktop antes de volver a abrirlo. La copia de caché anterior puede carecer del ejecutable. Después abre una **conversación local nueva**, selecciona AI Usage con @ o el selector de Plugins y comprueba que `get_overview` y `open_hud` aparezcan como herramientas MCP. Que solo aparezcan skills no demuestra conexión. No concedas permisos adicionales ni configures el footer de Codex para eludir el fallo.
