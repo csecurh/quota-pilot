@@ -19,6 +19,8 @@ The HUD provides provider-reported **used**, **remaining** and **reset time**, p
 
 **ChatGPT Desktop permissions:** decline broad requests to install the Codex footer or write into `.quotapilot` from a ChatGPT Work session. The official ChatGPT plugin manager may itself save enable/disable preferences in `~/.codex/config.toml`; that is separate from a script editing the native Codex footer. [Host-specific guidance](docs/AGENT-INSTALL.md).
 
+**MCP Apps UI correction (post-rc.4 on `main`):** the HUD now supports the standard `ui/initialize` / `ui/notifications/tool-result` postMessage bridge and host-mediated `tools/call` while retaining legacy ChatGPT support. A successful `open_hud` plus a readable `ui://` resource does not prove that Desktop rendered an iframe. Refresh the GitHub marketplace source and retest in a new local Desktop thread; no Codex installation or extra permissions. Verify the GitHub Actions result for this commit before treating the fix as validated.
+
 ## Windows Git marketplace: bundled runtime, no Node installation
 
 **Upgrading from 0.6.0-rc.3:** refresh the **AI Usage** marketplace/install through ChatGPT Desktop Plugins management and restart the application completely. The previous version can remain in the plugin cache without the native executable. Then open a **new local Desktop conversation**, select AI Usage via @ or the composer Plugins selector, and verify that `get_overview` / `open_hud` are actually exposed as MCP tools. Seeing skills alone does not confirm a working MCP connection. Do not request additional filesystem permissions or configure the Codex footer to work around a missing local executor.
