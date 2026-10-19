@@ -8,7 +8,7 @@ test('HUD uses a restrictive no-network CSP and does not render untrusted HTML',
     "default-src 'none'", "connect-src 'none'", "img-src 'none'",
     "form-action 'none'", "object-src 'none'", "frame-src 'none'",
     "base-uri 'none'", 'textContent', 'replaceChildren',
-    "window.openai.callTool('get_overview'",
+    "requestHost('tools/call',{name:'get_overview',arguments:{}})",
   ]) {
     assert.ok(source.includes(token), 'Missing widget invariant: ' + token);
   }
