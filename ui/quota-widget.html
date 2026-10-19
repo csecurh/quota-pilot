@@ -129,25 +129,71 @@ function render(data){
   const generated=Date.parse(overview?.generatedAt);
   $('updated').textContent=tr('updated')+' '+new Date(Number.isFinite(generated)?generated:Date.now()).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
 }
+// MCP Apps 2026-01-26 bridge: no dependencies, no direct network access.
+let hostReady=false;
+let hostToolProxy=false;
+let nextRequestId=0;
+let hostOrigin=null;
+const pending=new Map();
+function requestHost(method,params){
+  if(window.parent===window)return Promise.reject(new Error('No MCP Apps host'));
+  const id=++nextRequestId;
+  return new Promise((resolve,reject)=>{
+    const timeout=setTimeout(()=>{pending.delete(id);reject(new Error('Host timeout'));},10000);
+    pending.set(id,{resolve,reject,timeout});
+    window.parent.postMessage({jsonrpc:'2.0',id,method,params},hostOrigin||'*');
+  });
+}
+window.addEventListener('message',event=>{
+  if(event.source!==window.parent)return;
+  if(hostOrigin!==null&&event.origin!==hostOrigin)return;
+  const msg=event.data;
+  if(!msg||msg.jsonrpc!=='2.0'||typeof msg!=='object')return;
+  if((typeof msg.id==='number'||typeof msg.id==='string')&&pending.has(msg.id)){
+    const entry=pending.get(msg.id);pending.delete(msg.id);clearTimeout(entry.timeout);
+    if(hostOrigin===null)hostOrigin=event.origin;
+    if(msg.error)entry.reject(new Error('MCP Apps host error'));
+    else entry.resolve(msg.result);
+    return;
+  }
+  if(!hostReady)return;
+  if(msg.method==='ui/notifications/tool-result'&&msg.params?.structuredContent){
+    render(msg.params.structuredContent);
+    $('state').textContent='LOCAL';$('state').className='live';
+  }
+});
 let updating=false;
 async function refresh(){
   if(updating||document.hidden)return;
-  if(!window.openai?.callTool)return;
+  if(!hostToolProxy&&!window.openai?.callTool)return;
   updating=true;
   try{
-    if(window.openai?.callTool){
-      const result=await window.openai.callTool('get_overview',{});
-      render(result?.structuredContent||result);
-      $('state').textContent='LOCAL';$('state').className='live';
-    }
+    const result=hostToolProxy
+      ?await requestHost('tools/call',{name:'get_overview',arguments:{}})
+      :await window.openai.callTool('get_overview',{});
+    if(result?.isError)throw new Error('Overview unavailable');
+    render(result?.structuredContent||result);
+    $('state').textContent='LOCAL';$('state').className='live';
   }catch{$('state').textContent='OFFLINE';$('state').className='warn'}
   finally{updating=false;}
 }
-function initial(){
+async function initial(){
   chooseLocale(locale);
   if(window.openai){$('brand').textContent='ChatGPT';document.title='ChatGPT';}
   const first=window.openai?.toolOutput;
   if(first)render(first);
+  try{
+    const handshake=await requestHost('ui/initialize',{
+      protocolVersion:'2026-01-26',
+      appInfo:{name:'quota-pilot-hud',version:'0.6.0'},
+      appCapabilities:{availableDisplayModes:['inline','fullscreen','pip']}
+    });
+    hostReady=true;
+    hostToolProxy=!!handshake?.hostCapabilities?.serverTools;
+    window.parent.postMessage({jsonrpc:'2.0',method:'ui/notifications/initialized',params:{}},hostOrigin||'*');
+  }catch{
+    // Older ChatGPT clients may expose only the legacy window.openai bridge.
+  }
   window.openai?.requestDisplayMode?.({mode:'pip'}).catch(()=>{});
   refresh();
   setInterval(refresh,30000);
