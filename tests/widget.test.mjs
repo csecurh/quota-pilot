@@ -13,7 +13,7 @@ test('HUD uses a restrictive no-network CSP and does not render untrusted HTML',
     assert.ok(source.includes(token), 'Missing widget invariant: ' + token);
   }
   assert.doesNotMatch(source, /\.innerHTML\s*=|\beval\s*\(|\bfetch\s*\(|\bXMLHttpRequest\b|\bWebSocket\b|document\.write\s*\(/);
-  assert.match(source, /addEventListener\\s*\\(\\s*['"]message['"]/);
+  assert.ok(source.includes("window.addEventListener('message',event=>"));
   for (const token of ['event.source!==window.parent','hostOrigin!==null&&event.origin!==hostOrigin','ui/initialize','ui/notifications/initialized','ui/notifications/tool-result','hostCapabilities?.serverTools']) {
     assert.ok(source.includes(token),'Missing MCP Apps bridge: '+token);
   }
